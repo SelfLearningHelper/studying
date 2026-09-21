@@ -135,6 +135,12 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .rev .re{font-size:.9rem; color:var(--muted); margin-top:8px}
 .again{margin-top:22px}
 
+/* summary */
+.start.secondary{background:var(--surface); color:var(--ink); border:2px solid var(--line); margin-top:12px}
+.sec{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin-bottom:12px}
+.sec h3{margin:0 0 10px; font-size:1.05rem; color:var(--primary)}
+.sec ul, .sec ol{margin:0; padding-inline-start:22px; display:flex; flex-direction:column; gap:6px; font-size:.97rem; line-height:1.6}
+
 /* phones */
 @media (max-width:560px){
   .modes{grid-template-columns:1fr}
@@ -191,6 +197,7 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
           <p class="note" id="timeNote"></p>
         </div>
         <button class="start" id="startBtn" data-i="start"></button>
+        <button class="start secondary" id="summaryBtn" data-i="summaryBtn"></button>
       </div>
     </div>
   </section>
@@ -229,6 +236,17 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
     </div>
     <div class="review" id="review"></div>
     <button class="start again" id="againBtn" data-i="again"></button>
+  </section>
+
+  <section id="summary" class="hidden">
+    <div class="bar">
+      <div class="pos" data-i="summaryTitle"></div>
+      <div class="barside">
+        <button class="mini" id="langSwitch3"></button>
+        <button class="quit" id="summaryBackBtn" data-i="back"></button>
+      </div>
+    </div>
+    <div id="summaryContent"></div>
   </section>
 
 </div>
@@ -380,6 +398,233 @@ const BANK_EN = [
 ];
 
 
+const SUM_AR = [
+{h:"01 — التعريف", items:[
+"إدارة الهندسة: تطبيق مبادئ الإدارة وأساليب اتخاذ القرار على الأنشطة والمنظمات الهندسية لتحقيق أهداف محددة بفعالية وكفاءة.",
+"المهندس يحل مشاكل تقنية؛ مدير الهندسة يقرر أي حل يخدم المنظمة. السؤال الحقيقي: أي حل نختار ولماذا؟ وليس فقط هل نقدر نصممه؟"
+]},
+{h:"02 — مجالات المعرفة الثلاثة", items:[
+"المعرفة الهندسية: الأنظمة التقنية، العمليات، المنتجات، التقنيات، المشاكل الهندسية.",
+"المعرفة الإدارية: تنسيق الناس، الأنشطة، الموارد، وأداء المنظمة.",
+"معرفة اتخاذ القرار: المشاكل، البدائل، القيود، النتائج، مسارات العمل.",
+"إدارة الهندسة تعمل عند نقطة التقاء التقنية بالإدارة."
+]},
+{h:"03 — المهندس مقابل مدير الهندسة", items:[
+"الفرق أساسًا في نطاق المسؤولية والصلاحية والمساءلة، وليس فرقًا مطلقًا.",
+"المهندس: يحلل ويصمم ويختبر، ومسؤول غالبًا عن مخرجاته التقنية الشخصية.",
+"مدير الهندسة: يدمج التقني بالتنظيمي، ويوازن الأداء مع التكلفة والوقت والجودة والمخاطرة، ومسؤول عن نتائج الفريق أو المشروع أو المنظمة.",
+"تحوّل السؤال: من «كيف أديت أنا؟» إلى «كيف أدى الفريق أو المشروع أو المنظمة؟»."
+]},
+{h:"04 — لماذا نحتاج إدارة الهندسة (حالة اختيار الماكينة)", items:[
+"الماكينتان A وB مقبولتان تقنيًا لكن تختلفان في السعر والطاقة الإنتاجية ووقت التسليم والصيانة والموثوقية.",
+"الحل الأكثر تقدمًا تقنيًا ليس تلقائيًا أفضل حل إداري.",
+"أسئلة الإدارة: ما الطاقة المطلوبة فعلًا؟ ما الميزانية المتاحة؟ ما مدى الإلحاح؟ هل تقدر المنظمة تصون الماكينة؟ ما تكاليف التشغيل والصيانة والتوقف والمخاطر وتكلفة دورة الحياة؟"
+]},
+{h:"05 — منظور دورة الحياة", items:[
+"الشراء (استثمار رأسمالي) ← التشغيل (طاقة وعمالة ومواد) ← الصيانة (مخططة وغير مخططة) ← التوقف (إنتاج مفقود) ← العمر الإنتاجي (استبدال وتخلص).",
+"حالة مشكلة الجودة (ارتفاع نسبة الرفض من 2% إلى 8%): منظور المهندس تقني بحت (معاملات القطع، تآكل الأداة، دقة القياس...)، بينما مدير الهندسة يضيف الأثر المالي والإلحاح واستمرار الإنتاج وتخصيص الفنيين وتأثير العملاء واستدامة الحل."
+]},
+{h:"06 — المنظمة كنظام", items:[
+"مدخلات: أشخاص، مواد، معدات، مال، معلومات، تقنية، طاقة، وقت.",
+"عمليات: تصميم، تصنيع، إنشاء، صيانة، شراء، جودة، مشاريع، بحث وتطوير.",
+"مخرجات: منتجات، مشاريع، تصاميم، خدمات، بنية تحتية، حلول، قيمة للعميل، نتائج مالية.",
+"التسلسل: مدخلات ← عمليات ← مخرجات ← تغذية راجعة على الأداء. وقرار في جزء من المنظمة قد يخلق عواقب في جزء آخر."
+]},
+{h:"07 — الأداء المحلي مقابل أداء النظام", items:[
+"مثال: شراء مكوّن أرخص (تحسين محلي) قد يرفع أعطال المعدات وساعات الصيانة والتوقف ومطالبات الضمان وشكاوى العملاء.",
+"التحسين المحلي ذو قيمة فقط إذا دعم أهداف النظام ككل، ومؤشرات الأداء المحلية يجب أن تتماشى مع أهداف المنظمة."
+]},
+{h:"08 — تصنيف الموارد", items:[
+"الأشخاص: مهندسون، فنيون، مشغلون، مشرفون، مدراء، مختصون.",
+"المعدات: ماكينات، خطوط إنتاج، أدوات، مركبات، مختبرات، حواسيب.",
+"المواد: مواد خام، مكونات، قطع غيار، مستهلكات، إمدادات.",
+"المال: استثمار رأسمالي، رواتب، ميزانيات، صيانة، تمويل تشغيلي.",
+"الأساليب (Methods): عمليات وإجراءات ومعايير وتعليمات عمل.",
+"المعلومات: مخططات، مواصفات، جداول، بيانات، سجلات، متطلبات."
+]},
+{h:"09 — الندرة وتخصيص الموارد", items:[
+"مثال: 10 مهندسين متاحين مقابل 15 مطلوبين (مشاريع A=6، B=5، C=4).",
+"الندرة تفرض الحاجة للاختيار الإداري، لأنه ليس كل نشاط مرغوب يحصل على كل ما يطلبه من موارد.",
+"تخصيص الموارد: عملية تحديد كيفية توزيع الموارد المحدودة بين متطلبات متنافسة.",
+"عوامل التخصيص: المواعيد والإلحاح، السلامة والالتزامات التعاقدية، أهمية العميل والربحية، الأهمية الاستراتيجية والتعقيد، المهارات والتوقيت وتوفر الأفراد، الترابط بين الأنشطة."
+]},
+{h:"10 — الأهداف مقابل القيود", items:[
+"الهدف: ما الذي نحاول تحقيقه؟ (تقليل التكلفة، الإنجاز في الوقت، زيادة الإنتاج، تقليل العيوب، تحسين الجودة، تقليل التوقف، تحسين السلامة، زيادة الربحية).",
+"القيد: تحديد أو متطلب يقيّد البدائل المتاحة (الميزانية المعتمدة، الموعد النهائي، الموظفون المتاحون، طاقة الماكينة، توفر المواد، المواصفات التقنية، متطلبات السلامة، الأنظمة، المتطلبات التعاقدية).",
+"بعض القيود — السلامة والقانون والعقود — تعمل كشروط جدوى غير قابلة للتفاوض.",
+"نفس العامل (مثل التكلفة) قد يكون هدفًا في قرار وقيدًا في قرار آخر، حسب صياغة مشكلة القرار."
+]},
+{h:"11 — المقايضات (Trade-offs)", items:[
+"تحدث المقايضة عندما يتطلب تحسين معيار قبول أداء أقل أو تكلفة/مخاطرة أعلى في مكان آخر.",
+"أزواج شائعة: التكلفة↔الجودة، التكلفة↔الموثوقية، الوقت↔التكلفة، الأداء↔التكلفة، المخزون↔التوفر، المرونة↔التوحيد القياسي.",
+"المقايضات معتمدة على السياق وليست قواعد عامة؛ فمثلًا تقليل العيوب قد يحسّن الجودة ويقلل إعادة العمل والتكلفة ووقت التسليم في نفس الوقت.",
+"حالة مدة المشروع: تسريع من 8 إلى 6 أشهر عبر موظفين إضافيين أو عمل إضافي أو ورديات أو نقل/موردين أسرع، لكن هذا يحمل مخاطر تنسيق وجودة وسلامة وتنفيذ وتكلفة أعلى.",
+"حالة اختيار المورد: لا يوجد «أفضل» مطلق؛ الاختيار يعتمد على الهدف والقيود ومعايير القرار المتاحة."
+]},
+{h:"12 — الفعالية والكفاءة والإنتاجية", items:[
+"الفعالية (Effectiveness): «عمل الأشياء الصحيحة» — مدى تحقيق الأهداف المطلوبة.",
+"الكفاءة (Efficiency): «عمل الأشياء بالطريقة الصحيحة» — مدى الاقتصاد في استخدام الموارد.",
+"الإنتاجية (Productivity): المخرجات ÷ المدخلات.",
+"مثال تحذيري: فريق A (10 مهندسين، 20 حزمة) = 2 حزمة/مهندس؛ فريق B (8 مهندسين، 24 حزمة) = 3 حزم/مهندس. إنتاجية أعلى لا تعني بالضرورة أداءً تنظيميًا أفضل — يجب مراعاة التعقيد والجودة وساعات العمل وإعادة العمل والسلامة ورضا العميل."
+]},
+{h:"13 — عملية اتخاذ القرار", ordered:true, items:[
+"تعريف المشكلة",
+"تحديد الهدف",
+"تحديد القيود ذات الصلة",
+"تطوير بدائل ممكنة",
+"وضع معايير القرار المناسبة",
+"جمع وتحليل المعلومات ذات الصلة",
+"تقييم البدائل",
+"اختيار وتنفيذ البديل المناسب",
+"متابعة النتائج ← تغذية راجعة للخطوة الأولى (العملية دورة وليست خطًا مستقيمًا)"
+]},
+{h:"14 — عرّف المشكلة قبل الحل", items:[
+"المشكلة المُبلَّغة: «إنتاجنا منخفض، نحتاج ماكينة أخرى».",
+"الحقيقة المكتشفة: الماكينات الحالية تعمل بـ65% استغلال فقط بسبب نقص المواد وتأخيرات الإعداد والانتظار بين العمليات.",
+"الحل التقني المتطور لمشكلة خاطئة يبقى قرارًا إداريًا سيئًا."
+]},
+{h:"15 — المخاطرة وعدم اليقين", items:[
+"التعريف الكلاسيكي: المخاطرة = يمكن تقدير احتمالات النتائج؛ عدم اليقين = لا يمكن تقدير النتائج و/أو الاحتمالات بشكل موثوق.",
+"الأطر الحديثة: المخاطرة = أثر عدم اليقين على أهداف المنظمة.",
+"مثال شراء خط إنتاج آلي: أهم أوجه عدم اليقين هي الطلب المستقبلي الفعلي، وموثوقية المعدات، وأسعار الطاقة، ومتطلبات الصيانة، وتوفر الفنيين المهرة، وظهور تقنية منافسة."
+]},
+{h:"16 — الحالة المتكاملة النهائية", items:[
+"شركة تنتج 1,200 وحدة/يوم، وارتفع الطلب إلى نحو 1,500. يُقترح شراء ماكينة آلية بـ1.8 مليون ريال.",
+"معلومات إضافية: استغلال المعدات ≈70%، معدل عيوب 6%، العمل الإضافي مرتفع أصلًا، اختناق في مرحلة إنتاج واحدة، الماكينة تحتاج صيانة متخصصة، التسليم 7 أشهر، الطلب المستقبلي غير مؤكد.",
+"الدرس: لا تُتخذ الموافقة الفورية — يجب أولًا فهم المشكلة الحقيقية والأهداف والقيود والمعلومات الناقصة؛ فمعالجة الاختناق وخفض العيوب قد يرفعان الإنتاج بدون ماكينة جديدة."
+]},
+{h:"17 — ملخص الوحدة الأولى", ordered:true, items:[
+"التكامل: إدارة الهندسة تدمج التفكير التقني والتنظيمي.",
+"الجدوى ≠ الأفضل: الجدوى التقنية وحدها لا تحدد أفضل حل تنظيمي.",
+"أدوار متداخلة: الفروقات أساسًا في النطاق والصلاحية والمسؤولية والمساءلة.",
+"منظور الأنظمة: المنظمات الهندسية تعمل كأنظمة (مدخلات، عمليات، مخرجات، تغذية راجعة).",
+"موارد محدودة: الندرة تخلق الحاجة للأولوية وتخصيص الموارد.",
+"الأهداف والقيود: تُعرّف مشكلة القرار وتقيّد البدائل الممكنة.",
+"مقايضات معتمدة على السياق: التحسينات أحيانًا تخدم عدة معايير معًا.",
+"أبعاد الأداء: الفعالية والكفاءة والإنتاجية أبعاد مختلفة للأداء.",
+"اتخاذ قرار سليم: يبدأ بتعريف صحيح للمشكلة.",
+"المخاطرة وعدم اليقين: القرارات الهندسية غالبًا تُتخذ بدون معرفة كاملة بالمستقبل."
+]},
+{h:"18 — الفكرة الرئيسية: فكّر كمدير هندسة", items:[
+"إدارة الهندسة ليست مجرد «أن تصبح مديرًا»، وليست استبدال الحكم الهندسي بالاعتبارات التجارية.",
+"هي اتخاذ قرارات سليمة في بيئات هندسية يتفاعل فيها الأداء التقني والأشخاص والموارد والتكلفة والوقت والجودة والمخاطرة وأهداف المنظمة.",
+"اسأل دائمًا: ما المشكلة الحقيقية؟ ما الذي نحاول تحقيقه؟ ما القيود الواجب تحقيقها؟ ما الموارد المتاحة؟ ما البدائل الموجودة؟ ما المقايضات والمخاطر المحتملة؟ ما المعلومات الناقصة؟ كيف سيؤثر القرار على النظام ككل؟ وأي بديل ممكن يخدم أهداف المنظمة بأفضل شكل؟"
+]}
+];
+const SUM_EN = [
+{h:"01 — Definition", items:[
+"Engineering Management is the application of management principles and decision-making methods to engineering activities and organizations to achieve defined objectives effectively and efficiently.",
+"Engineers solve technical problems; engineering managers decide which solution serves the organization. The real question is \"which solution, and why?\" — not just \"can we engineer it?\""
+]},
+{h:"02 — Three Areas of Knowledge", items:[
+"Engineering Knowledge: technical systems, processes, products, technologies, and engineering problems.",
+"Management Knowledge: coordinating people, activities, resources, and organizational performance.",
+"Decision-Making Knowledge: problems, alternatives, constraints, consequences, courses of action.",
+"Engineering Management operates at the interface between technology and management."
+]},
+{h:"03 — Engineer vs. Engineering Manager", items:[
+"The distinction is mainly one of typical scope of responsibility, authority, and accountability — not a rigid boundary.",
+"Engineer: analyzes problems, develops technical solutions, performs analysis/design/testing; responsible mainly for assigned technical outputs.",
+"Engineering Manager: integrates technical and organizational considerations, balances performance with cost/time/quality/risk, and is accountable for team, project, or organizational results.",
+"The performance question shifts from \"How well did I perform?\" to \"How well did the team, project, or organization perform?\""
+]},
+{h:"04 — Why Engineering Management Is Necessary (Machine Selection)", items:[
+"Machines A and B both meet technical requirements but differ in price, capacity, delivery time, maintenance, and reliability.",
+"The most technically advanced solution is not automatically the best managerial solution.",
+"Management questions: how much capacity is really needed? What budget is available? How urgent is it? Can the organization maintain it? What are the operating, maintenance, downtime, risk, and life-cycle costs?"
+]},
+{h:"05 — Life-Cycle Perspective", items:[
+"Purchase (capital investment) → Operation (energy, labor, materials) → Maintenance (planned and unplanned) → Downtime (lost production) → Useful life (replacement, disposal).",
+"Quality case (rejection rate rises from 2% to 8%): the engineer's view is purely technical (cutting parameters, tool wear, measurement accuracy...), while the engineering manager also asks about financial impact, urgency, continuing production, staffing, customer impact, and how to sustain the fix."
+]},
+{h:"06 — Engineering Organizations as Systems", items:[
+"Inputs: people, materials, equipment, money, information, technology, energy, time.",
+"Processes: design, manufacturing, construction, maintenance, procurement, quality, projects, R&D.",
+"Outputs: products, projects, designs, services, infrastructure, solutions, customer value, financial results.",
+"Sequence: Inputs → Processes → Outputs → Performance Feedback. Decisions in one part of an organization may create consequences elsewhere."
+]},
+{h:"07 — Local vs. System Performance", items:[
+"Example: a cheaper component (local improvement) can increase equipment failures, maintenance hours, downtime, warranty claims, and customer complaints.",
+"Local improvement is valuable only when it supports system-level objectives; local KPIs should align with organizational objectives."
+]},
+{h:"08 — Resource Classification", items:[
+"People: engineers, technicians, operators, supervisors, managers, specialists.",
+"Equipment: machines, production lines, tools, vehicles, laboratories, computers.",
+"Materials: raw materials, components, spare parts, consumables, supplies.",
+"Money: capital investment, salaries, budgets, maintenance, operating funds.",
+"Methods: processes, procedures, standards, work instructions.",
+"Information: drawings, specifications, schedules, data, records, requirements."
+]},
+{h:"09 — Scarcity and Resource Allocation", items:[
+"Example: 10 engineers available vs. 15 requested (Project A=6, B=5, C=4).",
+"Scarcity makes managerial choice necessary — not every desirable activity can receive all the resources it requests.",
+"Resource allocation: deciding how limited resources are distributed among competing requirements.",
+"Allocation factors: deadlines and urgency, safety and contractual commitments, customer importance and profitability, strategic importance and complexity, required skills/timing/availability, and interdependence between activities."
+]},
+{h:"10 — Objectives vs. Constraints", items:[
+"Objective: what we are trying to achieve (minimize cost, finish on time, increase production, reduce defects, improve quality, reduce downtime, improve safety, increase profitability).",
+"Constraint: a limitation or requirement restricting available alternatives (approved budget, deadline, available employees, machine capacity, material availability, technical specs, safety requirements, regulations, contractual requirements).",
+"Some constraints — safety, legal, regulatory, contractual — function as non-negotiable feasibility conditions.",
+"The same factor (e.g., cost) can be an objective in one decision and a constraint in another, depending on how the problem is formulated."
+]},
+{h:"11 — Trade-Offs", items:[
+"A trade-off occurs when improving one criterion requires accepting reduced performance or increased cost/risk elsewhere.",
+"Common pairs: Cost↔Quality, Cost↔Reliability, Time↔Cost, Performance↔Cost, Inventory↔Availability, Flexibility↔Standardization.",
+"Trade-offs are context-dependent, not universal rules — reducing defects, for example, can simultaneously improve quality and reduce rework, cost, and lead time.",
+"Project duration case: shortening 8 months to 6 via extra staff, overtime, shifts, or faster transport/suppliers brings coordination, quality, safety, and execution risk plus higher cost.",
+"Supplier case: there is no single \"best\" option — it depends on the objective, constraints, and decision criteria."
+]},
+{h:"12 — Effectiveness, Efficiency, and Productivity", items:[
+"Effectiveness: \"doing the right things\" — the extent to which required objectives are achieved.",
+"Efficiency: \"doing things right\" — how economically resources are used.",
+"Productivity: Output ÷ Input.",
+"Cautionary example: Team A (10 engineers, 20 packages) = 2/engineer/month; Team B (8 engineers, 24 packages) = 3/engineer/month. Higher measured productivity doesn't automatically mean better performance — consider complexity, quality, hours, rework, safety, and customer satisfaction."
+]},
+{h:"13 — The Decision-Making Process", ordered:true, items:[
+"Define the problem",
+"Establish the objective",
+"Identify relevant constraints",
+"Develop feasible alternatives",
+"Establish appropriate decision criteria",
+"Collect and analyze relevant information",
+"Evaluate the alternatives",
+"Select and implement an appropriate alternative",
+"Monitor the results → feedback to Step 1 (it's a cycle, not a straight line)"
+]},
+{h:"14 — Define the Problem Before the Solution", items:[
+"Reported problem: \"our production is too low, we need another machine.\"",
+"Discovered reality: existing machines run at only 65% utilization due to material shortages, setup delays, and waiting between operations.",
+"A technically sophisticated answer to the wrong problem is still a poor managerial decision."
+]},
+{h:"15 — Risk and Uncertainty", items:[
+"Classical view: Risk = probabilities of outcomes can be estimated; Uncertainty = outcomes and/or probabilities cannot be reliably estimated.",
+"Modern view: risk is the effect uncertainty can have on organizational objectives.",
+"Example (buying an automated line): key uncertainties are future demand, equipment reliability, energy prices, maintenance needs, technician availability, and competing technology."
+]},
+{h:"16 — Final Integrated Case", items:[
+"Company produces 1,200 units/day; demand rose to about 1,500. Proposal: a SAR 1.8 million automated machine.",
+"Additional facts: utilization ≈70%, defect rate 6%, overtime already high, one bottleneck stage, machine needs specialized maintenance, 7-month delivery, uncertain future demand.",
+"Lesson: don't approve immediately — first understand the real problem, objectives, constraints, and missing information; fixing the bottleneck and reducing defects might raise output without a new machine."
+]},
+{h:"17 — Module 1 Summary", ordered:true, items:[
+"Integration: Engineering Management integrates technical and organizational thinking.",
+"Feasibility ≠ Best: technical feasibility alone doesn't determine the best organizational solution.",
+"Overlapping roles: differences relate mainly to scope, authority, responsibility, and accountability.",
+"Systems view: engineering organizations operate as systems with inputs, processes, outputs, and feedback.",
+"Limited resources: scarcity creates the need for prioritization and resource allocation.",
+"Objectives & constraints: define the decision problem and restrict feasible alternatives.",
+"Context-dependent trade-offs: improvements can sometimes advance multiple criteria at once.",
+"Performance dimensions: effectiveness, efficiency, and productivity are different dimensions of performance.",
+"Sound decision-making: good decisions begin with correctly defining the problem.",
+"Risk and uncertainty: engineering decisions are often made without complete knowledge of future conditions."
+]},
+{h:"18 — Key Takeaway: Think Like an Engineering Manager", items:[
+"Engineering Management isn't just about \"becoming a manager,\" and it isn't about replacing engineering judgment with business considerations.",
+"It's about making sound decisions in engineering environments where technical performance, people, resources, cost, time, quality, risk, and organizational objectives interact.",
+"Always ask: what's the real problem? What are we trying to achieve? What constraints must be satisfied? What resources are available? What alternatives exist? What are the potential trade-offs and risks? What information is missing? How will this affect the system as a whole? Which feasible alternative best supports the organization's objectives?"
+]}
+];
+
 const UI = {
   ar:{
     title:"كويز إدارة الهندسة",
@@ -398,7 +643,8 @@ const UI = {
     pct:(p,t)=>p+"% خلال "+t, timeout:"، انتهى الوقت",
     v:["ممتاز، المحاضرة واضحة عندك.","جيد جداً، راجع الأخطاء وبتقفلها.","مقبول، فيه مفاهيم تحتاج مراجعة.","تحتاج ترجع للشرح قبل الاختبار."],
     none:"ما جاوبت.", yours:"إجابتك: ", correct:"الصحيح: ", perfect:"ولا غلطة. كل الإجابات صحيحة.",
-    qn:"السؤال ", switchTo:"English", letters:["أ","ب","ج","د"]
+    qn:"السؤال ", switchTo:"English", letters:["أ","ب","ج","د"],
+    summaryBtn:"ملخص ومراجعة المحاضرة", summaryTitle:"ملخص المحاضرة الأولى", back:"رجوع"
   },
   en:{
     title:"Engineering Management Quiz",
@@ -417,7 +663,8 @@ const UI = {
     pct:(p,t)=>p+"% in "+t, timeout:", time ran out",
     v:["Excellent, you've got this lecture down.","Very good. Review your mistakes and you're there.","Passable. Some concepts need another look.","Go back to the notes before the exam."],
     none:"Not answered.", yours:"Your answer: ", correct:"Correct: ", perfect:"No mistakes. Every answer is correct.",
-    qn:"Question ", switchTo:"العربية", letters:["A","B","C","D"]
+    qn:"Question ", switchTo:"العربية", letters:["A","B","C","D"],
+    summaryBtn:"Lecture Summary & Review", summaryTitle:"Module 1 Summary", back:"Back"
   }
 };
 const SEC_PER_Q = 60;
@@ -429,7 +676,7 @@ const T = () => UI[lang];
 
 function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
 function fmt(s){ const m=Math.floor(s/60), r=s%60; return m+":"+String(r).padStart(2,"0"); }
-function show(id){ ["setup","quiz","result"].forEach(s=>$(s).classList.toggle("hidden", s!==id)); window.scrollTo(0,0); }
+function show(id){ ["setup","quiz","result","summary"].forEach(s=>$(s).classList.toggle("hidden", s!==id)); window.scrollTo(0,0); }
 function item(q){ const b=(lang==="ar"?BANK:BANK_EN)[q.i]; const base=[b[1],...b[2]]; return {q:b[0], opts:q.perm.map(k=>base[k]), e:b[3]}; }
 
 function applyLang(){
@@ -437,11 +684,24 @@ function applyLang(){
   html.lang=lang; html.dir = lang==="ar" ? "rtl" : "ltr";
   document.title = T().title+" · ME4441";
   document.querySelectorAll("[data-i]").forEach(el=>{ el.textContent=T()[el.dataset.i]; });
-  $("langSwitch").textContent=T().switchTo; $("langSwitch2").textContent=T().switchTo;
+  $("langSwitch").textContent=T().switchTo; $("langSwitch2").textContent=T().switchTo; $("langSwitch3").textContent=T().switchTo;
   document.querySelectorAll("#langs .chip").forEach(x=>x.setAttribute("aria-pressed", x.dataset.lang===lang));
   updateNote();
   if(!$("quiz").classList.contains("hidden")) render();
   if(!$("result").classList.contains("hidden")) renderResult();
+  if(!$("summary").classList.contains("hidden")) renderSummary();
+}
+function renderSummary(){
+  const data = lang==="ar" ? SUM_AR : SUM_EN;
+  const c=$("summaryContent"); c.innerHTML="";
+  data.forEach(sec=>{
+    const d=document.createElement("div"); d.className="sec";
+    const h=document.createElement("h3"); h.textContent=sec.h; d.appendChild(h);
+    const list=document.createElement(sec.ordered?"ol":"ul");
+    sec.items.forEach(t=>{ const li=document.createElement("li"); li.textContent=t; list.appendChild(li); });
+    d.appendChild(list);
+    c.appendChild(d);
+  });
 }
 function updateNote(){ $("timeNote").textContent = mode==="exam" ? T().noteExam(count*SEC_PER_Q/60) : T().noteLearn; }
 function setLang(l){ lang=l; try{localStorage.setItem("me4441-lang",l)}catch(e){} applyLang(); }
@@ -453,7 +713,9 @@ document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{
 document.querySelectorAll("#counts .chip").forEach(b=>b.onclick=()=>{
   count=+b.dataset.n; document.querySelectorAll("#counts .chip").forEach(x=>x.setAttribute("aria-pressed", x===b)); updateNote();
 });
-$("langSwitch").onclick=$("langSwitch2").onclick=()=>setLang(lang==="ar"?"en":"ar");
+$("langSwitch").onclick=$("langSwitch2").onclick=$("langSwitch3").onclick=()=>setLang(lang==="ar"?"en":"ar");
+$("summaryBtn").onclick=()=>{ renderSummary(); show("summary"); };
+$("summaryBackBtn").onclick=()=>show("setup");
 
 function start(){
   qs = shuffle([...Array(BANK.length).keys()]).slice(0,count).map(i=>{
