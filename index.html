@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ME4441 Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E9EEF0; --surface:#F7F9FA; --ink:#1D2A31; --muted:#5E6E76; --line:#CFD8DC;
+  --primary:#2F6F6A; --primary-soft:#D6E7E4; --ok:#2E8657; --ok-soft:#DCEFE3; --bad:#B6483F; --bad-soft:#F5DEDB;
+  --idle:#C3CDD1;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131A1E; --surface:#1B242A; --ink:#E3EAEC; --muted:#93A3AA; --line:#2E3A41;
+    --primary:#6FB5AC; --primary-soft:#1F3634; --ok:#5DBB86; --ok-soft:#1C3527; --bad:#E07C73; --bad-soft:#3A2220;
+    --idle:#34424A;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131A1E; --surface:#1B242A; --ink:#E3EAEC; --muted:#93A3AA; --line:#2E3A41;
+  --primary:#6FB5AC; --primary-soft:#1F3634; --ok:#5DBB86; --ok-soft:#1C3527; --bad:#E07C73; --bad-soft:#3A2220;
+  --idle:#34424A;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px); -webkit-text-size-adjust:100%}
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:'IBM Plex Sans Arabic', 'Noto Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
+  font-size:clamp(16px, 0.45vw + 14.5px, 19px); line-height:1.7;
+}
+.wrap{width:100%; max-width:760px; margin:0 auto; padding:clamp(20px,4vw,48px) clamp(14px,4vw,32px) 64px}
+button{font:inherit; color:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
+.hidden{display:none !important}
+
+/* setup */
+.intro h1{font-size:clamp(1.7rem, 3vw + 1rem, 2.5rem); line-height:1.25; margin:10px 0 6px; font-weight:700; letter-spacing:-.3px}
+.intro p{margin:0; color:var(--muted); max-width:60ch}
+.group{margin-top:30px}
+.group h2{font-size:1rem; font-weight:600; margin:0 0 12px}
+.modes{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.mode{
+  text-align:start; background:var(--surface); border:2px solid var(--line); border-radius:14px;
+  padding:16px 16px 14px; transition:border-color .15s, background .15s;
+}
+.mode{display:flex; flex-direction:column; justify-content:flex-start}
+.mode strong{display:block; font-size:1.02rem; margin-bottom:4px}
+.mode span{color:var(--muted); font-size:.9rem; line-height:1.55; display:block}
+.mode[aria-pressed="true"]{border-color:var(--primary); background:var(--primary-soft)}
+.chips{display:flex; gap:8px; flex-wrap:wrap}
+.chip{
+  min-width:64px; min-height:46px; padding:8px 16px; border-radius:999px; border:2px solid var(--line);
+  background:var(--surface); font-weight:600; font-variant-numeric:tabular-nums;
+}
+.chip[aria-pressed="true"]{border-color:var(--primary); background:var(--primary); color:var(--surface)}
+.chip.en{font-family:'Segoe UI', system-ui, sans-serif}
+.note{color:var(--muted); font-size:.88rem; margin-top:10px}
+.start{
+  margin-top:34px; width:100%; min-height:54px; padding:14px; border:none; border-radius:14px;
+  background:var(--primary); color:var(--surface); font-weight:700; font-size:1.08rem;
+}
+@media (hover:hover){ .start:hover{filter:brightness(1.07)} }
+
+/* quiz */
+.bar{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap}
+.pos{font-weight:600; font-variant-numeric:tabular-nums}
+.pos small{color:var(--muted); font-weight:400}
+.barside{display:flex; align-items:center; gap:8px}
+.timer{font-variant-numeric:tabular-nums; font-weight:700; padding:4px 12px; border-radius:999px; background:var(--surface); border:1px solid var(--line); direction:ltr}
+.timer.low{color:var(--bad); border-color:var(--bad)}
+.mini{background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:4px 12px; font-size:.85rem; min-height:34px}
+.quit{background:none; border:none; color:var(--muted); font-size:.9rem; text-decoration:underline; padding:6px}
+.rail{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:22px}
+.dot{width:14px; height:14px; border-radius:50%; background:var(--idle); border:none; padding:0; transition:transform .15s, background .2s}
+.dot.cur{outline:2px solid var(--ink); outline-offset:2px}
+.dot.ans{background:var(--primary)}
+.dot.ok{background:var(--ok)}
+.dot.bad{background:var(--bad)}
+@media (hover:hover){ .rail.jump .dot:hover{transform:scale(1.25)} }
+@media (pointer:coarse){ .rail.jump .dot{width:18px; height:18px} }
+.card{background:var(--surface); border-radius:18px; padding:clamp(18px,3vw,32px) clamp(15px,3vw,30px); border:1px solid var(--line)}
+.qtext{font-size:1.18rem; font-weight:600; line-height:1.65; margin:0 0 18px}
+.opts{display:flex; flex-direction:column; gap:10px}
+.opt{
+  display:flex; align-items:flex-start; gap:12px; text-align:start; width:100%; min-height:52px;
+  background:var(--bg); border:2px solid transparent; border-radius:12px; padding:12px 14px;
+  transition:border-color .12s, background .12s;
+}
+@media (hover:hover){ .opt:hover:not(:disabled){border-color:var(--line)} }
+.opt .l{
+  flex:none; width:28px; height:28px; border-radius:50%; display:grid; place-items:center;
+  background:var(--surface); border:1.5px solid var(--line); font-weight:700; font-size:.9rem; margin-top:1px;
+}
+.opt .t{flex:1; min-width:0; overflow-wrap:anywhere}
+.opt.sel{border-color:var(--primary); background:var(--primary-soft)}
+.opt.sel .l{background:var(--primary); color:var(--surface); border-color:var(--primary)}
+.opt.ok{border-color:var(--ok); background:var(--ok-soft)}
+.opt.ok .l{background:var(--ok); color:var(--surface); border-color:var(--ok)}
+.opt.bad{border-color:var(--bad); background:var(--bad-soft)}
+.opt.bad .l{background:var(--bad); color:var(--surface); border-color:var(--bad)}
+.opt:disabled{cursor:default; color:inherit}
+.why{margin-top:16px; padding:14px 16px; border-radius:12px; border-inline-start:4px solid var(--ok); background:var(--ok-soft); font-size:.97rem}
+.why.bad{border-inline-start-color:var(--bad); background:var(--bad-soft)}
+.why b{display:block; margin-bottom:2px}
+.nav{display:flex; gap:10px; margin-top:18px}
+.btn{flex:1; min-height:52px; padding:12px; border-radius:12px; border:2px solid var(--line); background:var(--surface); font-weight:600}
+.btn.main{background:var(--primary); border-color:var(--primary); color:var(--surface)}
+.btn:disabled{opacity:.45; cursor:default}
+.hint{color:var(--muted); font-size:.85rem; margin-top:10px; text-align:center}
+
+/* result */
+.score{text-align:center; padding:26px 0 10px}
+.score .big{font-size:clamp(3.4rem, 6vw + 1.5rem, 5rem); font-weight:700; line-height:1; font-variant-numeric:tabular-nums; direction:ltr}
+.score .big span{font-size:.42em; color:var(--muted); font-weight:500}
+.score p{margin:10px 0 0; color:var(--muted)}
+.verdict{font-size:1.15rem; font-weight:600; color:var(--ink) !important; margin-top:14px !important}
+.tools{display:flex; justify-content:space-between; align-items:center; margin:26px 0 12px; gap:10px; flex-wrap:wrap}
+.tools h2{margin:0; font-size:1.1rem}
+.toggle{background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:6px 14px; font-size:.9rem; min-height:38px}
+.toggle[aria-pressed="true"]{background:var(--ink); color:var(--surface); border-color:var(--ink)}
+.review{display:grid; grid-template-columns:1fr; gap:10px}
+.rev{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px 18px; border-inline-start:5px solid var(--ok)}
+.rev.bad{border-inline-start-color:var(--bad)}
+.rev .rq{font-weight:600; margin:0 0 8px}
+.rev .ra{font-size:.93rem; margin:2px 0}
+.rev .ra.wrong{color:var(--bad)}
+.rev .ra.right{color:var(--ok)}
+.rev .re{font-size:.9rem; color:var(--muted); margin-top:8px}
+.again{margin-top:22px}
+
+/* phones */
+@media (max-width:560px){
+  .modes{grid-template-columns:1fr}
+  .qtext{font-size:1.08rem}
+  .chip{flex:1 1 0; min-width:0; padding:8px 0}
+}
+/* tablets landscape & laptops */
+@media (min-width:1024px){
+  .wrap{max-width:880px}
+  .setup-grid{display:grid; grid-template-columns:1fr 1.15fr; gap:48px; align-items:start; min-height:70vh; align-content:center}
+  .setup-grid .intro{position:sticky; top:48px}
+  .setup-grid .group:first-child{margin-top:0}
+  .review{grid-template-columns:1fr 1fr; align-items:start}
+}
+@media (min-width:1024px) and (min-height:700px){
+  #quiz .card{min-height:420px}
+}
+@media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section id="setup">
+    <div class="setup-grid">
+      <div class="intro">
+        <h1 data-i="title"></h1>
+        <p data-i="sub"></p>
+      </div>
+      <div>
+        <div class="group">
+          <h2 data-i="langH"></h2>
+          <div class="chips" id="langs">
+            <button class="chip" data-lang="ar" aria-pressed="true">العربية</button>
+            <button class="chip en" data-lang="en" aria-pressed="false">English</button>
+          </div>
+        </div>
+        <div class="group">
+          <h2 data-i="modeH"></h2>
+          <div class="modes">
+            <button class="mode" data-mode="learn" aria-pressed="true"><strong data-i="m1"></strong><span data-i="m1d"></span></button>
+            <button class="mode" data-mode="exam" aria-pressed="false"><strong data-i="m2"></strong><span data-i="m2d"></span></button>
+          </div>
+        </div>
+        <div class="group">
+          <h2 data-i="countH"></h2>
+          <div class="chips" id="counts">
+            <button class="chip" data-n="10" aria-pressed="false">10</button>
+            <button class="chip" data-n="20" aria-pressed="true">20</button>
+            <button class="chip" data-n="30" aria-pressed="false">30</button>
+            <button class="chip" data-n="40" aria-pressed="false">40</button>
+            <button class="chip" data-n="50" aria-pressed="false">50</button>
+          </div>
+          <p class="note" id="timeNote"></p>
+        </div>
+        <button class="start" id="startBtn" data-i="start"></button>
+      </div>
+    </div>
+  </section>
+
+  <section id="quiz" class="hidden">
+    <div class="bar">
+      <div class="pos" id="pos"></div>
+      <div class="barside">
+        <div class="timer hidden" id="timer"></div>
+        <button class="mini" id="langSwitch"></button>
+        <button class="quit" id="quitBtn" data-i="quit"></button>
+      </div>
+    </div>
+    <div class="rail" id="rail"></div>
+    <div class="card">
+      <p class="qtext" id="qtext"></p>
+      <div class="opts" id="opts"></div>
+      <div class="why hidden" id="why"></div>
+    </div>
+    <div class="nav" id="nav"></div>
+    <p class="hint" id="hint"></p>
+  </section>
+
+  <section id="result" class="hidden">
+    <div class="score">
+      <div class="big" id="bigScore"></div>
+      <p id="pct"></p>
+      <p class="verdict" id="verdict"></p>
+    </div>
+    <div class="tools">
+      <h2 data-i="review"></h2>
+      <div class="barside">
+        <button class="mini" id="langSwitch2"></button>
+        <button class="toggle" id="onlyWrong" aria-pressed="false" data-i="onlyWrong"></button>
+      </div>
+    </div>
+    <div class="review" id="review"></div>
+    <button class="start again" id="againBtn" data-i="again"></button>
+  </section>
+
+</div>
+
+<script>
+const BANK = [
+["إدارة الهندسة هي تطبيق مبادئ الإدارة وأساليب اتخاذ القرار على الأنشطة الهندسية لتحقيق أهداف محددة:","بفعالية وكفاءة",["بأقل تكلفة ممكنة فقط","بأسرع وقت ممكن فقط","حسب تقدير المهندس الأقدم"],"التعريف في الشريحة 5 ينتهي بـ effectively and efficiently، يعني تحقيق الهدف الصحيح وباستخدام اقتصادي للموارد."],
+["المعرفة الهندسية (Engineering Knowledge) توفر فهماً لـ:","الأنظمة التقنية والعمليات والمنتجات والتقنيات",["تنسيق الناس والأنشطة والموارد","البدائل والقيود ومسارات العمل","الميزانيات والرواتب فقط"],"المعرفة الهندسية تخص الجانب التقني: الأنظمة، العمليات، المنتجات، التقنيات، والمشاكل الهندسية."],
+["أي مما يلي يندرج تحت معرفة اتخاذ القرار (Decision-Making Knowledge)؟","المشاكل والبدائل والقيود والنتائج ومسارات العمل",["الأنظمة التقنية والمنتجات","تنسيق الناس والموارد","المواد الخام وقطع الغيار"],"معرفة اتخاذ القرار حسب الشريحة 6: Problems, Alternatives, Constraints, Consequences, Courses of action."],
+["حسب المحاضرة، إدارة الهندسة تعمل عند:","نقطة التقاء التقنية بالإدارة",["نقطة التقاء الهندسة بالتسويق","مرحلة التصميم فقط","مستوى الإدارة العليا فقط"],"الشريحة 6: Engineering Management operates at the interface between technology and management."],
+["أي مما يلي هو تركيز نموذجي للمهندس وليس لمدير الهندسة؟","إجراء التحليل والحسابات والتصميم والاختبار",["تنسيق الناس والموارد والجداول","الموازنة بين الأداء والتكلفة والوقت والمخاطرة","المساءلة عن نتائج المشروع أو المنظمة"],"التحليل والحسابات والتصميم والاختبار من عمود المهندس في الشريحة 7، والباقي من عمود مدير الهندسة."],
+["أي مما يلي هو تركيز نموذجي لمدير الهندسة؟","دمج الاعتبارات التقنية والتنظيمية",["التركيز على الأداء التقني وحده","المسؤولية عن مخرجاته التقنية الشخصية فقط","تطبيق الأساليب الهندسية وحدها"],"مدير الهندسة يدمج التقني مع التنظيمي ويدمج الأساليب الهندسية مع الإدارية."],
+["الفرق بين المهندس ومدير الهندسة هو أساساً فرق في:","النطاق النموذجي للمسؤولية والصلاحية والمساءلة",["مستوى الذكاء والقدرة التقنية","نوع الشهادة الجامعية","عدد البرامج الهندسية المستخدمة"],"الشريحة 7 تقول إن الفرق ليس مطلقاً، وهو أساساً في typical scope of responsibility, authority, and accountability."],
+["سؤال «كيف كان أداء الفريق أو المشروع أو المنظمة؟» يعكس:","مسؤولية تنظيمية متكاملة",["مسؤولية تقنية فردية","مسؤولية قانونية فقط","سؤالاً لا يخص إدارة الهندسة"],"الشريحة 8: السؤال ينتقل من أدائي التقني (فردي) إلى أداء النظام الذي أنا مسؤول عنه (Integrated organizational responsibility)."],
+["في حالة اختيار الماكينة A أو B، لماذا لا تكفي الهندسة وحدها لاتخاذ القرار؟","لأن الماكينتين مقبولتان تقنياً والاختلاف في اعتبارات تنظيمية",["لأن إحدى الماكينتين معيبة تقنياً","لأن البيانات التقنية غير متوفرة","لأن المورد لم يحدد الأسعار"],"الماكينتان تحققان المتطلبات التقنية، لكنهما تختلفان في السعر والطاقة والتسليم والصيانة، وهذه قرارات تنظيمية."],
+["في حالة الماكينتين، ما الذي تتميز به الماكينة B؟","سعر أقل وتسليم أسرع وصيانة عادية",["طاقة إنتاجية أعلى وموثوقية عالية جداً","سعر أعلى وصيانة متخصصة","تسليم خلال 6 أشهر"],"B بسعر 700 ألف، تسليم شهرين، صيانة Standard، بينما A أعلى طاقة (1500) وموثوقية Very High."],
+["شركة لديها ميزانية 800 ألف ريال وتحتاج الماكينة خلال 3 أشهر. أي ماكينة تبقى ضمن البدائل الممكنة؟","الماكينة B فقط",["الماكينة A فقط","الماكينتان كلتاهما","لا توجد أي ماكينة ممكنة"],"A سعرها مليون (تتجاوز الميزانية) وتسليمها 6 أشهر (يتجاوز المهلة)، فالقيود تستبعدها. B بـ700 ألف وتسليم شهرين."],
+["أي من الأسئلة التالية يُعتبر سؤالاً إدارياً في حالة اختيار الماكينة؟","هل لدى المنظمة أفراد قادرون على صيانة الماكينة A؟",["ما سرعة دوران المحور الرئيسي للماكينة؟","ما نوع المعدن المستخدم في هيكل الماكينة؟","ما دقة حساس القياس داخل الماكينة؟"],"الشريحة 10 تذكر قدرة الأفراد على صيانة الماكينة ضمن أسئلة الإدارة، بينما الخيارات الأخرى تفاصيل تقنية بحتة."],
+["حسب المحاضرة، الحل الأكثر تقدماً تقنياً:","ليس تلقائياً أفضل حل إداري",["هو دائماً أفضل حل للمنظمة","يجب رفضه دائماً","هو الأقل تكلفة دائماً"],"الشريحة 10: The most technically advanced solution is not automatically the best managerial solution."],
+["ما الذي تشمله تكلفة دورة الحياة (Life-Cycle Cost)؟","الشراء والتشغيل والصيانة والتوقف والعمر الإنتاجي",["سعر الشراء فقط","تكلفة التشغيل فقط","سعر بيع المنتج النهائي"],"الشريحة 11 تعرض خمس مراحل: Purchase, Operation, Maintenance, Downtime, Useful Life."],
+["ماكينة سعرها أقل بكثير لكن أعطالها وتوقفاتها متكررة. ما المفهوم الذي يوضح أنها قد تكون الخيار الأغلى؟","تكلفة دورة الحياة",["الإنتاجية","الفعالية","تخصيص الموارد"],"تكلفة دورة الحياة تجمع الشراء مع التشغيل والصيانة والتوقف، فالسعر المنخفض قد يُعوَّض بتكاليف لاحقة أعلى."],
+["في حالة مشكلة الجودة، السؤال المركزي من منظور المهندس هو:","ما سبب العيوب وكيف نصحح المشكلة التقنية؟",["كم يجب أن تنفق المنظمة؟","هل ستتأثر مواعيد التسليم للعملاء؟","ما العمل الآخر الذي سيتأخر؟"],"منظور المهندس تقني بحت، والخيارات الأخرى أسئلة إدارية من الشريحة 13."],
+["أي مما يلي من بنود التحقيق التقني للمهندس في حالة مشكلة الجودة؟","تآكل الأداة (Tool wear)",["الأثر المالي لنسبة الرفض","أي المهندسين يُكلَّف بالمهمة","استمرار الإنتاج أثناء التحقيق"],"تآكل الأداة من قائمة المهندس في الشريحة 12 مع معاملات القطع ومحاذاة التثبيت ودقة القياس."],
+["«هل يستمر الإنتاج أثناء التحقيق؟» هو سؤال:","إداري يطرحه مدير الهندسة",["تقني يخص معاملات القطع","لا علاقة له بمشكلة الجودة","يخص المورد فقط"],"هذا من أسئلة منظور إدارة الهندسة في الشريحة 13 لأنه يوازن بين الإنتاج والجودة والمخاطر."],
+["في نموذج المنظمة كنظام، أي مما يلي يُعتبر مدخلاً (Input)؟","الناس والمواد والمعدات والمال",["المنتجات والخدمات","التصميم والتصنيع","القيمة للعميل والنتائج المالية"],"المدخلات في الشريحة 14: People, Materials, Equipment, Money, Information, Technology, Energy, Time."],
+["التسلسل الصحيح في نموذج النظام هو:","مدخلات ← عمليات ← مخرجات ← تغذية راجعة",["عمليات ← مدخلات ← مخرجات ← تغذية راجعة","مدخلات ← مخرجات ← عمليات ← تغذية راجعة","تغذية راجعة ← مخرجات ← عمليات ← مدخلات"],"الشريحة 14: Inputs → Processes → Outputs → Performance Feedback."],
+["في شريحة الأنظمة، «الوقت» (Time) صُنِّف على أنه:","مدخل",["عملية","مخرج","تغذية راجعة"],"الوقت ورد في قائمة INPUTS مع الناس والمواد والمال والطاقة. سؤال يلخبط لأن كثير يعتبرونه قيداً فقط."],
+["الفكرة الجوهرية للتفكير النُظُمي في المحاضرة هي:","القرار في جزء من المنظمة قد يسبب عواقب في جزء آخر",["كل قسم يعمل مستقلاً عن الآخر","التحسين المحلي دائماً مفيد","النظام يتكون من مخرجات فقط"],"الشريحة 14: Decisions in one part of an organization may create consequences elsewhere."],
+["قسم المشتريات اشترى مكوّناً أرخص. حسب المحاضرة، ما الأثر على مستوى النظام؟","زيادة الأعطال والصيانة والتوقف ومطالبات الضمان والشكاوى",["تحسن شامل في كل المؤشرات","لا يوجد أي أثر خارج المشتريات","انخفاض تكاليف الصيانة"],"الشريحة 15: التوفير المحلي في الشراء سبب خسائر أكبر على مستوى النظام."],
+["التحسين المحلي (Local Improvement) يكون ذا قيمة عندما:","يدعم أهداف النظام ككل",["يوفّر المال للقسم فقط","لا يؤثر على أي قسم آخر","يرفع مؤشرات القسم بأي ثمن"],"الشريحة 15: Local improvement is valuable when it supports system-level objectives."],
+["مؤشرات الأداء المحلية (Local KPIs) يجب أن:","تتماشى مع أهداف المنظمة",["تكون مستقلة عن أهداف المنظمة","تُعظَّم حتى لو تعارضت مع الأقسام الأخرى","تُلغى لصالح مؤشر واحد"],"الشريحة 15: Local KPIs should align with organizational objectives."],
+["في تصنيف الموارد، فئة Methods تشمل:","العمليات والإجراءات والمعايير وتعليمات العمل",["المخططات والمواصفات والبيانات","الماكينات والأدوات والمختبرات","الرواتب والميزانيات"],"Methods = Processes, procedures, standards, work instructions. المخططات والبيانات من فئة Information."],
+["في تصنيف الموارد، فئة Information تشمل:","المخططات والمواصفات والجداول والسجلات",["الإجراءات وتعليمات العمل","المهندسين والفنيين","المواد الخام والمستهلكات"],"Information = Drawings, specifications, schedules, data, records, requirements."],
+["قطع الغيار (Spare parts) تُصنَّف في المحاضرة ضمن:","Materials",["Equipment","Methods","Money"],"قطع الغيار وردت في فئة Materials مع المواد الخام والمكونات والمستهلكات، وليس ضمن المعدات."],
+["في مثال الندرة، عدد المهندسين المتاحين وعدد المطلوبين كان:","10 متاحين و15 مطلوباً",["15 متاحاً و10 مطلوبين","10 متاحين و10 مطلوبين","6 متاحين و15 مطلوباً"],"المشاريع A=6 و B=5 و C=4 مجموعها 15، والمتاح 10، أي عجز 5 مهندسين."],
+["لماذا تخلق الندرة (Scarcity) الحاجة إلى الإدارة؟","لأن ليس كل نشاط مرغوب يمكن أن يحصل على كل الموارد التي يطلبها",["لأن الموارد متوفرة بلا حدود","لأن المشاريع لا تحتاج موارد","لأن الإدارة تزيد الموارد تلقائياً"],"الشريحة 18: Scarcity makes managerial choice necessary because not every desirable activity can receive all the resources it requests."],
+["تخصيص الموارد (Resource Allocation) هو:","عملية تحديد كيفية توزيع الموارد المحدودة بين متطلبات متنافسة",["شراء أكبر قدر من الموارد","إعطاء كل مشروع ما يطلبه","تجميد الموارد حتى تنتهي المشاريع"],"التعريف حرفياً من الشريحة 18."],
+["أي مما يلي ليس من عوامل تخصيص الموارد المذكورة في المحاضرة؟","التفضيل الشخصي للمدير لأحد الفرق",["مواعيد المشاريع والاستعجال","الالتزامات التعاقدية والسلامة","الترابط بين الأنشطة"],"العوامل المذكورة: المواعيد، السلامة والعقود، أهمية العميل والربحية، الأهمية الاستراتيجية والتعقيد، المهارات والتوقيت، الترابط بين الأنشطة."],
+["الهدف (Objective) في اتخاذ القرار يجيب على سؤال:","ما الذي نحاول تحقيقه؟",["ما الذي يحد خياراتنا؟","من سيتأثر بالقرار؟","ماذا لو كنا مخطئين؟"],"الشريحة 19: What are we trying to achieve؟ أما «ما الذي يحد خياراتنا» فهو سؤال القيود."],
+["سؤال «أي عملية تصنيع هي الأفضل؟» ناقص لأن:","الأفضلية تحتاج تحديد المعيار: تكلفة؟ سرعة؟ دقة؟ موثوقية؟",["كل العمليات متساوية دائماً","القرار تقني ولا يحتاج معايير","المهندس هو من يقرر دون أهداف"],"الشريحة 19: Best according to what؟ ولا يمكن تقييم قرار قبل تحديد الهدف."],
+["القيد (Constraint) هو:","تحديد أو متطلب يقيّد البدائل المتاحة",["ما نحاول تعظيمه أو تقليله","نتيجة القرار بعد التنفيذ","مقياس للإنتاجية"],"الشريحة 20: A constraint is a limitation or requirement that restricts the available alternatives."],
+["أي القيود التالية يعمل عادة كشرط جدوى غير قابل للتفاوض؟","متطلبات السلامة والأنظمة القانونية والتعاقدية",["رغبة الإدارة في لون معين","سرعة التسليم المفضلة","الرأي الشخصي لأحد المهندسين"],"الشريحة 20: safety, legal, regulatory, and contractual requirements function as non-negotiable feasibility conditions."],
+["في الشريحة 21، «الميزانية المعتمدة القصوى = 2 مليون ريال» مثال على:","قيد",["هدف","مقايضة","مخرج"],"هي تحد البدائل الممكنة (What limits feasible alternatives)، فهي قيد."],
+["هل يمكن أن تكون التكلفة هدفاً في قرار وقيداً في قرار آخر؟","نعم، حسب طريقة صياغة مشكلة القرار",["لا، التكلفة هدف دائماً","لا، التكلفة قيد دائماً","لا، التكلفة ليست هدفاً ولا قيداً"],"الشريحة 21: The role of a factor depends on how the decision problem is formulated."],
+["المقايضة (Trade-off) تحدث عندما:","تحسين معيار يتطلب قبول أداء أقل أو تكلفة ومخاطرة أعلى في مكان آخر",["يتحسن كل شيء معاً بدون تنازل","تُلغى القيود كلها","تتساوى كل البدائل"],"التعريف من الشريحة 22."],
+["حسب المحاضرة، المقايضات:","معتمدة على السياق وليست قواعد عامة",["قواعد ثابتة تنطبق دائماً","غير موجودة في الواقع","تخص القرارات المالية فقط"],"الشريحة 22: Trade-offs are context-dependent, not universal rules. لذلك لا نفترضها قبل التأكد."],
+["أي مثال تستخدمه المحاضرة لتوضيح أن التحسين قد يخدم عدة معايير معاً؟","تقليل العيوب يحسن الجودة ويقلل إعادة العمل والتكلفة ووقت التسليم",["زيادة السرعة ترفع التكلفة","خفض السعر يقلل الجودة","زيادة المخزون ترفع التوفر"],"الشريحة 22 تذكر تقليل العيوب كمثال على غياب المقايضة، لأنه يحسن أكثر من معيار في نفس الوقت."],
+["أي من الأزواج التالية ورد في المحاضرة كمقايضة شائعة؟","المخزون ↔ التوفر",["المدخلات ↔ المخرجات","الفعالية ↔ التغذية الراجعة","السلامة ↔ القانون"],"المقايضات المذكورة: تكلفة↔جودة، تكلفة↔موثوقية، وقت↔تكلفة، أداء↔تكلفة، مخزون↔توفر، مرونة↔توحيد قياسي."],
+["في حالة مدة المشروع، الخطة 8 أشهر والمطلوب 6. أي مما يلي من الإجراءات الممكنة للتسريع؟","موظفون إضافيون وورديات إضافية وموردون أسرع",["تقليل عدد الموظفين","تأجيل شراء المواد","إلغاء مراحل الاختبار"],"الإجراءات في الشريحة 23: Additional personnel, Overtime, Additional shifts, Faster transportation, Faster suppliers."],
+["من العواقب المحتملة لتسريع المشروع حسب المحاضرة:","مخاطر تنسيق وجودة وسلامة وتنفيذ وتكلفة أعلى",["انخفاض تلقائي في التكلفة","تحسن تلقائي في الجودة","اختفاء كل المخاطر"],"الشريحة 23: Higher direct cost, Coordination risk, Quality risk, Safety risk, Execution risk."],
+["السؤال الحاسم في حالة تسريع المشروع هو:","هل قيمة الإنجاز المبكر أكبر من التكلفة والمخاطرة الإضافية؟",["كم عدد الموظفين الحاليين؟","هل المشروع ممتع؟","هل المورد يوافق على السعر؟"],"الشريحة 23 تنتهي بهذا السؤال: هل قيمة الإنجاز المبكر تستاهل التكلفة والمخاطر؟"],
+["في حالة الموردين، إذا كانت الأولوية جودة عالية مع تسليم خلال 5 أسابيع كحد أقصى، أي مورد يبقى؟","المورد B",["المورد A","المورد C","لا يوجد مورد ممكن"],"A جودته عالية لكن تسليمه 12 أسبوع، و C يحقق الحد الأدنى فقط من الجودة. B جودته عالية وتسليمه 4 أسابيع."],
+["في حالة الموردين، إذا كان الهدف أقل سعر، والحد الأدنى من الجودة مقبول، والمهلة 6 أسابيع، أي مورد تختار؟","المورد C",["المورد A","المورد B","لا يمكن الاختيار"],"C الأرخص (70 ألف)، يحقق المواصفة الدنيا المقبولة، وتسليمه 5 أسابيع ضمن المهلة."],
+["الفعالية (Effectiveness) تعني:","عمل الأشياء الصحيحة، أي درجة تحقيق الأهداف المطلوبة",["عمل الأشياء بالطريقة الصحيحة","نسبة المخرجات إلى المدخلات","سرعة إنجاز العمل"],"Effectiveness = Doing the right things. أما Doing things right فهي الكفاءة."],
+["الكفاءة (Efficiency) تجيب على سؤال:","كيف نستخدم الموارد بشكل اقتصادي لتحقيق النتيجة؟",["هل نحقق الهدف المطلوب؟","كم مخرج لكل وحدة مدخل؟","ماذا لو كنا مخطئين؟"],"Efficiency = Doing things right: How well are we using resources?"],
+["فريق يستخدم موارد قليلة جداً وبدون هدر، لكنه ينتج منتجاً لا يحتاجه العميل. هذا الفريق:","كفؤ لكنه غير فعّال",["فعّال لكنه غير كفؤ","فعّال وكفؤ","غير كفؤ وغير فعّال"],"استخدام الموارد اقتصادياً = كفاءة، لكنه لم يحقق الهدف الصحيح (حاجة العميل) = غير فعّال."],
+["الإنتاجية (Productivity) تُحسب بـ:","المخرجات ÷ المدخلات",["المدخلات ÷ المخرجات","المخرجات − المدخلات","المخرجات × المدخلات"],"الشريحة 25: Productivity = Output / Input."],
+["فريق B فيه 8 مهندسين وأنجز 24 حزمة عمل شهرياً. إنتاجيته تساوي:","3 حزم لكل مهندس شهرياً",["2 حزمة لكل مهندس شهرياً","0.33 حزمة لكل مهندس","32 حزمة شهرياً"],"24 ÷ 8 = 3. وفريق A: 20 ÷ 10 = 2."],
+["إنتاجية فريق B (3) أعلى من فريق A (2). هل فريق B أداؤه أفضل بالتأكيد؟","لا، يجب مراعاة التعقيد والجودة وساعات العمل وإعادة العمل والسلامة",["نعم، الأرقام تحسم الموضوع","نعم، لأن عدد مهندسيه أقل","لا، لأن فريق A أكبر دائماً أفضل"],"الشريحة 26: Higher measured productivity does not automatically mean better organizational performance."],
+["القرار (Decision) حسب المحاضرة هو:","اختيار مسار عمل من بين بديلين أو أكثر",["تنفيذ أول حل متاح","جمع المعلومات دون اختيار","تأجيل المشكلة"],"الشريحة 27: A decision involves selecting a course of action from two or more alternatives."],
+["ما الخطوة الأولى في عملية اتخاذ القرار؟","تعريف المشكلة",["تحديد الهدف","تطوير البدائل","جمع المعلومات"],"الترتيب يبدأ بـ Define the problem ثم Establish the objective."],
+["في عملية اتخاذ القرار، ما الخطوة التي تأتي مباشرة بعد «تحديد القيود ذات الصلة»؟","تطوير بدائل ممكنة",["وضع معايير القرار","تقييم البدائل","تعريف المشكلة"],"الترتيب: المشكلة ← الهدف ← القيود ← البدائل الممكنة ← المعايير ← المعلومات ← التقييم ← الاختيار والتنفيذ ← المتابعة."],
+["ما الخطوة الأخيرة في عملية اتخاذ القرار، وماذا يحدث بعدها؟","متابعة النتائج، ثم تغذية راجعة للخطوة الأولى",["التنفيذ، ثم تنتهي العملية","تقييم البدائل، ثم التنفيذ","جمع المعلومات، ثم تعريف الهدف"],"الشريحة 27: Monitor the results → Feedback to Step 1، فالعملية دورة وليست خطاً مستقيماً."],
+["المشكلة المُبلَّغة: «إنتاجنا منخفض، نحتاج ماكينة أخرى». ماذا كشف التحقيق؟","الماكينات الحالية تعمل بـ65% استغلال فقط",["الماكينات تعمل بطاقتها الكاملة","الطلب انخفض","الماكينات معطلة بالكامل"],"الشريحة 28: utilization 65% بسبب نقص المواد وتأخيرات الإعداد والانتظار بين العمليات."],
+["الدرس الأساسي من شريحة «عرّف المشكلة قبل الحل» هو:","الحل التقني المتطور لمشكلة خاطئة يبقى قراراً إدارياً سيئاً",["شراء ماكينة جديدة هو الحل دائماً","المشكلة المُبلَّغة صحيحة دائماً","الاستغلال لا يؤثر على الإنتاج"],"الشريحة 28: A technically sophisticated answer to the wrong problem is still a poor managerial decision."],
+["حسب التعريف الكلاسيكي، المخاطرة (Risk) هي المواقف التي:","يمكن فيها تقدير احتمالات النتائج",["لا يمكن فيها تقدير النتائج أو الاحتمالات","لا توجد فيها أي نتائج سلبية","تكون النتيجة فيها مؤكدة"],"Classical View: Risk = probabilities of relevant outcomes can be estimated."],
+["حسب التعريف الكلاسيكي، عدم اليقين (Uncertainty) هو المواقف التي:","لا يمكن فيها تقدير النتائج أو الاحتمالات أو كليهما بشكل موثوق",["تُعرف فيها كل الاحتمالات بدقة","لا تحتاج إلى قرار","تخص الأمور المالية فقط"],"Classical View: Uncertainty = outcomes, probabilities, or both cannot be estimated reliably."],
+["في الأطر الحديثة، تُفهم المخاطرة بشكل أوسع على أنها:","أثر عدم اليقين على أهداف المنظمة",["مرادف للخسارة المالية فقط","غياب المعلومات بالكامل","احتمال ثابت لا يتغير"],"الشريحة 30: Risk may be understood more broadly as the effect that uncertainty can have on organizational objectives."],
+["شركة تتوقع زيادة الطلب وتفكر بشراء خط إنتاج آلي. أي مما يلي من «عدم اليقين المهم» المذكور في المحاضرة؟","الطلب الفعلي المستقبلي وظهور تقنية منافسة",["عدد أيام الأسبوع","اسم المورد","لون خط الإنتاج"],"الشريحة 31: الطلب المستقبلي، موثوقية المعدات، أسعار الطاقة، الصيانة، توفر الفنيين، التقنية المنافسة."],
+["في قرار الطاقة الإنتاجية (1000 حالياً مقابل 1300 مطلوب)، بديل «تحسين العملية الحالية» يتميز بـ:","رأس مال منخفض لكن الطاقة الناتجة غير مؤكدة",["استثمار رأسمالي كبير","تكاليف عمالة متكررة أعلى","طاقة مضمونة 100%"],"الشريحة 32: الماكينة = استثمار كبير، الوردية الثانية = عمالة متكررة أعلى، تحسين العملية = رأس مال قليل وطاقة غير مؤكدة."],
+["في الحالة المتكاملة النهائية، هل يجب الموافقة فوراً على الماكينة بـ1.8 مليون ريال؟","لا، يجب أولاً فهم المشكلة الحقيقية والأهداف والقيود والمعلومات الناقصة",["نعم، لأن الطلب زاد","نعم، لأن الماكينة آلية وحديثة","لا، لأن شراء الماكينات خطأ دائماً"],"الشريحة 35: Do not select an alternative before understanding the problem, objectives, constraints, criteria, and relevant information."],
+["في الحالة النهائية، أي معلومة تشير بقوة إلى أن نقص الطاقة قد لا يكون المشكلة الحقيقية؟","استغلال المعدات ≈70% ووجود اختناق في مرحلة إنتاج",["تسليم الماكينة يحتاج 7 أشهر","الماكينة تحتاج صيانة متخصصة","الطلب المستقبلي غير مؤكد"],"استغلال 70% واختناق واحد يعني أن الطاقة الحالية غير مستغلة، ومعالجة الاختناق قد ترفع الإنتاج بدون ماكينة جديدة."],
+["في الحالة النهائية، معدل العيوب 6%. كيف يرتبط هذا بقرار الطاقة؟","تقليل العيوب قد يرفع الإنتاج السليم دون زيادة الطاقة",["لا علاقة له بالإنتاج إطلاقاً","يعني أن الماكينة الجديدة ضرورية حتماً","يعني أن الطلب سينخفض"],"كل وحدة معيبة طاقة مهدرة. خفض العيوب يزيد المخرجات الصالحة، وهذا مثال على تحسين يخدم عدة معايير معاً."],
+["في الحالة النهائية، لماذا يُعتبر خيار زيادة الساعات والعمالة محدوداً؟","لأن العمل الإضافي (Overtime) مرتفع أصلاً",["لأن الماكينة تحتاج 7 أشهر","لأن معدل العيوب 6%","لأن الطلب غير مؤكد"],"الشريحة 40: Overtime is already high، فالاعتماد على مزيد من ساعات العمل فيه مخاطر تكلفة وجودة وسلامة."],
+["الانتقال من مهندس تصميم إلى مدير هندسة يعني حسب المحاضرة:","المعرفة التقنية تبقى مهمة لكن نطاق المسؤولية يتوسع",["المعرفة التقنية لم تعد مهمة","المسؤولية تنحصر في العمل الشخصي","الإدارة تستبدل الحكم الهندسي"],"الشريحة 42: Moving into management does not make technical knowledge unimportant. The scope of responsibility expands."],
+["حسب الخلاصة الرئيسية، إدارة الهندسة ليست:","استبدال الحكم الهندسي بالاعتبارات التجارية",["اتخاذ قرارات سليمة في بيئات هندسية","موازنة الأداء والتكلفة والوقت والجودة والمخاطرة","التفكير في أثر القرار على النظام ككل"],"الشريحة 43: EM is not about replacing engineering judgment with business considerations."],
+];
+const BANK_EN = [
+["Engineering Management is the application of management principles and decision-making methods to engineering activities in order to achieve defined objectives:","Effectively and efficiently",["At the lowest possible cost only","As fast as possible only","According to the senior engineer's judgment"],"The definition on slide 5 ends with \"effectively and efficiently\": achieving the right objective while using resources economically."],
+["Engineering Knowledge provides an understanding of:","Technical systems, processes, products, and technologies",["Coordinating people, activities, and resources","Alternatives, constraints, and courses of action","Budgets and salaries only"],"Engineering knowledge covers the technical side: systems, processes, products, technologies, and engineering problems."],
+["Which of the following belongs to Decision-Making Knowledge?","Problems, alternatives, constraints, consequences, and courses of action",["Technical systems and products","Coordinating people and resources","Raw materials and spare parts"],"Slide 6 lists Decision-Making Knowledge as: Problems, Alternatives, Constraints, Consequences, Courses of action."],
+["According to the lecture, Engineering Management operates at:","The interface between technology and management",["The interface between engineering and marketing","The design stage only","The top-management level only"],"Slide 6: Engineering Management operates at the interface between technology and management."],
+["Which of the following is a typical emphasis of an engineer rather than an engineering manager?","Performing analysis, calculations, design, and testing",["Coordinating people, resources, and schedules","Balancing performance with cost, time, and risk","Being accountable for project or organizational results"],"Analysis, calculations, design, and testing are in the engineer column on slide 7; the others are engineering-manager responsibilities."],
+["Which of the following is a typical emphasis of an engineering manager?","Integrating technical and organizational considerations",["Focusing on technical performance alone","Being responsible only for personal technical outputs","Applying engineering methods alone"],"The engineering manager integrates technical with organizational considerations, and engineering with management methods."],
+["The difference between an engineer and an engineering manager is primarily a difference in:","The typical scope of responsibility, authority, and accountability",["Intelligence and technical ability","Type of university degree","Number of engineering software tools used"],"Slide 7: the distinction is not absolute; it is mainly the typical scope of responsibility, authority, and accountability."],
+["The question \"How well did the team, project, or organization perform?\" reflects:","Integrated organizational responsibility",["Individual technical responsibility","Legal responsibility only","A question unrelated to engineering management"],"Slide 8: the question shifts from my own technical work (individual) to the performance of the system I am responsible for."],
+["In the Machine A vs. Machine B case, why is engineering alone not enough to decide?","Both machines are technically acceptable; they differ in organizational factors",["One of the machines is technically defective","Technical data is not available","The supplier has not set prices"],"Both machines satisfy technical requirements but differ in price, capacity, delivery, and maintenance, which are organizational decisions."],
+["In the two-machine case, what distinguishes Machine B?","Lower price, faster delivery, and standard maintenance",["Higher capacity and very high reliability","Higher price and specialized maintenance","Delivery within 6 months"],"B costs SAR 700,000, delivers in 2 months, with standard maintenance; A has higher capacity (1,500) and very high reliability."],
+["A company has a budget of SAR 800,000 and needs the machine within 3 months. Which machine remains a feasible alternative?","Machine B only",["Machine A only","Both machines","No machine is feasible"],"A costs SAR 1,000,000 (over budget) and takes 6 months (over the deadline), so the constraints exclude it. B costs 700,000 and takes 2 months."],
+["Which of the following is a managerial question in the machine selection case?","Does the organization have personnel capable of maintaining Machine A?",["What is the spindle speed of the machine?","What metal is used in the machine frame?","How accurate is the internal measurement sensor?"],"Slide 10 lists the ability to maintain Machine A among management questions; the others are purely technical details."],
+["According to the lecture, the most technically advanced solution:","Is not automatically the best managerial solution",["Is always the best solution for the organization","Should always be rejected","Is always the lowest-cost option"],"Slide 10: The most technically advanced solution is not automatically the best managerial solution."],
+["What does Life-Cycle Cost include?","Purchase, operation, maintenance, downtime, and useful life",["Purchase price only","Operating cost only","The final product selling price"],"Slide 11 shows five stages: Purchase, Operation, Maintenance, Downtime, Useful Life."],
+["A machine is much cheaper, but it breaks down frequently. Which concept explains why it may be the more expensive choice?","Life-cycle cost",["Productivity","Effectiveness","Resource allocation"],"Life-cycle cost combines purchase with operation, maintenance, and downtime, so a low price can be offset by higher later costs."],
+["In the quality problem case, the central question from the engineer's perspective is:","What is causing the defects, and how can the technical problem be corrected?",["How much should the organization spend?","Will customer deliveries be affected?","What other work will be delayed?"],"The engineer's perspective is purely technical; the other options are managerial questions from slide 13."],
+["Which of the following is part of the engineer's technical investigation in the quality problem case?","Tool wear",["The financial impact of the rejection rate","Which engineers to assign","Continuing production during the investigation"],"Tool wear is on the engineer's list on slide 12, along with cutting parameters, fixture alignment, and measurement accuracy."],
+["\"Should production continue during the investigation?\" is a question that is:","Managerial, asked by the engineering manager",["Technical, about cutting parameters","Unrelated to the quality problem","Relevant to the supplier only"],"This is one of the engineering-management questions on slide 13, because it balances production, quality, and risk."],
+["In the organization-as-a-system model, which of the following is an input?","People, materials, equipment, and money",["Products and services","Design and manufacturing","Customer value and financial results"],"Inputs on slide 14: People, Materials, Equipment, Money, Information, Technology, Energy, Time."],
+["The correct sequence in the system model is:","Inputs → Processes → Outputs → Feedback",["Processes → Inputs → Outputs → Feedback","Inputs → Outputs → Processes → Feedback","Feedback → Outputs → Processes → Inputs"],"Slide 14: Inputs → Processes → Outputs → Performance Feedback."],
+["On the systems slide, \"Time\" is classified as:","An input",["A process","An output","Feedback"],"Time appears in the INPUTS list with people, materials, money, and energy. Tricky, because many people think of it only as a constraint."],
+["The core idea of systems thinking in the lecture is:","A decision in one part of the organization may create consequences elsewhere",["Each department works independently","Local improvement is always beneficial","A system consists of outputs only"],"Slide 14: Decisions in one part of an organization may create consequences elsewhere."],
+["Purchasing bought a cheaper component. According to the lecture, what happens at the system level?","Failures, maintenance, downtime, warranty claims, and complaints increase",["All indicators improve","There is no effect outside purchasing","Maintenance costs decrease"],"Slide 15: the local saving in purchasing caused larger losses at the system level."],
+["A local improvement is valuable when:","It supports system-level objectives",["It saves money for the department only","It does not affect any other department","It raises the department's KPIs at any cost"],"Slide 15: Local improvement is valuable when it supports system-level objectives."],
+["Local KPIs should:","Align with organizational objectives",["Be independent of organizational objectives","Be maximized even if they conflict with other departments","Be replaced by a single indicator"],"Slide 15: Local KPIs should align with organizational objectives."],
+["In the resource classification, the Methods category includes:","Processes, procedures, standards, and work instructions",["Drawings, specifications, and data","Machines, tools, and laboratories","Salaries and budgets"],"Methods = processes, procedures, standards, work instructions. Drawings and data belong to Information."],
+["In the resource classification, the Information category includes:","Drawings, specifications, schedules, and records",["Procedures and work instructions","Engineers and technicians","Raw materials and consumables"],"Information = drawings, specifications, schedules, data, records, requirements."],
+["In the lecture, spare parts are classified under:","Materials",["Equipment","Methods","Money"],"Spare parts are listed under Materials with raw materials, components, and consumables, not under Equipment."],
+["In the scarcity example, the number of engineers available vs. requested was:","10 available and 15 requested",["15 available and 10 requested","10 available and 10 requested","6 available and 15 requested"],"Projects A=6, B=5, and C=4 total 15, with 10 available: a shortage of 5 engineers."],
+["Why does scarcity create a need for management?","Because not every desirable activity can receive all the resources it requests",["Because resources are unlimited","Because projects do not need resources","Because management increases resources automatically"],"Slide 18: Scarcity makes managerial choice necessary because not every desirable activity can receive all the resources it requests."],
+["Resource allocation is:","The process of deciding how limited resources are distributed among competing requirements",["Buying as many resources as possible","Giving every project what it requests","Freezing resources until projects finish"],"This is the exact definition from slide 18."],
+["Which of the following is NOT an allocation factor mentioned in the lecture?","The manager's personal preference for one team",["Project deadlines and urgency","Safety and contractual commitments","Interdependence between activities"],"The listed factors: deadlines, safety and contracts, customer importance and profitability, strategic importance and complexity, skills and timing, interdependence."],
+["In decision-making, an objective answers the question:","What are we trying to achieve?",["What limits our choices?","Who will be affected by the decision?","What if we are wrong?"],"Slide 19: What are we trying to achieve? \"What limits our choices?\" is the constraints question."],
+["The question \"Which manufacturing process is best?\" is incomplete because:","\"Best\" requires a defined criterion: cost, speed, accuracy, reliability?",["All processes are always equal","The decision is technical and needs no criteria","The engineer decides without objectives"],"Slide 19: Best according to what? A decision cannot be evaluated until the objective is defined."],
+["A constraint is:","A limitation or requirement that restricts the available alternatives",["What we try to maximize or minimize","The result of a decision after implementation","A measure of productivity"],"Slide 20: A constraint is a limitation or requirement that restricts the available alternatives."],
+["Which of the following usually functions as a non-negotiable feasibility condition?","Safety, legal, regulatory, and contractual requirements",["Management's preferred color","Preferred delivery speed","An engineer's personal opinion"],"Slide 20: safety, legal, regulatory, and contractual requirements function as non-negotiable feasibility conditions."],
+["On slide 21, \"Maximum approved budget = SAR 2 million\" is an example of:","A constraint",["An objective","A trade-off","An output"],"It limits the feasible alternatives, so it is a constraint."],
+["Can cost be an objective in one decision and a constraint in another?","Yes, depending on how the decision problem is formulated",["No, cost is always an objective","No, cost is always a constraint","No, cost is neither an objective nor a constraint"],"Slide 21: The role of a factor depends on how the decision problem is formulated."],
+["A trade-off occurs when:","Improving one criterion requires accepting reduced performance or increased cost/risk elsewhere",["Everything improves together with no sacrifice","All constraints are removed","All alternatives become equal"],"The definition from slide 22."],
+["According to the lecture, trade-offs are:","Context-dependent, not universal rules",["Fixed rules that always apply","Non-existent in practice","Relevant to financial decisions only"],"Slide 22: Trade-offs are context-dependent, not universal rules, so don't assume one before confirming it."],
+["Which example does the lecture use to show that an improvement can advance several criteria at once?","Reducing defects improves quality and reduces rework, cost, and lead time",["Increasing speed raises cost","Lowering price reduces quality","Increasing inventory raises availability"],"Slide 22 uses defect reduction as an example with no trade-off, since it improves several criteria simultaneously."],
+["Which of the following pairs is listed in the lecture as a common trade-off?","Inventory ↔ Availability",["Inputs ↔ Outputs","Effectiveness ↔ Feedback","Safety ↔ Law"],"Listed trade-offs: Cost↔Quality, Cost↔Reliability, Time↔Cost, Performance↔Cost, Inventory↔Availability, Flexibility↔Standardization."],
+["In the project duration case, the plan is 8 months and 6 are desired. Which is a possible action to speed up?","Additional personnel, extra shifts, and faster suppliers",["Reducing the number of staff","Delaying material purchases","Cancelling testing stages"],"Actions on slide 23: Additional personnel, Overtime, Additional shifts, Faster transportation, Faster suppliers."],
+["According to the lecture, a potential consequence of accelerating a project is:","Coordination, quality, safety, and execution risk, plus higher cost",["An automatic decrease in cost","An automatic improvement in quality","Elimination of all risks"],"Slide 23: Higher direct cost, Coordination risk, Quality risk, Safety risk, Execution risk."],
+["The critical question in the project acceleration case is:","Is the value of earlier completion greater than the additional cost and risk?",["How many employees are there now?","Is the project interesting?","Does the supplier agree on the price?"],"Slide 23 ends with this question: is finishing earlier worth the extra cost and risk?"],
+["In the supplier case, if the priority is high quality with delivery within 5 weeks at most, which supplier remains?","Supplier B",["Supplier A","Supplier C","No supplier is feasible"],"A has high quality but takes 12 weeks; C only meets minimum specification. B has high quality and delivers in 4 weeks."],
+["In the supplier case, if the objective is the lowest price, minimum specification is acceptable, and the deadline is 6 weeks, which supplier do you choose?","Supplier C",["Supplier A","Supplier B","Cannot choose"],"C is the cheapest (SAR 70,000), meets the acceptable minimum specification, and delivers in 5 weeks, within the deadline."],
+["Effectiveness means:","Doing the right things: the extent to which objectives are achieved",["Doing things right","The ratio of output to input","The speed of completing work"],"Effectiveness = Doing the right things. \"Doing things right\" is efficiency."],
+["Efficiency answers the question:","How economically are resources used to achieve the result?",["Are we achieving the required objective?","How much output per unit of input?","What if we are wrong?"],"Efficiency = Doing things right: How well are we using resources?"],
+["A team uses very few resources with no waste, but produces a product the customer does not need. This team is:","Efficient but not effective",["Effective but not efficient","Effective and efficient","Neither efficient nor effective"],"Using resources economically = efficiency, but it did not achieve the right objective (customer need) = not effective."],
+["Productivity is calculated as:","Output ÷ Input",["Input ÷ Output","Output − Input","Output × Input"],"Slide 25: Productivity = Output / Input."],
+["Team B has 8 engineers and completes 24 work packages per month. Its productivity is:","3 packages per engineer per month",["2 packages per engineer per month","0.33 packages per engineer","32 packages per month"],"24 ÷ 8 = 3. Team A: 20 ÷ 10 = 2."],
+["Team B's productivity (3) is higher than Team A's (2). Is Team B definitely performing better?","No, complexity, quality, working hours, rework, and safety must be considered",["Yes, the numbers settle it","Yes, because it has fewer engineers","No, because the bigger team A is always better"],"Slide 26: Higher measured productivity does not automatically mean better organizational performance."],
+["According to the lecture, a decision is:","Selecting a course of action from two or more alternatives",["Implementing the first available solution","Collecting information without choosing","Postponing the problem"],"Slide 27: A decision involves selecting a course of action from two or more alternatives."],
+["What is the first step in the decision-making process?","Define the problem",["Establish the objective","Develop alternatives","Collect information"],"The sequence starts with Define the problem, then Establish the objective."],
+["In the decision-making process, which step comes directly after \"Identify relevant constraints\"?","Develop feasible alternatives",["Establish decision criteria","Evaluate the alternatives","Define the problem"],"Sequence: problem → objective → constraints → feasible alternatives → criteria → information → evaluation → select & implement → monitor."],
+["What is the last step in the decision-making process, and what happens after it?","Monitor the results, then feedback to Step 1",["Implement, then the process ends","Evaluate alternatives, then implement","Collect information, then define the objective"],"Slide 27: Monitor the results → Feedback to Step 1. The process is a cycle, not a straight line."],
+["The reported problem: \"Our production is too low. We need another machine.\" What did the investigation reveal?","Existing machines operate at only 65% utilization",["Machines operate at full capacity","Demand has decreased","Machines are completely broken"],"Slide 28: 65% utilization due to material shortages, setup delays, and waiting between operations."],
+["The main lesson from the \"Define the Problem Before the Solution\" slide is:","A sophisticated technical answer to the wrong problem is still a poor managerial decision",["Buying a new machine is always the solution","The reported problem is always correct","Utilization does not affect production"],"Slide 28: A technically sophisticated answer to the wrong problem is still a poor managerial decision."],
+["Under the classical view, risk refers to situations in which:","The probabilities of outcomes can be estimated",["Outcomes or probabilities cannot be estimated","There are no negative outcomes","The outcome is certain"],"Classical view: Risk = the probabilities of relevant outcomes can be estimated."],
+["Under the classical view, uncertainty refers to situations in which:","Outcomes, probabilities, or both cannot be estimated reliably",["All probabilities are known exactly","No decision is needed","Only financial matters are involved"],"Classical view: Uncertainty = outcomes, probabilities, or both cannot be estimated reliably."],
+["In modern frameworks, risk is understood more broadly as:","The effect of uncertainty on organizational objectives",["A synonym for financial loss only","A complete absence of information","A fixed probability that never changes"],"Slide 30: Risk may be understood more broadly as the effect that uncertainty can have on organizational objectives."],
+["A company expects demand to rise and considers buying an automated production line. Which of the following is an important uncertainty mentioned in the lecture?","Actual future demand and emergence of competing technology",["The number of days in a week","The supplier's name","The color of the production line"],"Slide 31: future demand, equipment reliability, energy prices, maintenance, availability of technicians, competing technology."],
+["In the capacity decision (1,000 current vs. 1,300 expected), the \"improve existing process\" alternative is characterized by:","Low capital, but uncertain resulting capacity",["Significant capital investment","Higher recurring labor costs","Guaranteed 100% capacity"],"Slide 32: machine = significant capital, second shift = higher recurring labor, process improvement = low capital, uncertain capacity."],
+["In the final integrated case, should management immediately approve the SAR 1.8 million machine?","No, first understand the real problem, objectives, constraints, and missing information",["Yes, because demand has increased","Yes, because the machine is automated and modern","No, because buying machines is always wrong"],"Slide 35: Do not select an alternative before understanding the problem, objectives, constraints, criteria, and relevant information."],
+["In the final case, which information strongly suggests that lack of capacity may not be the real problem?","Equipment utilization ≈70% and a bottleneck in one production stage",["Machine delivery takes 7 months","The machine requires specialized maintenance","Future demand is uncertain"],"70% utilization plus a single bottleneck means current capacity is underused; fixing the bottleneck may raise output without a new machine."],
+["In the final case, the defect rate is 6%. How does this relate to the capacity decision?","Reducing defects may increase good output without adding capacity",["It has nothing to do with production","It means the new machine is definitely necessary","It means demand will decrease"],"Every defective unit is wasted capacity. Reducing defects increases good output, an example of one improvement serving several criteria."],
+["In the final case, why is adding more hours and labor a limited option?","Because overtime is already high",["Because the machine takes 7 months","Because the defect rate is 6%","Because demand is uncertain"],"Slide 40: Overtime is already high, so relying on more working hours carries cost, quality, and safety risks."],
+["According to the lecture, moving from design engineer to engineering manager means:","Technical knowledge remains important, but the scope of responsibility expands",["Technical knowledge is no longer important","Responsibility is limited to personal work","Management replaces engineering judgment"],"Slide 42: Moving into management does not make technical knowledge unimportant. The scope of responsibility expands."],
+["According to the key takeaway, Engineering Management is NOT:","Replacing engineering judgment with business considerations",["Making sound decisions in engineering environments","Balancing performance, cost, time, quality, and risk","Considering how a decision affects the whole system"],"Slide 43: EM is not about replacing engineering judgment with business considerations."]
+];
+
+
+const UI = {
+  ar:{
+    title:"كويز إدارة الهندسة",
+    sub:"ME4441، المحاضرة الأولى. كل مرة تبدأ تنسحب أسئلة عشوائية من بنك فيه 70 سؤال، وترتيب الخيارات يتغير.",
+    langH:"لغة الأسئلة", modeH:"النمط", countH:"عدد الأسئلة",
+    m1:"تصحيح فوري", m1d:"بدون مؤقت. بعد كل إجابة تشوف الصح وسببه.",
+    m2:"محاكاة اختبار", m2d:"مؤقت دقيقة لكل سؤال، والتصحيح بالنهاية فقط.",
+    start:"ابدأ الاختبار", quit:"إنهاء", review:"مراجعة الإجابات", onlyWrong:"الأخطاء فقط", again:"اختبار جديد",
+    noteExam:n=>"الوقت الكلي: "+n+" دقيقة. إذا خلص الوقت ينتهي الاختبار تلقائياً.", noteLearn:"بدون وقت. خذ راحتك.",
+    pos:(i,n)=>"السؤال "+i+" <small>من "+n+"</small>",
+    right:"صح", wrong:l=>"خطأ، الإجابة الصحيحة: "+l,
+    next:"السؤال التالي", showRes:"عرض النتيجة", prev:"السابق", nxt:"التالي", end:"إنهاء الاختبار",
+    pickHint:"اختر إجابة، أو استخدم الأرقام 1 إلى 4.",
+    left:n=>"باقي "+n+" بدون إجابة. تقدر تنتقل لأي سؤال من النقاط فوق.", allDone:"جاوبت على الكل.",
+    confirm:n=>"باقي "+n+" سؤال بدون إجابة. تنهي الاختبار؟",
+    pct:(p,t)=>p+"% خلال "+t, timeout:"، انتهى الوقت",
+    v:["ممتاز، المحاضرة واضحة عندك.","جيد جداً، راجع الأخطاء وبتقفلها.","مقبول، فيه مفاهيم تحتاج مراجعة.","تحتاج ترجع للشرح قبل الاختبار."],
+    none:"ما جاوبت.", yours:"إجابتك: ", correct:"الصحيح: ", perfect:"ولا غلطة. كل الإجابات صحيحة.",
+    qn:"السؤال ", switchTo:"English", letters:["أ","ب","ج","د"]
+  },
+  en:{
+    title:"Engineering Management Quiz",
+    sub:"ME4441, Module 1. Each attempt draws random questions from a bank of 70, and the options are reshuffled.",
+    langH:"Question language", modeH:"Mode", countH:"Number of questions",
+    m1:"Instant feedback", m1d:"No timer. After each answer you see the correct one and why.",
+    m2:"Exam simulation", m2d:"One minute per question, graded only at the end.",
+    start:"Start quiz", quit:"End", review:"Review answers", onlyWrong:"Mistakes only", again:"New quiz",
+    noteExam:n=>"Total time: "+n+" minutes. The quiz ends automatically when time runs out.", noteLearn:"No time limit. Take your time.",
+    pos:(i,n)=>"Question "+i+" <small>of "+n+"</small>",
+    right:"Correct", wrong:l=>"Wrong. Correct answer: "+l,
+    next:"Next question", showRes:"See result", prev:"Previous", nxt:"Next", end:"Finish quiz",
+    pickHint:"Pick an answer, or press 1 to 4.",
+    left:n=>n+" unanswered. Tap any dot above to jump to a question.", allDone:"All questions answered.",
+    confirm:n=>n+" questions are unanswered. Finish the quiz?",
+    pct:(p,t)=>p+"% in "+t, timeout:", time ran out",
+    v:["Excellent, you've got this lecture down.","Very good. Review your mistakes and you're there.","Passable. Some concepts need another look.","Go back to the notes before the exam."],
+    none:"Not answered.", yours:"Your answer: ", correct:"Correct: ", perfect:"No mistakes. Every answer is correct.",
+    qn:"Question ", switchTo:"العربية", letters:["A","B","C","D"]
+  }
+};
+const SEC_PER_Q = 60;
+const $ = id => document.getElementById(id);
+
+let lang="ar", mode="learn", count=20;
+let qs=[], answers=[], idx=0, timeLeft=0, tick=null, startedAt=0, finished=false, lastSecs=0, timedOut=false;
+const T = () => UI[lang];
+
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+function fmt(s){ const m=Math.floor(s/60), r=s%60; return m+":"+String(r).padStart(2,"0"); }
+function show(id){ ["setup","quiz","result"].forEach(s=>$(s).classList.toggle("hidden", s!==id)); window.scrollTo(0,0); }
+function item(q){ const b=(lang==="ar"?BANK:BANK_EN)[q.i]; const base=[b[1],...b[2]]; return {q:b[0], opts:q.perm.map(k=>base[k]), e:b[3]}; }
+
+function applyLang(){
+  const html=document.documentElement;
+  html.lang=lang; html.dir = lang==="ar" ? "rtl" : "ltr";
+  document.title = T().title+" · ME4441";
+  document.querySelectorAll("[data-i]").forEach(el=>{ el.textContent=T()[el.dataset.i]; });
+  $("langSwitch").textContent=T().switchTo; $("langSwitch2").textContent=T().switchTo;
+  document.querySelectorAll("#langs .chip").forEach(x=>x.setAttribute("aria-pressed", x.dataset.lang===lang));
+  updateNote();
+  if(!$("quiz").classList.contains("hidden")) render();
+  if(!$("result").classList.contains("hidden")) renderResult();
+}
+function updateNote(){ $("timeNote").textContent = mode==="exam" ? T().noteExam(count*SEC_PER_Q/60) : T().noteLearn; }
+function setLang(l){ lang=l; try{localStorage.setItem("me4441-lang",l)}catch(e){} applyLang(); }
+
+document.querySelectorAll("#langs .chip").forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
+document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{
+  mode=b.dataset.mode; document.querySelectorAll(".mode").forEach(x=>x.setAttribute("aria-pressed", x===b)); updateNote();
+});
+document.querySelectorAll("#counts .chip").forEach(b=>b.onclick=()=>{
+  count=+b.dataset.n; document.querySelectorAll("#counts .chip").forEach(x=>x.setAttribute("aria-pressed", x===b)); updateNote();
+});
+$("langSwitch").onclick=$("langSwitch2").onclick=()=>setLang(lang==="ar"?"en":"ar");
+
+function start(){
+  qs = shuffle([...Array(BANK.length).keys()]).slice(0,count).map(i=>{
+    const perm=shuffle([0,1,2,3]); return {i, perm, correct:perm.indexOf(0)};
+  });
+  answers=new Array(count).fill(null); idx=0; finished=false; timedOut=false; startedAt=Date.now();
+  clearInterval(tick);
+  const t=$("timer");
+  if(mode==="exam"){
+    timeLeft=count*SEC_PER_Q; t.classList.remove("hidden","low"); t.textContent=fmt(timeLeft);
+    tick=setInterval(()=>{
+      timeLeft--; t.textContent=fmt(Math.max(timeLeft,0)); t.classList.toggle("low", timeLeft<=60);
+      if(timeLeft<=0){ timedOut=true; finish(); }
+    },1000);
+  } else t.classList.add("hidden");
+  $("rail").classList.toggle("jump", mode==="exam");
+  show("quiz"); render();
+}
+
+function renderRail(){
+  const r=$("rail"); r.innerHTML="";
+  qs.forEach((q,i)=>{
+    const d=document.createElement("button"); d.className="dot"; d.setAttribute("aria-label",T().qn+(i+1));
+    if(answers[i]!==null) d.classList.add(mode==="learn" ? (answers[i]===q.correct?"ok":"bad") : "ans");
+    if(i===idx) d.classList.add("cur");
+    if(mode==="exam") d.onclick=()=>{ idx=i; render(); }; else d.tabIndex=-1;
+    r.appendChild(d);
+  });
+}
+
+function render(){
+  const q=qs[idx], it=item(q), a=answers[idx], L=T().letters;
+  $("pos").innerHTML=T().pos(idx+1,count);
+  $("qtext").textContent=it.q;
+  renderRail();
+  const box=$("opts"); box.innerHTML="";
+  const locked = mode==="learn" && a!==null;
+  it.opts.forEach((o,i)=>{
+    const b=document.createElement("button"); b.className="opt";
+    const l=document.createElement("span"); l.className="l"; l.textContent=L[i];
+    const t=document.createElement("span"); t.className="t"; t.textContent=o;
+    b.append(l,t);
+    if(locked){ b.disabled=true; if(i===q.correct) b.classList.add("ok"); else if(i===a) b.classList.add("bad"); }
+    else if(a===i) b.classList.add("sel");
+    b.onclick=()=>pick(i); box.appendChild(b);
+  });
+  const why=$("why");
+  if(locked){
+    const right=a===q.correct;
+    why.className="why"+(right?"":" bad");
+    why.innerHTML=""; const bb=document.createElement("b"); bb.textContent= right?T().right:T().wrong(L[q.correct]);
+    why.append(bb, document.createTextNode(it.e));
+  } else why.className="why hidden";
+  renderNav();
+}
+
+function renderNav(){
+  const n=$("nav"); n.innerHTML=""; $("hint").textContent="";
+  const last=idx===count-1;
+  if(mode==="learn"){
+    const b=document.createElement("button"); b.className="btn main";
+    b.textContent= last?T().showRes:T().next; b.disabled=answers[idx]===null;
+    b.onclick=()=> last?finish():(idx++,render()); n.appendChild(b);
+    if(answers[idx]===null) $("hint").textContent=T().pickHint;
+  } else {
+    const p=document.createElement("button"); p.className="btn"; p.textContent=T().prev; p.disabled=idx===0;
+    p.onclick=()=>{ idx--; render(); };
+    const nx=document.createElement("button"); nx.className="btn main"; nx.textContent= last?T().end:T().nxt;
+    nx.onclick=()=> last?confirmFinish():(idx++,render());
+    n.append(p,nx);
+    const left=answers.filter(x=>x===null).length;
+    $("hint").textContent= left?T().left(left):T().allDone;
+  }
+}
+
+function pick(i){
+  if(finished) return;
+  if(mode==="learn" && answers[idx]!==null) return;
+  answers[idx]=i; render();
+}
+function confirmFinish(){
+  const left=answers.filter(x=>x===null).length;
+  if(left && !confirm(T().confirm(left))) return;
+  finish();
+}
+function finish(){
+  if(finished) return;
+  finished=true; clearInterval(tick);
+  lastSecs=Math.round((Date.now()-startedAt)/1000);
+  $("onlyWrong").setAttribute("aria-pressed","false");
+  renderResult(); show("result");
+}
+function renderResult(){
+  const correct=qs.filter((q,i)=>answers[i]===q.correct).length;
+  const pct=Math.round(correct/count*100);
+  $("bigScore").innerHTML=correct+' <span>/ '+count+'</span>';
+  $("pct").textContent=T().pct(pct,fmt(lastSecs))+(timedOut?T().timeout:"");
+  $("verdict").textContent=T().v[pct>=90?0:pct>=75?1:pct>=60?2:3];
+  renderReview($("onlyWrong").getAttribute("aria-pressed")==="true");
+}
+function renderReview(onlyWrong){
+  const r=$("review"); r.innerHTML="";
+  qs.forEach((q,i)=>{
+    const a=answers[i], ok=a===q.correct; if(onlyWrong && ok) return;
+    const it=item(q), d=document.createElement("div"); d.className="rev"+(ok?"":" bad");
+    const t=(cls,txt)=>{ const e=document.createElement("p"); e.className=cls; e.textContent=txt; d.appendChild(e); };
+    t("rq",(i+1)+". "+it.q);
+    if(a===null) t("ra wrong",T().none); else if(!ok) t("ra wrong",T().yours+it.opts[a]);
+    t("ra right",T().correct+it.opts[q.correct]);
+    t("re",it.e);
+    r.appendChild(d);
+  });
+  if(!r.children.length){ const p=document.createElement("p"); p.style.color="var(--muted)"; p.textContent=T().perfect; r.appendChild(p); }
+}
+
+$("onlyWrong").onclick=function(){ const on=this.getAttribute("aria-pressed")!=="true"; this.setAttribute("aria-pressed",on); renderReview(on); };
+$("startBtn").onclick=start;
+$("againBtn").onclick=()=>show("setup");
+$("quitBtn").onclick=()=>{
+  if(mode==="exam") confirmFinish();
+  else if(answers.some(x=>x!==null)) finish();
+  else { clearInterval(tick); show("setup"); }
+};
+document.addEventListener("keydown",e=>{
+  if($("quiz").classList.contains("hidden")) return;
+  const k=e.key;
+  if("1234".includes(k) && k.length===1) pick(+k-1);
+  else if("١٢٣٤".includes(k) && k.length===1) pick("١٢٣٤".indexOf(k));
+  else if(k==="Enter"){
+    const m=document.querySelector("#nav .btn.main");
+    if(m && !m.disabled && document.activeElement.tagName!=="BUTTON") m.click();
+  }
+});
+
+try{ const s=localStorage.getItem("me4441-lang"); if(s==="en"||s==="ar") lang=s; }catch(e){}
+applyLang();
+</script>
+</body>
+</html>
