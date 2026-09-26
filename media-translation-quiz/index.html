@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Media Translation Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E9EEF0; --surface:#F7F9FA; --ink:#1D2A31; --muted:#5E6E76; --line:#CFD8DC;
+  --primary:#2F6F6A; --primary-soft:#D6E7E4; --ok:#2E8657; --ok-soft:#DCEFE3; --bad:#B6483F; --bad-soft:#F5DEDB;
+  --idle:#C3CDD1;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131A1E; --surface:#1B242A; --ink:#E3EAEC; --muted:#93A3AA; --line:#2E3A41;
+    --primary:#6FB5AC; --primary-soft:#1F3634; --ok:#5DBB86; --ok-soft:#1C3527; --bad:#E07C73; --bad-soft:#3A2220;
+    --idle:#34424A;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131A1E; --surface:#1B242A; --ink:#E3EAEC; --muted:#93A3AA; --line:#2E3A41;
+  --primary:#6FB5AC; --primary-soft:#1F3634; --ok:#5DBB86; --ok-soft:#1C3527; --bad:#E07C73; --bad-soft:#3A2220;
+  --idle:#34424A;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px); -webkit-text-size-adjust:100%}
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:'IBM Plex Sans Arabic', 'Noto Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
+  font-size:clamp(16px, 0.45vw + 14.5px, 19px); line-height:1.7;
+}
+.wrap{width:100%; max-width:760px; margin:0 auto; padding:clamp(20px,4vw,48px) clamp(14px,4vw,32px) 64px}
+button{font:inherit; color:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
+.hidden{display:none !important}
+
+/* setup */
+.intro h1{font-size:clamp(1.7rem, 3vw + 1rem, 2.5rem); line-height:1.25; margin:10px 0 6px; font-weight:700; letter-spacing:-.3px}
+.intro p{margin:0; color:var(--muted); max-width:60ch}
+.group{margin-top:30px}
+.group h2{font-size:1rem; font-weight:600; margin:0 0 12px}
+.modes{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.mode{
+  text-align:start; background:var(--surface); border:2px solid var(--line); border-radius:14px;
+  padding:16px 16px 14px; transition:border-color .15s, background .15s;
+}
+.mode{display:flex; flex-direction:column; justify-content:flex-start}
+.mode strong{display:block; font-size:1.02rem; margin-bottom:4px}
+.mode span{color:var(--muted); font-size:.9rem; line-height:1.55; display:block}
+.mode[aria-pressed="true"]{border-color:var(--primary); background:var(--primary-soft)}
+.chips{display:flex; gap:8px; flex-wrap:wrap}
+.chip{
+  min-width:64px; min-height:46px; padding:8px 16px; border-radius:999px; border:2px solid var(--line);
+  background:var(--surface); font-weight:600; font-variant-numeric:tabular-nums;
+}
+.chip[aria-pressed="true"]{border-color:var(--primary); background:var(--primary); color:var(--surface)}
+.chip.en{font-family:'Segoe UI', system-ui, sans-serif}
+.note{color:var(--muted); font-size:.88rem; margin-top:10px}
+.start{
+  margin-top:34px; width:100%; min-height:54px; padding:14px; border:none; border-radius:14px;
+  background:var(--primary); color:var(--surface); font-weight:700; font-size:1.08rem;
+}
+@media (hover:hover){ .start:hover{filter:brightness(1.07)} }
+.start:disabled{opacity:.45; cursor:default}
+.start.secondary{background:var(--surface); color:var(--ink); border:2px solid var(--line); margin-top:12px}
+
+/* quiz */
+.bar{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap}
+.pos{font-weight:600; font-variant-numeric:tabular-nums}
+.pos small{color:var(--muted); font-weight:400}
+.barside{display:flex; align-items:center; gap:8px}
+.timer{font-variant-numeric:tabular-nums; font-weight:700; padding:4px 12px; border-radius:999px; background:var(--surface); border:1px solid var(--line); direction:ltr}
+.timer.low{color:var(--bad); border-color:var(--bad)}
+.mini{background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:4px 12px; font-size:.85rem; min-height:34px}
+.quit{background:none; border:none; color:var(--muted); font-size:.9rem; text-decoration:underline; padding:6px}
+.rail{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:22px}
+.dot{width:14px; height:14px; border-radius:50%; background:var(--idle); border:none; padding:0; transition:transform .15s, background .2s}
+.dot.cur{outline:2px solid var(--ink); outline-offset:2px}
+.dot.ans{background:var(--primary)}
+.dot.ok{background:var(--ok)}
+.dot.bad{background:var(--bad)}
+@media (hover:hover){ .rail.jump .dot:hover{transform:scale(1.25)} }
+@media (pointer:coarse){ .rail.jump .dot{width:18px; height:18px} }
+.card{background:var(--surface); border-radius:18px; padding:clamp(18px,3vw,32px) clamp(15px,3vw,30px); border:1px solid var(--line)}
+.lecTag{display:inline-block; background:var(--primary-soft); color:var(--primary); font-size:.78rem; font-weight:600; padding:3px 12px; border-radius:999px; margin-bottom:12px}
+.qtext{font-size:1.18rem; font-weight:600; line-height:1.65; margin:0 0 18px}
+.opts{display:flex; flex-direction:column; gap:10px}
+.opt{
+  display:flex; align-items:flex-start; gap:12px; text-align:start; width:100%; min-height:52px;
+  background:var(--bg); border:2px solid transparent; border-radius:12px; padding:12px 14px;
+  transition:border-color .12s, background .12s;
+}
+@media (hover:hover){ .opt:hover:not(:disabled){border-color:var(--line)} }
+.opt .l{
+  flex:none; width:28px; height:28px; border-radius:50%; display:grid; place-items:center;
+  background:var(--surface); border:1.5px solid var(--line); font-weight:700; font-size:.9rem; margin-top:1px;
+}
+.opt .t{flex:1; min-width:0; overflow-wrap:anywhere}
+.opt.sel{border-color:var(--primary); background:var(--primary-soft)}
+.opt.sel .l{background:var(--primary); color:var(--surface); border-color:var(--primary)}
+.opt.ok{border-color:var(--ok); background:var(--ok-soft)}
+.opt.ok .l{background:var(--ok); color:var(--surface); border-color:var(--ok)}
+.opt.bad{border-color:var(--bad); background:var(--bad-soft)}
+.opt.bad .l{background:var(--bad); color:var(--surface); border-color:var(--bad)}
+.opt:disabled{cursor:default; color:inherit}
+.why{margin-top:16px; padding:14px 16px; border-radius:12px; border-inline-start:4px solid var(--ok); background:var(--ok-soft); font-size:.97rem}
+.why.bad{border-inline-start-color:var(--bad); background:var(--bad-soft)}
+.why b{display:block; margin-bottom:2px}
+.nav{display:flex; gap:10px; margin-top:18px}
+.btn{flex:1; min-height:52px; padding:12px; border-radius:12px; border:2px solid var(--line); background:var(--surface); font-weight:600}
+.btn.main{background:var(--primary); border-color:var(--primary); color:var(--surface)}
+.btn:disabled{opacity:.45; cursor:default}
+.hint{color:var(--muted); font-size:.85rem; margin-top:10px; text-align:center}
+
+/* result */
+.score{text-align:center; padding:26px 0 10px}
+.score .big{font-size:clamp(3.4rem, 6vw + 1.5rem, 5rem); font-weight:700; line-height:1; font-variant-numeric:tabular-nums; direction:ltr}
+.score .big span{font-size:.42em; color:var(--muted); font-weight:500}
+.score p{margin:10px 0 0; color:var(--muted)}
+.verdict{font-size:1.15rem; font-weight:600; color:var(--ink) !important; margin-top:14px !important}
+.tools{display:flex; justify-content:space-between; align-items:center; margin:26px 0 12px; gap:10px; flex-wrap:wrap}
+.tools h2{margin:0; font-size:1.1rem}
+.toggle{background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:6px 14px; font-size:.9rem; min-height:38px}
+.toggle[aria-pressed="true"]{background:var(--ink); color:var(--surface); border-color:var(--ink)}
+.review{display:grid; grid-template-columns:1fr; gap:10px}
+.rev{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px 18px; border-inline-start:5px solid var(--ok)}
+.rev.bad{border-inline-start-color:var(--bad)}
+.rev .rq{font-weight:600; margin:0 0 8px}
+.rev .ra{font-size:.93rem; margin:2px 0}
+.rev .ra.wrong{color:var(--bad)}
+.rev .ra.right{color:var(--ok)}
+.rev .re{font-size:.9rem; color:var(--muted); margin-top:8px}
+.again{margin-top:22px}
+
+/* summary */
+.sec{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin-bottom:12px}
+.sec h3{margin:0 0 10px; font-size:1.05rem; color:var(--primary)}
+.sec ul, .sec ol{margin:0; padding-inline-start:22px; display:flex; flex-direction:column; gap:6px; font-size:.97rem; line-height:1.6}
+
+/* phones */
+@media (max-width:560px){
+  .modes{grid-template-columns:1fr}
+  .qtext{font-size:1.08rem}
+  .chip{flex:1 1 0; min-width:0; padding:8px 0}
+}
+/* tablets landscape & laptops */
+@media (min-width:1024px){
+  .wrap{max-width:880px}
+  .setup-grid{display:grid; grid-template-columns:1fr 1.15fr; gap:48px; align-items:start; min-height:70vh; align-content:center}
+  .setup-grid .intro{position:sticky; top:48px}
+  .setup-grid .group:first-child{margin-top:0}
+  .review{grid-template-columns:1fr 1fr; align-items:start}
+}
+@media (min-width:1024px) and (min-height:700px){
+  #quiz .card{min-height:420px}
+}
+@media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section id="setup">
+    <div class="setup-grid">
+      <div class="intro">
+        <h1 data-i="title"></h1>
+        <p data-i="sub"></p>
+      </div>
+      <div>
+        <div class="group">
+          <h2 data-i="langH"></h2>
+          <div class="chips" id="langs">
+            <button class="chip" data-lang="ar" aria-pressed="true">العربية</button>
+            <button class="chip en" data-lang="en" aria-pressed="false">English</button>
+          </div>
+        </div>
+        <div class="group">
+          <h2 data-i="lecH"></h2>
+          <div class="chips" id="lectures"></div>
+          <p class="note" id="availNote"></p>
+        </div>
+        <div class="group">
+          <h2 data-i="modeH"></h2>
+          <div class="modes">
+            <button class="mode" data-mode="learn" aria-pressed="true"><strong data-i="m1"></strong><span data-i="m1d"></span></button>
+            <button class="mode" data-mode="exam" aria-pressed="false"><strong data-i="m2"></strong><span data-i="m2d"></span></button>
+          </div>
+        </div>
+        <div class="group">
+          <h2 data-i="countH"></h2>
+          <div class="chips" id="counts">
+            <button class="chip" data-n="10" aria-pressed="false">10</button>
+            <button class="chip" data-n="20" aria-pressed="true">20</button>
+            <button class="chip" data-n="30" aria-pressed="false">30</button>
+            <button class="chip" data-n="40" aria-pressed="false">40</button>
+            <button class="chip" data-n="50" aria-pressed="false">50</button>
+          </div>
+          <p class="note" id="timeNote"></p>
+        </div>
+        <button class="start" id="startBtn" data-i="start"></button>
+        <button class="start secondary" id="summaryBtn" data-i="summaryBtn"></button>
+      </div>
+    </div>
+  </section>
+
+  <section id="quiz" class="hidden">
+    <div class="bar">
+      <div class="pos" id="pos"></div>
+      <div class="barside">
+        <div class="timer hidden" id="timer"></div>
+        <button class="mini" id="langSwitch"></button>
+        <button class="quit" id="quitBtn" data-i="quit"></button>
+      </div>
+    </div>
+    <div class="rail" id="rail"></div>
+    <div class="card">
+      <span class="lecTag" id="lecTag"></span>
+      <p class="qtext" id="qtext"></p>
+      <div class="opts" id="opts"></div>
+      <div class="why hidden" id="why"></div>
+    </div>
+    <div class="nav" id="nav"></div>
+    <p class="hint" id="hint"></p>
+  </section>
+
+  <section id="result" class="hidden">
+    <div class="score">
+      <div class="big" id="bigScore"></div>
+      <p id="pct"></p>
+      <p class="verdict" id="verdict"></p>
+    </div>
+    <div class="tools">
+      <h2 data-i="review"></h2>
+      <div class="barside">
+        <button class="mini" id="langSwitch2"></button>
+        <button class="toggle" id="onlyWrong" aria-pressed="false" data-i="onlyWrong"></button>
+      </div>
+    </div>
+    <div class="review" id="review"></div>
+    <button class="start again" id="againBtn" data-i="again"></button>
+  </section>
+
+  <section id="summary" class="hidden">
+    <div class="bar">
+      <div class="pos" data-i="summaryTitle"></div>
+      <div class="barside">
+        <button class="mini" id="langSwitch3"></button>
+        <button class="quit" id="summaryBackBtn" data-i="back"></button>
+      </div>
+    </div>
+    <div class="chips" id="sumTabs" style="margin-bottom:18px"></div>
+    <div id="summaryContent"></div>
+  </section>
+
+</div>
+
+<script>
+/* ============ Lecture 1: Introduction to Media Translation ============ */
+const BANK_L1_AR = [
+["كلمة Media (جمع Medium) تشير إلى:","أي صيغة (format) تُستخدم لنقل المعلومات",["فقط الأجهزة الإلكترونية","فقط الصحف الورقية","مرادف حصري لكلمة الإنترنت"],"التعريف في المحاضرة: Media refers to any kind of format used to convey information."],
+["تعريف «وسائل الإعلام الجماهيري» (Mass media) يركز على:","الوصول إلى عدد كبير من الناس عبر وسيلة تواصل عام",["التواصل الفردي الخاص فقط","الاستخدام الحكومي فقط","الأدوات المكتبية"],"Mass media = a means of public communication reaching a large audience."],
+["أي مما يلي مذكور صراحة كنوع من أنواع الوسائط في المحاضرة؟","التصوير الفوتوغرافي (Photography)",["المكالمات الهاتفية الخاصة","الاجتماعات الرسمية وجهًا لوجه","المذكرات الداخلية للشركات"],"أنواع الوسائط المذكورة: تلفاز، راديو، أفلام وفيديو، إعلام مطبوع، تصوير، إعلام إلكتروني/رقمي."],
+["الإعلام الإلكتروني (Electronic Media) يشمل:","أي جهاز يُستخدم في عملية التواصل الإلكتروني (تلفاز، راديو، هاتف، حاسوب، جهاز ألعاب، جهاز محمول)",["الأجهزة الميكانيكية غير الكهربائية فقط","الكتب المطبوعة فقط","وسائل النقل العام"],"التعريف: أي equipment يُستخدم في electronic communication process يُعتبر إعلامًا إلكترونيًا."],
+["الإعلام الرقمي (Digital Media) يُعرَّف بأنه:","معلومات مُرقمنة تُبَث لنا عبر شاشة و/أو مكبر صوت (مثل يوتيوب)",["أي طباعة ورقية حديثة","البريد التقليدي","المكالمات التناظرية القديمة فقط"],"Digital media refers to mediums of digitized information broadcast through a screen and/or a speaker."],
+["حسب المحاضرة، الفرق بين Digital وMedia هو:","Digital = بيانات ممثلة بسلسلة أرقام، وMedia = طرق بث/نقل هذه المعلومات",["هما مرادفان تمامًا","Digital يخص الصوت فقط وMedia يخص الصورة فقط","لا علاقة بينهما إطلاقًا"],"Digital = data as digits، media = methods of broadcasting or communicating that data."],
+["الإعلام المعلوماتي (Informative media) مثاله:","نشرات الأخبار والصحف والمواقع المعلوماتية",["الروايات والأفلام","الإعلانات التجارية","الكتب المدرسية فقط"],"Informative media: news shows, newspapers, informative websites."],
+["الإعلام التعليمي (Educational media) يشمل:","الكتب والفيديوهات التعليمية وبرامج البرمجيات التعليمية",["نشرات الأخبار العاجلة","الإعلانات التجارية","المجلات الترفيهية"],"Educational media: books, educational video, or educational software programs."],
+["الإعلام الإقناعي (Persuasive media) مثاله:","جميع أنواع الإعلانات والبرامج الدعائية ومقالات الرأي الصحفية",["الروايات الأدبية","الكتب العلمية","الأفلام الوثائقية المحايدة"],"Persuasive media: advertising, TV infomercials, newspaper editorials, or persuasive websites."],
+["الإعلام الترفيهي (Entertainment media) يشمل:","المجلات الترفيهية والأفلام والروايات والمواقع الترفيهية",["التقارير الإخبارية الرسمية","الأدلة التقنية","الوثائق الحكومية"],"Entertainment media: entertainment magazines, movies, novels, entertainment-related websites."],
+["العنوان الصحفي (Headline) هو:","الملخص القصير الذي يقدّم الخبر في بداية نشرة تلفزيونية/إذاعية أو أعلى مقال في صحيفة أو موقع",["الفقرة الختامية للمقال","اسم الكاتب فقط","تاريخ النشر فقط"],"Headline = the short summary which introduces the story at the beginning of a broadcast or above an article."],
+["لماذا تُعتبر العناوين الصحفية الإنجليزية صعبة الفهم أحيانًا؟","لأن أسلوبها الخاص «Headlinese» يختلف كثيرًا عن الإنجليزية العادية",["لأنها مكتوبة بلغة أجنبية غير الإنجليزية","لأنها تحتوي أخطاء إملائية دائمًا","لأنها أطول من المقال نفسه"],"الأسلوب الخاص للعناوين يجعلها significantly different from ordinary English."],
+["ما أهمية معرفة السمات النحوية والمعجمية لعناوين الأخبار للمترجم؟","تسهّل ترجمة هذه العناوين بدقة بين لغتين مختلفتين كالعربية والإنجليزية",["لا علاقة لها بجودة الترجمة","تخص فقط تصميم الصحيفة","تُستخدم فقط في الامتحانات الأكاديمية"],"الإلمام بهذه السمات يسهّل translation of such headlines between two distinct languages."],
+["العناوين الصحفية غالبًا:","ليست جملًا كاملة بل ملخصات قصيرة لجذب الانتباه",["دائمًا جمل تامة الأركان","تحتوي دائمًا فعلًا وفاعلًا ومفعولًا كاملين","أطول من نص الخبر نفسه"],"Headlines are not full sentences but short summaries designed to attract attention."],
+["قاعدة استخدام الأزمنة في العناوين للأحداث الماضية/الحالية:","تُستخدم صيغة المضارع البسيط حتى للأحداث التي وقعت بالفعل",["يُستخدم الماضي التام دائمًا","يُستخدم المستقبل التام","لا تُستخدم أفعال إطلاقًا"],"مثال: Parliament confirms new policy — present simple لحدث وقع بالفعل."],
+["قاعدة استخدام الأزمنة في العناوين للأحداث المستقبلية:","يُستخدم المصدر مع to، مثل: President to visit France",["يُستخدم Present Continuous","يُستخدم Past Perfect","تُستخدم Would"],"Use infinitives for future events، e.g. President to visit France for further talks."],
+["أي من التالي صحيح بخصوص أفعال الكينونة (to be) في العناوين؟","غالبًا ما تُحذف (is, are, was, were) لتوفير المساحة",["تُكتب دائمًا كاملة","تُستبدل بعلامات ترقيم فقط","تُترجم حرفيًا دائمًا للعربية"],"To be verbs، such as is, are, was and were should be omitted."],
+["أي من التالي صحيح بخصوص أدوات التعريف/التنكير (a, an, the) في العناوين؟","تُحذف غالبًا لأنها تهدر المساحة بلا داعٍ",["تُضاف دائمًا لزيادة الوضوح","تُستبدل بأرقام","تُكتب بأحرف كبيرة فقط"],"Don't use the articles a, an, and the. They waste space unnecessarily."],
+["في تركيب المقال الإخباري، ما وظيفة «Placeline»؟","تحديد مكان وقوع الخبر أو تغطيته (مثل CANBERRA)",["اسم الصحفي","تاريخ النشر","الاقتباس المباشر من مصدر الخبر"],"Placeline يظهر أسفل الـ Byline مباشرة ليحدد موقع الخبر."],
+["في تركيب المقال الإخباري، وظيفة «Lead» (المقدمة) هي:","جذب اهتمام القارئ، تقديم أهم المعلومات، والإجابة عن أغلب أسئلة الـ5W",["سرد كل تفاصيل الخبر بالكامل","تكرار العنوان حرفيًا","ذكر مصادر الخبر فقط بلا معلومات"],"Lead: catches reader interest, most important info, introduces topic, answers most of the 5W's."]
+];
+const BANK_L1_EN = [
+["The word \"Media\" (plural of \"medium\") refers to:","Any kind of format used to convey information",["Only electronic devices","Only printed newspapers","An exclusive synonym for \"the internet\""],"Slide definition: Media refers to any kind of format used to convey information."],
+["The definition of \"mass media\" focuses on:","Reaching a large number of people through public communication",["Private one-to-one communication only","Government use only","Office supplies"],"Mass media = a means of public communication reaching a large audience."],
+["Which of the following is explicitly listed as a type of media in the lecture?","Photography",["Private phone calls","Face-to-face formal meetings","Internal company memos"],"Listed types: television, radio, film & video, print media, photography, electronic/digital media."],
+["Electronic media includes:","Any equipment used in the electronic communication process (TV, radio, telephone, computer, game console, mobile device)",["Only non-electric mechanical devices","Only printed books","Public transportation"],"Any equipment used in the electronic communication process is considered electronic media."],
+["Digital media is defined as:","Digitized information broadcast to us through a screen and/or a speaker (e.g., YouTube)",["Any modern paper printing","Traditional postal mail","Only old analog phone calls"],"Digital media refers to mediums of digitized information broadcast through a screen and/or a speaker."],
+["According to the lecture, the difference between \"digital\" and \"media\" is:","Digital = data represented by a series of digits, media = methods of broadcasting/communicating that information",["They are exact synonyms","Digital is only about audio and media is only about images","They are unrelated"],"Digital = data as digits; media = methods of broadcasting or communicating that data."],
+["Informative media is exemplified by:","News shows, newspapers, and informative websites",["Novels and movies","Commercial advertisements","Only school textbooks"],"Informative media: news shows, newspapers, informative websites."],
+["Educational media includes:","Books, educational videos, and educational software programs",["Breaking news bulletins","Commercial advertisements","Entertainment magazines"],"Educational media: books, educational video, or educational software programs."],
+["Persuasive media is exemplified by:","All types of advertising, TV infomercials, and newspaper editorials",["Literary novels","Scientific books","Neutral documentary films"],"Persuasive media: advertising, TV infomercials, newspaper editorials, or persuasive websites."],
+["Entertainment media includes:","Entertainment magazines, movies, novels, and entertainment-related websites",["Official news reports","Technical manuals","Government documents"],"Entertainment media: entertainment magazines, movies, novels, entertainment-related websites."],
+["A headline is:","The short summary that introduces a story at the start of a TV/radio broadcast or above an article in a newspaper or website",["The closing paragraph of an article","Only the author's name","Only the publication date"],"Headline = the short summary which introduces the story at the beginning of a broadcast or above an article."],
+["Why are English news headlines sometimes hard to understand?","Because their special style (\"headlinese\") differs significantly from ordinary English",["Because they are written in a foreign language other than English","Because they always contain spelling mistakes","Because they are longer than the article itself"],"Their special style makes headlines significantly different from ordinary English."],
+["Why is it important for translators to know the syntactic and lexical features of news headlines?","It facilitates accurate translation of headlines between two distinct languages such as English and Arabic",["It has no relation to translation quality","It only concerns newspaper design","It is only used for academic exams"],"Familiarity with these features facilitates translation of such headlines between two distinct languages."],
+["English news headlines are usually:","Not full sentences but short summaries designed to attract attention",["Always grammatically complete sentences","Always containing a complete subject, verb, and object","Longer than the news story itself"],"Headlines are not full sentences but short summaries designed to attract attention."],
+["The rule for tense in headlines about past/present events is:","Present simple tense is used even for events that already happened",["Past perfect is always used","Future perfect is always used","No verbs are used at all"],"Example: Parliament confirms new policy — present simple for a past event."],
+["The rule for tense in headlines about future events is:","The infinitive with \"to\" is used, e.g., \"President to visit France\"",["Present continuous is used","Past perfect is used","\"Would\" is used"],"Use infinitives for future events, e.g., President to visit France for further talks."],
+["Which of the following is true about \"to be\" verbs in headlines?","They are often omitted (is, are, was, were) to save space",["They are always written in full","They are always replaced with punctuation only","They are always translated literally into Arabic"],"To be verbs, such as is, are, was and were should be omitted."],
+["Which of the following is true about articles (a, an, the) in headlines?","They are usually omitted because they waste space unnecessarily",["They are always added for extra clarity","They are replaced with numbers","They are always capitalized"],"Don't use the articles a, an, and the. They waste space unnecessarily."],
+["In news article structure, what is the function of the \"Placeline\"?","It indicates the location where the story took place or was reported from (e.g., CANBERRA)",["The journalist's name","The publication date","A direct quotation from a news source"],"The Placeline appears right below the Byline to indicate the story's location."],
+["In news article structure, the function of the \"Lead\" is to:","Catch the reader's interest, present the most important information, and answer most of the 5 W's",["Narrate every detail of the story in full","Repeat the headline verbatim","Only list the story's sources with no information"],"Lead: catches reader interest, most important info, introduces topic, answers most of the 5W's."]
+];
+
+/* ============ Lecture 2: Translating Arabic & English Media Texts ============ */
+const BANK_L2_AR = [
+["حسب المحاضرة، «Headlinese» يشير إلى:","الأسلوب الخاص والمعقد نحويًا ومعجميًا وأسلوبيًا للعناوين الصحفية والذي يختلف عن الإنجليزية العادية",["لهجة إنجليزية إقليمية","مصطلح يخص فقط الترجمة الآلية","نوع من الخط الطباعي"],"English headlines complexity lies in their syntactic, lexical, and stylistic features often referred to as headlinese."],
+["العناوين الصحفية تتميز بأسلوب:","تلغرافي وحذفي (Telegraphic and elliptical)",["أدبي مطوّل ومسجوع","شعري موزون","قانوني رسمي جدًا"],"Headlines feature telegraphic and elliptical style."],
+["من أكثر السمات النحوية شيوعًا في العناوين الإنجليزية حسب المحاضرة:","حذف فعل الكينونة (be)، تبسيط الأزمنة، علامات ترقيم خاصة، واختصارات",["استخدام المبني للمجهول حصرًا فقط","إطالة الجمل عمدًا","استخدام لغة رسمية معقدة"],"The most common syntactic features: deletion of verb be, simplified tenses, special punctuation and abbreviation."],
+["العنوان الإنجليزي 'Mustang Referral Customer Complaint' يوضح سمة:","الجملة غير المكتملة (تتكون من أسماء فقط بدون أفعال)",["استخدام الأرقام بدل الكلمات","حذف حرف العطف and","استخدام المصدر للدلالة على المستقبل"],"English headlines are often not full sentences and sometimes consist only of nouns."],
+["عند ترجمة 'Mustang Referral Customer Complaint' للعربية، يحتاج المترجم إلى:","إضافة كلمات توضيحية مثل «فورد» و«برنامج» لتوضيح المقصود",["حذف كل الأسماء والاكتفاء بفعل واحد","ترجمة كل كلمة حرفيًا دون أي إضافة","تحويلها إلى سؤال"],"الترجمة العربية تتطلب إضافات: Ford (لتوضيح Mustang) وProgram (لتوضيح referral)."],
+["العنوان 'US launches air raids in Iraq' يوضح أي سمة نحوية؟","استخدام الأزمنة البسيطة بدل المستمرة أو التامة",["حذف أداة التعريف فقط","استبدال and بفاصلة","استخدام المصدر مع to"],"Headlines usually employ simple tenses, not continuous or perfect."],
+["عند ترجمة عناوين تستخدم الزمن البسيط مثل 'Erdogan discusses cooperation with EU delegation' للعربية، تُترجم عادة بصيغة:","المضارع (أردوغان يناقش...)",["الماضي التام","الأمر","المبني للمجهول فقط"],"Arabic renders the verb in present tense."],
+["العنوان 'Saudi Arabia to extend visa validity' يستخدم تركيب to + infinitive للدلالة على:","حدث مستقبلي",["حدث ماضٍ منتهٍ","حدث مستمر حاليًا","حدث مشروط لم يتحقق"],"Headlines use 'to + infinitive' to express future events."],
+["عند ترجمة تركيب to + infinitive المستقبلي للعربية، يُستخدم غالبًا:","سوف/س + الفعل المضارع",["الفعل الماضي فقط","اسم الفاعل فقط","صيغة الأمر"],"Arabic translation: will + present tense (سوف + المضارع)."],
+["العنوان 'Man killed, woman wounded in shooting' يوضح سمة:","حذف أدوات التعريف/التنكير وفعل الكينونة be",["استخدام الفاصلة بدل and فقط","استخدام المصدر للمستقبل","عدم وجود نقطة ختامية فقط"],"Articles (a, the) and forms of verb 'be' are omitted in such headlines."],
+["عند ترجمة عناوين محذوفة الأفعال المساعدة مثل 'Man killed, woman wounded in shooting' للعربية، غالبًا تُستخدم:","المصادر/الأسماء الفعلية (مثل: مقتل رجل وإصابة امرأة)",["صيغة السؤال","صيغة الأمر المباشر","الفعل الماضي المبني للمعلوم حصرًا"],"Arabic renders this as verbal nouns."],
+["العنوان 'Stolen vehicle recovered, suspect arrested' هو مثال على:","تراكيب مبنية للمجهول (Passive) مع حذف be",["تركيب المصدر للمستقبل","استبدال and بفاصلة","إضافة كلمات توضيحية"],"Passive headlines omit 'be'."],
+["العنوان 'Military sending doctors into New York hospitals' يوضح:","صيغة المضارع المستمر مكتوبة بدون فعل الكينونة be",["صيغة الماضي البسيط","تركيب to + infinitive","حذف أداة التعريف فقط"],"Present progressive tense is written without 'be'."],
+["العنوان 'Iraqi Government, DAE Trade Accusations' يوضح سمة:","استبدال حرف العطف and بفاصلة",["حذف فعل الكينونة","استخدام تركيب to + infinitive","عدم وجود نقطة ختامية"],"Headlines replace 'and' with commas."],
+["عند ترجمة العناوين التي تستبدل and بفاصلة إلى العربية، المترجم عادة:","يعيد إضافة حرف العطف «و»",["يحذف كل الأسماء المذكورة","يضيف علامة استفهام","يستخدم صيغة الأمر"],"Arabic restores 'و' (and) in translation."],
+["من السمات النحوية الثابتة للعناوين الصحفية الإنجليزية:","لا تنتهي بنقطة (Period)",["تنتهي دائمًا بعلامة تعجب","تبدأ دائمًا بفعل أمر","تُكتب بالكامل بأحرف كبيرة إلزاميًا"],"Headlines do not end with a period — a consistent stylistic convention in English journalism."],
+["كلمة 'Blast' في عناوين الأخبار تعني:","انفجار (Explosion)",["مباراة رياضية","اجتماع رسمي","عاصفة ثلجية"],"Blast = explosion."],
+["كلمة 'Toll' في عناوين الأخبار تعني:","عدد الوفيات/الضحايا",["رسوم عبور الطرق فقط","جرس الكنيسة","نوع من الضرائب التجارية"],"Toll = number of deaths."],
+["كلمة 'Aid' في سياق عناوين الأخبار تعني:","دعم/مساعدة (Support)",["عقاب","تحقيق قضائي","إعلان تجاري"],"Aid = support."],
+["كلمة 'Blaze' في عناوين الأخبار تعني:","حريق (Fire)",["ضوء ساطع للاحتفالات","نوع من الأسلحة","مسابقة رياضية"],"Blaze = fire."],
+["كلمة 'Clash' في عناوين الأخبار تعني:","مشادة/اشتباك (Quarrel)",["اتفاقية سلام","مؤتمر صحفي","عقد تجاري"],"Clash = quarrel."],
+["كلمة 'Foil' في سياق عناوين الأخبار تعني:","إحباط/منع نجاح شيء ما (Prevent success)",["تغليف الطعام فقط","نوع من المعادن يُستخدم في الديكور","جائزة تكريمية"],"Foil = prevent success."],
+["كلمة 'Back' في عناوين الأخبار غالبًا تعني:","دعم/تأييد (Support)",["التراجع للخلف حرفيًا فقط","الجزء الخلفي من مبنى","إلغاء قرار سابق"],"Back = support (special meaning in headlines)."],
+["كلمة 'Bar' في عناوين الأخبار غالبًا تعني:","منع (Prevent)",["حانة فقط","وحدة قياس ضغط","قضيب معدني في البناء"],"Bar = prevent (special meaning in headlines)."],
+["تعبير 'Call for' في عناوين الأخبار يعني:","يطالب/يدعو إلى (Demand)",["يتصل هاتفيًا فقط","يزور مكانًا","يستدعي شخصًا للمحكمة حصرًا"],"Call for = demand."],
+["العنوان 'US bans Samsung Note 7 phones from flights' يستخدم كلمة 'bans' بمعنى:","يحظر/يمنع",["يشتري بكميات كبيرة","يروّج لمنتج","يفحص تقنيًا"],"Ban: 'US bans Samsung Note 7 phones from flights'."],
+["أحد أهم التحديات في ترجمة العناوين من الإنجليزية للعربية حسب المحاضرة هو:","أن الإنجليزية تفضّل الإيجاز بينما العربية تفضّل الوضوح والجمل الكاملة",["أن العربية لا تحتوي على عناوين صحفية إطلاقًا","أن الإنجليزية تستخدم فقط المبني للمجهول","أن الترجمة الآلية تحل المشكلة دائمًا بدقة كاملة"],"English favors brevity, Arabic prefers clarity؛ Arabic headlines usually use full sentences and verbs."],
+["من استراتيجيات ترجمة العناوين المذكورة في المحاضرة «الإضافة» (Addition) وتعني:","إضافة كلمات توضيحية غير موجودة صراحة في العنوان الأصلي لتوضيح المعنى",["حذف كل التفاصيل غير الضرورية","ترجمة العنوان كلمة بكلمة دون تغيير","تحويل العنوان إلى سؤال بلاغي"],"Additions: add clarifying words (e.g., Ford for Mustang)."],
+["من استراتيجيات ترجمة العناوين «التكييف» (Adaptation) وتعني:","تعديل الزمن والأسلوب ليناسب القارئ العربي",["حذف اسم الشخصية الرئيسية","إضافة صور توضيحية للعنوان","ترجمة العنوان بلغة أخرى غير العربية"],"Adaptation: adjust tense and style for Arabic readers."],
+["في دراسة الحالة 'US to Change Migration Rules'، الترجمة العربية المناسبة تستخدم:","سوف يغير (will change)، مطابقةً لتركيب to + infinitive المستقبلي",["صيغة الماضي (غيّرت)","صيغة الأمر (غيّر!)","حذف الفعل تمامًا"],"English: 'to + infinitive' = future event. Arabic: سوف يغير (will change)."]
+];
+const BANK_L2_EN = [
+["According to the lecture, \"headlinese\" refers to:","The special syntactically, lexically, and stylistically complex style of news headlines that differs from ordinary English",["A regional English dialect","A term used only for machine translation","A typographic font style"],"English headlines complexity lies in their syntactic, lexical, and stylistic features often referred to as headlinese."],
+["News headlines are characterized by a style that is:","Telegraphic and elliptical",["Long and rhymed literary prose","Metrical poetry","Highly formal legal language"],"Headlines feature telegraphic and elliptical style."],
+["One of the most common syntactic features of English headlines according to the lecture is:","Deletion of the verb \"be,\" simplified tenses, special punctuation, and abbreviation",["Exclusive use of the passive voice","Deliberately lengthening sentences","Use of highly formal, complex language"],"The most common syntactic features: deletion of verb be, simplified tenses, special punctuation and abbreviation."],
+["The headline \"Mustang Referral Customer Complaint\" illustrates the feature of:","Incomplete sentences (consisting only of nouns, without verbs)",["Using figures instead of words","Omitting the conjunction \"and\"","Using the infinitive to indicate the future"],"English headlines are often not full sentences and sometimes consist only of nouns."],
+["When translating \"Mustang Referral Customer Complaint\" into Arabic, the translator needs to:","Add clarifying words such as \"Ford\" and \"Program\" to clarify the meaning",["Delete all the nouns and keep only one verb","Translate every word literally with no additions","Turn it into a question"],"Arabic translation requires additions: Ford (to clarify Mustang), Program (to clarify referral)."],
+["The headline \"US launches air raids in Iraq\" illustrates which syntactic feature?","Use of simple tenses instead of continuous or perfect tenses",["Omission of the article only","Replacing \"and\" with a comma","Using the infinitive with \"to\""],"Headlines usually employ simple tenses, not continuous or perfect."],
+["When translating headlines using simple tense such as \"Erdogan discusses cooperation with EU delegation\" into Arabic, it is usually rendered in:","The present tense (Erdogan is discussing...)",["The past perfect","The imperative","The passive voice only"],"Arabic renders the verb in present tense."],
+["The headline \"Saudi Arabia to extend visa validity\" uses the \"to + infinitive\" structure to indicate:","A future event",["A completed past event","An event currently in progress","A conditional event that never happened"],"Headlines use 'to + infinitive' to express future events."],
+["When translating the future \"to + infinitive\" structure into Arabic, translators usually use:","\"sawfa/sa\" + the present-tense verb",["The past tense verb only","The active participle only","The imperative form"],"Arabic translation: will + present tense (سوف + المضارع)."],
+["The headline \"Man killed, woman wounded in shooting\" illustrates the feature of:","Omission of articles and the verb \"be\"",["Using a comma instead of \"and\" only","Using the infinitive for the future","Simply having no final period"],"Articles (a, the) and forms of verb 'be' are omitted in such headlines."],
+["When translating headlines with omitted auxiliary verbs, such as \"Man killed, woman wounded in shooting,\" Arabic typically uses:","Verbal nouns/masdars (e.g., \"the killing of a man and the wounding of a woman\")",["A question form","A direct imperative form","The active past tense exclusively"],"Arabic renders this as verbal nouns."],
+["The headline \"Stolen vehicle recovered, suspect arrested\" is an example of:","Passive structures with the verb \"be\" omitted",["The infinitive-for-future structure","Replacing \"and\" with a comma","Adding clarifying words"],"Passive headlines omit 'be'."],
+["The headline \"Military sending doctors into New York hospitals\" illustrates:","Present progressive tense written without the verb \"be\"",["Simple past tense","The \"to + infinitive\" structure","Omission of the article only"],"Present progressive tense is written without 'be'."],
+["The headline \"Iraqi Government, DAE Trade Accusations\" illustrates the feature of:","Replacing the conjunction \"and\" with a comma",["Omitting the verb \"be\"","Using the \"to + infinitive\" structure","Having no final period"],"Headlines replace 'and' with commas."],
+["When translating headlines that replace \"and\" with a comma into Arabic, translators usually:","Restore the conjunction \"و\" (and)",["Delete all the nouns mentioned","Add a question mark","Use the imperative form"],"Arabic restores 'و' (and) in translation."],
+["One of the fixed syntactic features of English news headlines is that they:","Do not end with a period",["Always end with an exclamation mark","Always start with an imperative verb","Must always be written entirely in capital letters"],"Headlines do not end with a period — a consistent stylistic convention in English journalism."],
+["The word \"Blast\" in news headlines means:","Explosion",["A sports match","A formal meeting","A snowstorm"],"Blast = explosion."],
+["The word \"Toll\" in news headlines means:","The number of deaths/casualties",["A road toll fee only","A church bell","A type of business tax"],"Toll = number of deaths."],
+["The word \"Aid\" in the context of news headlines means:","Support",["Punishment","A judicial investigation","A commercial advertisement"],"Aid = support."],
+["The word \"Blaze\" in news headlines means:","Fire",["A bright celebratory light","A type of weapon","A sports competition"],"Blaze = fire."],
+["The word \"Clash\" in news headlines means:","A quarrel/confrontation",["A peace agreement","A press conference","A business contract"],"Clash = quarrel."],
+["The word \"Foil\" in the context of news headlines means:","To prevent something from succeeding",["Only food wrapping foil","A type of decorative metal","An honorary award"],"Foil = prevent success."],
+["The word \"Back\" in news headlines usually means:","To support",["To physically move backward only","The rear part of a building","To cancel a previous decision"],"Back = support (special meaning in headlines)."],
+["The word \"Bar\" in news headlines usually means:","To prevent",["A pub only","A unit of pressure","A metal rod used in construction"],"Bar = prevent (special meaning in headlines)."],
+["The expression \"call for\" in news headlines means:","To demand",["To make a phone call only","To visit a place","To summon someone to court exclusively"],"Call for = demand."],
+["The headline \"US bans Samsung Note 7 phones from flights\" uses the word \"bans\" to mean:","To prohibit",["To buy in bulk","To promote a product","To technically inspect"],"Ban: 'US bans Samsung Note 7 phones from flights'."],
+["One of the major challenges in translating headlines from English to Arabic according to the lecture is:","English favors brevity while Arabic favors clarity and full sentences",["Arabic has no news headlines at all","English uses only the passive voice","Machine translation always solves the problem perfectly"],"English favors brevity, Arabic prefers clarity; Arabic headlines usually use full sentences and verbs."],
+["Among the headline-translation strategies mentioned, \"Addition\" means:","Adding clarifying words not explicitly present in the original headline to clarify meaning",["Deleting all unnecessary details","Translating the headline word-for-word without any change","Turning the headline into a rhetorical question"],"Additions: add clarifying words (e.g., Ford for Mustang)."],
+["Among the headline-translation strategies, \"Adaptation\" means:","Adjusting the tense and style to suit the Arabic reader",["Deleting the name of the main character","Adding illustrative images to the headline","Translating the headline into a third language"],"Adaptation: adjust tense and style for Arabic readers."],
+["In the case study \"US to Change Migration Rules,\" the appropriate Arabic translation uses:","\"sawfa yughayyir\" (will change), matching the future \"to + infinitive\" structure",["The past tense (changed)","The imperative (Change!)","Omitting the verb entirely"],"English: 'to + infinitive' = future event. Arabic: سوف يغير (will change)."]
+];
+
+/* ============ Lecture 3: Translation Quality Assessment (TQA) ============ */
+const BANK_L3_AR = [
+["لماذا يُعتبر تقييم جودة الترجمة في الترجمة السمعية البصرية (AVT) معقدًا؟","لأنه يتضمن أنماطًا سيميائية متعددة (منطوقة، مكتوبة، بصرية، صوتية) تتفاعل في الزمان والمكان",["لأنه لا يحتاج أي معايير لغوية","لأن الجمهور لا يشاهد الترجمة مباشرة","لأن الأفلام لا تحتوي على حوار مكتوب"],"Assessing translation quality in AVT is complex because it involves multiple semiotic modes that interact in time and space."],
+["الترجمة السمعية البصرية عالية الجودة يجب أن:","تكون صحيحة لغويًا وتتزامن مع الصوت والصورة وإيقاع المونتاج",["تكون أطول من الحوار الأصلي دائمًا","تتجاهل التزامن الزمني تمامًا","تعتمد فقط على الترجمة الآلية دون أي مراجعة"],"A high-quality subtitle or dub must be linguistically correct and synchronize with sound, image, and editing rhythm."],
+["في تعريف جودة الترجمة في AVT، الجودة تتجاوز الدقة اللغوية لتشمل:","التوقيت، سهولة القراءة، الوضوح البصري، والتزامن مع الإشارات الصوتية",["عدد الكلمات المترجمة فقط","سرعة إنجاز المترجم فقط","تكلفة الترجمة فقط"],"Translation quality in AVT includes timing, readability, visual clarity, and synchronization with audio cues."],
+["ترجمة سطر ترجمة (subtitle) صحيحة لغويًا لكنها تُعرض لفترة قصيرة جدًا أو تحجب وجه الممثل تُعتبر:","منخفضة الجودة من منظور المشاهد رغم صحتها اللغوية",["عالية الجودة دائمًا لأنها دقيقة لغويًا","غير قابلة للتقييم إطلاقًا","مقبولة فقط في الأفلام الوثائقية"],"A subtitle displayed too briefly or blocking an actor's face will still be perceived as low-quality by viewers."],
+["في الدبلجة، يُعتبر النص «طبيعيًا» عندما:","يطابق حركة الشفاه ونبرة الصوت وأسلوب الأداء",["يُترجم حرفيًا كلمة بكلمة","يكون أقصر من الأصل بغض النظر عن المعنى","يُقرأ بصوت واحد لكل الشخصيات"],"In dubbing, a translation must match lip movements, tone, and performance style to be accepted as natural."],
+["حسب المحاضرة، محترفو الترجمة السمعية البصرية غالبًا يُعرّفون الجودة من خلال:","الكفاية الوظيفية (Functional adequacy) أي مدى خدمة الترجمة لتجربة المشاهدة",["التكافؤ اللغوي الصارم فقط","عدد الكلمات المترجمة","سرعة تسليم المشروع فقط"],"AVT professionals often define quality through functional adequacy rather than strict linguistic equivalence."],
+["أي نظريات في دراسات الترجمة تم تكييفها لتناسب الترجمة السمعية البصرية؟","نظرية الهدف (Skopos) والدراسات الوصفية للترجمة",["نظرية النحو التوليدي فقط","نظرية الترجمة الحرفية البحتة","نظرية الصوتيات المقارنة"],"Quality models such as Skopos theory and Descriptive Translation Studies have been adapted to AVT."],
+["حسب نظرية Skopos المطبقة على AVT، تُوجَّه الترجمة الإعلامية بواسطة:","الغرض (إخبار، ترفيه، توطين) والقيود (الوقت، المساحة، التزامن)",["رغبة المترجم الشخصية فقط","قواعد نحوية صارمة فقط","عدد المشاهدين المتوقع فقط"],"Translation in media is guided by purpose (inform, entertain, localize) and constraints (time, space, synchronization)."],
+["في الترجمة السينمائية للحوار (Subtitling)، تُقاس الجودة غالبًا بقدرة المترجم على:","تكثيف الحوار مع الحفاظ على التماسك السردي والفكاهة",["ترجمة كل كلمة من الحوار الأصلي دون اختصار","حذف كل الحوار الفكاهي تمامًا","إطالة الترجمة لتغطي الشاشة بالكامل"],"In subtitling, quality may be judged by the translator's ability to condense dialogue while preserving narrative coherence and humor."],
+["دراسة Díaz Cintas و Remael (2021) أظهرت أن الترجمة الجيدة للأفلام توازن بين:","الأمانة (Fidelity) وسهولة القراءة (Readability)",["السرعة والتكلفة فقط","طول الجملة وحجم الخط فقط","عدد المشاهدين وعدد اللغات فقط"],"Good subtitles balance fidelity with readability — a trade-off traditional linguistic models often overlook."],
+["حسب المحاضرة، النماذج الأكاديمية التقليدية لتقييم جودة الترجمة يجب أن تتطور لتشمل:","الأمانة متعددة الوسائط (multimodal fidelity) وسهولة القراءة المرتكزة على المستخدم",["التركيز فقط على القواعد النحوية الصارمة","إلغاء أي معايير جودة أكاديمية","الاعتماد الكامل على الترجمة الآلية فقط"],"Traditional academic TQA models must evolve to include multimodal fidelity and user-centered readability."],
+["ما هما الإطاران المعياريان المذكوران واللذان يُطبَّقان في صناعة الترجمة الإعلامية؟","TAUS DQF و MQM",["BLEU و TER فقط","ISO 9001 و ISO 14001","APA و MLA"],"Standardized frameworks such as TAUS DQF and MQM are increasingly applied to subtitling and dubbing workflows."],
+["منظمة TAUS تأسست عام:","2004 كمنظمة صناعية عالمية تروّج للابتكار والتوحيد القياسي في تقنيات الترجمة",["1990 كجمعية أكاديمية بحتة","2015 كشركة برمجيات خاصة","1980 كمنظمة حكومية دولية"],"TAUS is a global industry organization founded in 2004 that promotes innovation and standardization in translation technologies."],
+["إطار عمل الجودة الديناميكي (DQF) الذي طورته TAUS هو:","مجموعة أدوات ومقاييس وأفضل ممارسات لقياس وإدارة جودة الترجمة بشكل متسق",["برنامج ترجمة آلية مجاني فقط","قاموس مصطلحات ثنائي اللغة فقط","منصة توظيف مترجمين مستقلين"],"DQF is a set of tools, metrics, and best practices created by TAUS to help measure and manage translation quality consistently."],
+["مقاييس MQM (Multidimensional Quality Metrics) طُوِّرت ضمن مشروعي:","QTLaunchPad و QT21 الممولين من الاتحاد الأوروبي (2012-2018)",["مشروع ناسا للفضاء","مبادرة الأمم المتحدة للتعليم","مشروع جوجل للترجمة الفورية"],"MQM was developed under the QTLaunchPad and QT21 EU-funded projects (2012–2018)."],
+["تصنيف MQM الهرمي لأنواع الأخطاء يشمل أبعادًا مثل:","الدقة، الطلاقة، المصطلحات، الأسلوب، اصطلاحات اللغة المحلية، والصحة/الأمانة (verity)",["السرعة فقط","عدد الصفحات فقط","سعر الترجمة فقط"],"MQM defines a hierarchical taxonomy of error types grouped under accuracy, fluency, terminology, style, locale convention, and verity."],
+["من أمثلة أدلة الجودة الداخلية لمنصات البث مثل Netflix:","دليل أسلوب النصوص الموقوتة (Timed Text Style Guides) الذي يحدد طول الترجمة وسرعة القراءة وعلامات الترقيم والنبرة",["دليل تسعير الاشتراكات","دليل حقوق النشر السينمائي فقط","دليل تصميم الشعارات"],"Netflix's Timed Text Style Guides specify acceptable subtitle length, reading speed, punctuation, and tone."],
+["أدوات ضبط الجودة الآلية مثل Xbench و OOONA QA تُستخدم لاكتشاف:","الأخطاء التقنية مثل التوقيت والتداخل والترجمات المفقودة",["الأخطاء الثقافية والأسلوبية فقط","أخطاء النحو العربي فقط","جودة الصوت في الدبلجة فقط"],"Automatic QC systems (e.g., Xbench, OOONA QA) detect technical errors (timing, overlaps, missing subtitles)."],
+["رغم فعالية أدوات ضبط الجودة الآلية، فإنها لا تزال بحاجة إلى:","مراجعين بشريين لتقييم الملاءمة الأسلوبية والثقافية",["لا تحتاج أي مراجعة بشرية إطلاقًا","تحتاج فقط لموافقة الجهة المنتجة","تحتاج فقط لفحص الترجمة الآلية بأداة أخرى"],"They still rely on human reviewers for stylistic and cultural appropriateness — a hybrid workflow."],
+["التقييم البشري لجودة الترجمة في AVT عادة يجمع بين معايير:","لغوية وتقنية وإدراكية (perceptual)",["مالية وقانونية فقط","تسويقية فقط","برمجية فقط"],"Human evaluation of translation quality in AVT typically combines linguistic, technical, and perceptual criteria."],
+["دبلجة فيلم Spirited Away (2001) الإنجليزية أُشيد بها لأنها:","حافظت على النبرة العاطفية مع تكييف المراجع الثقافية للجمهور الغربي",["ترجمت الحوار حرفيًا دون أي تكييف","حذفت كل الحوار الأصلي","استُبدلت بلغة أخرى غير الإنجليزية بالكامل"],"The English dubbing of Spirited Away (2001) was praised for preserving emotional tone while adapting cultural references."],
+["مسلسل Squid Game (2021) تعرّض لانتقادات جمهورية بسبب:","ترجمات غير دقيقة أثارت جدلاً على وسائل التواصل الاجتماعي",["عدم وجود ترجمة إطلاقًا لأي لغة","حذف جميع الحلقات المترجمة","استخدام دبلجة كاملة بدل الترجمة النصية"],"Mistranslated subtitles in Squid Game (2021) drew public criticism on social media."],
+["مثالا Spirited Away وSquid Game يوضحان أن:","إدراك الجودة يتأثر بالجمهور والمنصات، والتقييم البشري يجب أن يراعي جودة النص وتجربة المشاهد معًا",["الجودة تُقاس فقط بعدد المشاهدات","الترجمة الآلية دائمًا أفضل من البشرية","الجمهور لا يؤثر إطلاقًا على تقييم الجودة"],"These examples show that human evaluation must consider both textual quality and viewer experience."],
+["اختبار Hermes الخاص بـ Netflix يُستخدم من قبل المقيّمين المحترفين لقياس:","الدقة والتوقيت باستخدام قوائم تحقق منظمة",["سرعة الكتابة على لوحة المفاتيح فقط","مهارات التمثيل الصوتي فقط","جودة الإضاءة في الأفلام"],"Professional evaluators use structured checklists (e.g., Netflix's Hermes test) to measure accuracy and timing."],
+["المقاربات التي تركز على المستخدم (user-centered) تجادل بأن الجودة الحقيقية تكمن في:","فهم المشاهد للترجمة واستمتاعه بها، وليس فقط الدقة اللغوية",["عدد الكلمات المترجمة فقط","رأي المترجم الشخصي فقط","سرعة إنتاج الترجمة فقط"],"User-centered translation approaches argue that true quality lies in the viewer's comprehension and enjoyment."],
+["مقاييس الترجمة الآلية مثل BLEU وTER محدودة الفائدة في تقييم الترجمة السمعية البصرية لأنها:","لا تأخذ بعين الاعتبار التوقيت وتعدد الوسائط والعناصر الأدائية",["لا تعمل مع اللغة الإنجليزية إطلاقًا","مكلفة جدًا للاستخدام","تحتاج معدات خاصة فقط للفيديو"],"Automatic metrics such as BLEU and TER are limited in AVT because they cannot account for timing, multimodality, or performative elements."],
+["أدوات الترجمة الآلية للنصوص المصاحبة المستخدمة من قبل هيئات مثل BBC تعتمد على:","التعرف الآلي على الكلام (ASR) مع الترجمة الآلية العصبية (NMT)",["كتابة يدوية بالكامل بدون أي تقنية","الترجمة الفورية البشرية فقط دون تسجيل","الاعتماد الحصري على الذكاء الاصطناعي التوليدي للنصوص الإبداعية فقط"],"AI subtitling tools employ automatic speech recognition (ASR) combined with neural machine translation (NMT)."],
+["التحرير اللاحق (Post-editing) في سياق سير عمل AVT هو:","قيام المترجم البشري بتنقيح الترجمة أو نص الدبلجة الناتج آليًا",["حذف الترجمة الآلية بالكامل واستبدالها من الصفر دائمًا","عملية آلية بحتة دون تدخل بشري","مراجعة قانونية للحقوق فقط"],"Translators use post-editing to refine machine-generated subtitles or dubbing scripts."],
+["يمكن قياس جهد التحرير اللاحق (Post-editing effort) من خلال:","الوقت المستغرق، عدد ضغطات لوحة المفاتيح، والحمل المعرفي (بتتبع حركة العين)",["عدد المشاهدين النهائي فقط","تقييم النقاد السينمائيين فقط","عدد اللغات المتاحة للفيلم فقط"],"Post-editing effort can be measured in time, keystrokes, and cognitive load (eye-tracking studies)."],
+["من التحديات الأخلاقية التي تطرحها المحاضرة بخصوص الترجمة الآلية في AVT:","هل يجب الإفصاح عن أن الترجمة أُنتجت بالذكاء الاصطناعي؟ وكيف نضمن أجرًا عادلاً للمحررين البشريين؟",["هل يجب حظر الترجمة الآلية بالكامل نهائيًا؟","هل يجب إلغاء التحرير اللاحق تمامًا؟","هل يجب توحيد كل اللغات في لغة واحدة؟"],"Ethical questions: should AI-generated subtitles be labeled? How can we ensure fair pay for human post-editors?"],
+["حسب خلاصة المحاضرة، مستقبل تقييم جودة الترجمة (TQA) في AVT يكمن في:","طرق تقييم هجينة تجمع بين المقاييس الآلية والتغذية الراجعة البشرية واختبارات قابلية الاستخدام",["الاعتماد الكلي على المقاييس الآلية فقط","إلغاء أي دور بشري في التقييم","الاعتماد فقط على آراء النقاد المحترفين"],"The future of TQA lies in hybrid evaluation methods combining automatic metrics with human-centered feedback and usability testing."]
+];
+const BANK_L3_EN = [
+["Why is assessing translation quality in AVT considered complex?","Because it involves multiple semiotic modes (spoken, written, visual, acoustic) interacting in time and space",["Because it requires no linguistic criteria at all","Because the audience never watches the translation directly","Because films contain no written dialogue"],"Assessing translation quality in AVT is complex because it involves multiple semiotic modes that interact in time and space."],
+["A high-quality audiovisual translation must:","Be linguistically correct and synchronize with sound, image, and editing rhythm",["Always be longer than the original dialogue","Completely ignore timing synchronization","Rely solely on machine translation with no review"],"A high-quality subtitle or dub must be linguistically correct and synchronize with sound, image, and editing rhythm."],
+["In defining translation quality in AVT, quality goes beyond linguistic accuracy to include:","Timing, readability, visual clarity, and synchronization with audio cues",["Only the number of translated words","Only the translator's speed","Only the cost of translation"],"Translation quality in AVT includes timing, readability, visual clarity, and synchronization with audio cues."],
+["A subtitle that is linguistically perfect but displayed too briefly or blocks the actor's face is considered:","Low-quality from the viewer's perspective despite its linguistic accuracy",["Always high quality because it is linguistically accurate","Impossible to evaluate at all","Acceptable only in documentaries"],"A subtitle displayed too briefly or blocking an actor's face will still be perceived as low-quality by viewers."],
+["In dubbing, a translation is considered \"natural\" when it:","Matches lip movements, tone, and performance style",["Is translated word-for-word literally","Is always shorter than the original regardless of meaning","Is read in one voice for all characters"],"In dubbing, a translation must match lip movements, tone, and performance style to be accepted as natural."],
+["According to the lecture, AVT professionals often define quality through:","Functional adequacy — how well the translation serves the viewing experience",["Strict linguistic equivalence only","The number of translated words","Project delivery speed only"],"AVT professionals often define quality through functional adequacy rather than strict linguistic equivalence."],
+["Which translation studies theories have been adapted to fit AVT?","Skopos theory and Descriptive Translation Studies",["Generative syntax theory only","Purely literal translation theory","Comparative phonetics theory"],"Quality models such as Skopos theory and Descriptive Translation Studies have been adapted to AVT."],
+["According to Skopos theory applied to AVT, media translation is guided by:","Purpose (inform, entertain, localize) and constraints (time, space, synchronization)",["The translator's personal preference only","Strict grammar rules only","The expected number of viewers only"],"Translation in media is guided by purpose (inform, entertain, localize) and constraints (time, space, synchronization)."],
+["In subtitling, quality is often judged by the translator's ability to:","Condense dialogue while preserving narrative coherence and humor",["Translate every word of the original dialogue without any shortening","Completely remove all humorous dialogue","Lengthen the subtitle to fill the whole screen"],"In subtitling, quality may be judged by the translator's ability to condense dialogue while preserving narrative coherence and humor."],
+["The study by Díaz Cintas and Remael (2021) showed that good film subtitles balance:","Fidelity and readability",["Speed and cost only","Sentence length and font size only","Number of viewers and number of languages only"],"Good subtitles balance fidelity with readability — a trade-off traditional linguistic models often overlook."],
+["According to the lecture, traditional academic TQA models must evolve to include:","Multimodal fidelity and user-centered readability",["Focusing only on strict grammar rules","Eliminating academic quality standards altogether","Relying entirely on machine translation only"],"Traditional academic TQA models must evolve to include multimodal fidelity and user-centered readability."],
+["What are the two standardized frameworks mentioned that are applied in the media translation industry?","TAUS DQF and MQM",["BLEU and TER only","ISO 9001 and ISO 14001","APA and MLA"],"Standardized frameworks such as TAUS DQF and MQM are increasingly applied to subtitling and dubbing workflows."],
+["TAUS was founded in:","2004, as a global industry organization promoting innovation and standardization in translation technologies",["1990, as a purely academic association","2015, as a private software company","1980, as an intergovernmental organization"],"TAUS is a global industry organization founded in 2004 that promotes innovation and standardization in translation technologies."],
+["The Dynamic Quality Framework (DQF) developed by TAUS is:","A set of tools, metrics, and best practices to measure and manage translation quality consistently",["A free machine translation program only","A bilingual glossary only","A freelance translator hiring platform"],"DQF is a set of tools, metrics, and best practices created by TAUS to help measure and manage translation quality consistently."],
+["The MQM (Multidimensional Quality Metrics) was developed under:","The QTLaunchPad and QT21 EU-funded projects (2012–2018)",["A NASA space project","A UN education initiative","A Google instant-translation project"],"MQM was developed under the QTLaunchPad and QT21 EU-funded projects (2012–2018)."],
+["MQM's hierarchical taxonomy of error types includes dimensions such as:","Accuracy, fluency, terminology, style, locale convention, and verity (truthfulness)",["Speed only","Number of pages only","Translation price only"],"MQM defines a hierarchical taxonomy of error types grouped under accuracy, fluency, terminology, style, locale convention, and verity."],
+["An example of internal quality guidelines used by streaming platforms like Netflix is:","The Timed Text Style Guides, which specify subtitle length, reading speed, punctuation, and tone",["A subscription pricing guide","A film copyright guide only","A logo design guide"],"Netflix's Timed Text Style Guides specify acceptable subtitle length, reading speed, punctuation, and tone."],
+["Automatic QA tools such as Xbench and OOONA QA are used to detect:","Technical errors such as timing, overlaps, and missing subtitles",["Cultural and stylistic errors only","Arabic grammar errors only","Dubbing audio quality only"],"Automatic QC systems (e.g., Xbench, OOONA QA) detect technical errors (timing, overlaps, missing subtitles)."],
+["Despite their effectiveness, automatic QA tools still require:","Human reviewers to assess stylistic and cultural appropriateness",["No human review at all","Only approval from the production company","Only checking the machine translation with another machine tool"],"They still rely on human reviewers for stylistic and cultural appropriateness — a hybrid workflow."],
+["Human evaluation of translation quality in AVT usually combines criteria that are:","Linguistic, technical, and perceptual",["Financial and legal only","Marketing only","Software-related only"],"Human evaluation of translation quality in AVT typically combines linguistic, technical, and perceptual criteria."],
+["The English dubbing of Spirited Away (2001) was praised because it:","Preserved emotional tone while adapting cultural references for Western audiences",["Translated the dialogue completely literally with no adaptation","Removed all the original dialogue","Was replaced entirely with a different language other than English"],"The English dubbing of Spirited Away (2001) was praised for preserving emotional tone while adapting cultural references."],
+["Squid Game (2021) faced public criticism because of:","Mistranslated subtitles that sparked controversy on social media",["Having no translation at all in any language","Removing all subtitled episodes","Using full dubbing instead of subtitles"],"Mistranslated subtitles in Squid Game (2021) drew public criticism on social media."],
+["The examples of Spirited Away and Squid Game show that:","Quality perception is mediated by audiences and platforms, and human evaluation must consider both textual quality and viewer experience",["Quality is measured only by view count","Machine translation is always superior to human translation","The audience has no effect on quality perception at all"],"These examples show that human evaluation must consider both textual quality and viewer experience."],
+["Netflix's Hermes test is used by professional evaluators to measure:","Accuracy and timing using structured checklists",["Typing speed only","Voice-acting skills only","Film lighting quality"],"Professional evaluators use structured checklists (e.g., Netflix's Hermes test) to measure accuracy and timing."],
+["User-centered translation approaches argue that true quality lies in:","The viewer's comprehension and enjoyment, not only in linguistic precision",["The number of translated words only","The translator's personal opinion only","The speed of producing the translation only"],"User-centered translation approaches argue that true quality lies in the viewer's comprehension and enjoyment."],
+["Automatic metrics like BLEU and TER are of limited use in evaluating AVT because they:","Cannot account for timing, multimodality, and performative elements",["Do not work with the English language at all","Are too expensive to use","Require special video equipment only"],"Automatic metrics such as BLEU and TER are limited in AVT because they cannot account for timing, multimodality, or performative elements."],
+["AI subtitling tools used by broadcasters such as the BBC rely on:","Automatic speech recognition (ASR) combined with neural machine translation (NMT)",["Entirely manual writing with no technology","Human simultaneous interpretation only, with no recording","Exclusively generative AI for creative texts only"],"AI subtitling tools employ automatic speech recognition (ASR) combined with neural machine translation (NMT)."],
+["Post-editing in the context of the AVT workflow is:","A human translator refining machine-generated subtitles or dubbing scripts",["Completely deleting the machine translation and starting from scratch every time","A purely automated process with no human involvement","A legal review of rights only"],"Translators use post-editing to refine machine-generated subtitles or dubbing scripts."],
+["Post-editing effort can be measured through:","Time spent, keystrokes, and cognitive load (via eye-tracking)",["Final viewer count only","Film critics' reviews only","The number of languages available for the film only"],"Post-editing effort can be measured in time, keystrokes, and cognitive load (eye-tracking studies)."],
+["One of the ethical challenges the lecture raises regarding machine translation in AVT is:","Should AI-generated subtitles be labeled as such, and how can fair pay for human post-editors be ensured?",["Should machine translation be banned entirely?","Should post-editing be eliminated completely?","Should all languages be unified into one?"],"Ethical questions: should AI-generated subtitles be labeled? How can we ensure fair pay for human post-editors?"],
+["According to the lecture's conclusion, the future of TQA in AVT lies in:","Hybrid evaluation methods combining automatic metrics with human-centered feedback and usability testing",["Relying entirely on automatic metrics only","Removing any human role from evaluation","Relying only on professional critics' opinions"],"The future of TQA lies in hybrid evaluation methods combining automatic metrics with human-centered feedback and usability testing."]
+];
+
+/* ============ Summaries ============ */
+const SUM_L1_AR = [
+{h:"01 — تعريف الوسائط ووسائل الإعلام الجماهيري", items:[
+"الوسائط (Media) هي جمع Medium وتعني أي صيغة تُستخدم لنقل المعلومات.",
+"وسائل الإعلام الجماهيري هي وسائل تواصل عام مصممة للوصول لعدد كبير من الناس."
+]},
+{h:"02 — أنواع الوسائط", items:[
+"التلفاز، الراديو، الأفلام والفيديو، الإعلام المطبوع (صحف ومجلات)، التصوير الفوتوغرافي، والإعلام الإلكتروني/الرقمي."
+]},
+{h:"03 — الإعلام الإلكتروني والرقمي", items:[
+"الإعلام الإلكتروني: أي جهاز يُستخدم في التواصل الإلكتروني (تلفاز، راديو، هاتف، حاسوب، جهاز ألعاب، جهاز محمول).",
+"الإعلام الرقمي: معلومات مُرقمنة تُبث عبر شاشة و/أو مكبر صوت (مثل يوتيوب).",
+"Digital = بيانات ممثلة بأرقام، وMedia = طرق بث ونقل هذه المعلومات."
+]},
+{h:"04 — أنواع المحتوى الإعلامي (Genres)", items:[
+"معلوماتي: نشرات الأخبار، الصحف، المواقع المعلوماتية.",
+"تعليمي: الكتب، الفيديوهات، وبرامج البرمجيات التعليمية.",
+"إقناعي: الإعلانات، البرامج الدعائية، مقالات الرأي.",
+"ترفيهي: المجلات الترفيهية، الأفلام، الروايات، المواقع الترفيهية."
+]},
+{h:"05 — ما هو العنوان الصحفي؟", items:[
+"العنوان هو الملخص القصير الذي يقدّم الخبر في بداية نشرة تلفزيونية/إذاعية أو أعلى مقال في صحيفة أو موقع.",
+"كلمات العناوين قصيرة ودرامية وتُستخدم بمعنى خاص، مما يجعلها صعبة الفهم مقارنة بالإنجليزية العادية (Headlinese).",
+"معرفة السمات النحوية والمعجمية للعناوين تسهّل ترجمتها بين لغتين كالعربية والإنجليزية."
+]},
+{h:"06 — السمات النحوية للعناوين (7 قواعد)", ordered:true, items:[
+"استخدام المضارع البسيط للأحداث الماضية (مثل: Parliament confirms new policy).",
+"تجنب الأفعال المساعدة (مثل: New policy decided by Parliament بدل has been decided).",
+"استخدام المصدر مع to للأحداث المستقبلية (مثل: President to visit France).",
+"تجنب أدوات التعريف/التنكير a, an, the (مثل: Prime Minister hikes Alps for charity).",
+"تجنب to be وto say (مثل: Residents unhappy about new road).",
+"استبدال حروف العطف بعلامات ترقيم (مثل: Fire in bakery: hundreds dead).",
+"استخدام الأرقام بدل الكتابة بالحروف (مثل: 9 dead in car accident)."
+]},
+{h:"07 — قواعد إضافية لكتابة العناوين", items:[
+"لا يبدأ العنوان بفعل، والعناوين ليست جملًا كاملة.",
+"يمكن أن يُفهم الفعل الرابط ضمنيًا دون كتابته.",
+"الأحداث الماضية/الحالية تُكتب بالمضارع، والمستقبلية بالمصدر (to leave, to work).",
+"تُحذف أفعال الكينونة (is, are, was, were) وأدوات التعريف/التنكير لتوفير المساحة."
+]},
+{h:"08 — تشريح المقال الإخباري", items:[
+"العنوان (Headline)، اسم الكاتب (Byline)، مكان الخبر (Placeline).",
+"المقدمة (Lead): تجذب الاهتمام، تقدم أهم المعلومات، وتجيب عن أغلب أسئلة الـ5W.",
+"الاقتباس (Quotation) ثم متن الخبر (Body)."
+]}
+];
+const SUM_L1_EN = [
+{h:"01 — Defining Media and Mass Media", items:[
+"\"Media\" is the plural of \"medium\" and refers to any format used to convey information.",
+"Mass media are means of public communication designed to reach a large audience."
+]},
+{h:"02 — Types of Media", items:[
+"Television, radio, film and video, print media (newspapers, magazines), photography, and electronic/digital media."
+]},
+{h:"03 — Electronic and Digital Media", items:[
+"Electronic media: any equipment used in the electronic communication process (TV, radio, telephone, computer, game console, mobile device).",
+"Digital media: digitized information broadcast to us through a screen and/or a speaker (e.g., YouTube).",
+"\"Digital\" = data represented by a series of digits; \"media\" = the methods of broadcasting or communicating that information."
+]},
+{h:"04 — Media Genres", items:[
+"Informative: news shows, newspapers, informative websites.",
+"Educational: books, educational videos, and educational software programs.",
+"Persuasive: advertising, infomercials, and newspaper editorials.",
+"Entertainment: entertainment magazines, movies, novels, and entertainment websites."
+]},
+{h:"05 — What Is a News Headline?", items:[
+"A headline is the short summary that introduces a story at the start of a TV/radio broadcast or above an article in a newspaper or website.",
+"Headline words are short, dramatic, and used in a special sense, making them hard to understand compared to ordinary English (\"headlinese\").",
+"Knowing the syntactic and lexical features of headlines facilitates translating them between two languages such as English and Arabic."
+]},
+{h:"06 — Syntactic Features of Headlines (7 Rules)", ordered:true, items:[
+"Use present simple tense for past events (e.g., \"Parliament confirms new policy\").",
+"Avoid auxiliary verbs (e.g., \"New policy decided by Parliament\" instead of \"has been decided\").",
+"Use the infinitive with \"to\" for future events (e.g., \"President to visit France\").",
+"Avoid articles a, an, the (e.g., \"Prime Minister hikes Alps for charity\").",
+"Avoid \"to be\" and \"to say\" (e.g., \"Residents unhappy about new road\").",
+"Replace conjunctions with punctuation (e.g., \"Fire in bakery: hundreds dead\").",
+"Use figures instead of spelling out numbers (e.g., \"9 dead in car accident\")."
+]},
+{h:"07 — Additional Headline-Writing Rules", items:[
+"No headline starts with a verb, and headlines are not complete sentences.",
+"A linking verb can be implied rather than spelled out.",
+"Past/present events use present tense; future events use the infinitive (to leave, to work).",
+"\"To be\" verbs (is, are, was, were) and articles are omitted to save space."
+]},
+{h:"08 — Anatomy of a News Article", items:[
+"Headline, Byline (author's name), and Placeline (location).",
+"Lead: catches the reader's interest, presents the most important information, and answers most of the 5 W's.",
+"Quotation, followed by the Body of the story."
+]}
+];
+
+const SUM_L2_AR = [
+{h:"01 — مقدمة: أسلوب Headlinese", items:[
+"تعقيد العناوين الإنجليزية نحويًا ومعجميًا وأسلوبيًا يجعلها تختلف عن الإنجليزية العادية، وهو ما يُعرف بـ Headlinese.",
+"العناوين ذات أسلوب تلغرافي وحذفي، وأبرز سماتها النحوية: حذف فعل الكينونة، تبسيط الأزمنة، علامات ترقيم خاصة، واختصارات."
+]},
+{h:"02 — السمة 1: الجمل غير المكتملة", items:[
+"قد يتكون العنوان من أسماء فقط دون أفعال، مثل: 'Mustang Referral Customer Complaint'.",
+"الترجمة العربية تحتاج إضافات توضيحية مثل «فورد» و«برنامج» لتوضيح المعنى: شكوى زبون فورد موستنج من برنامج الإحالة."
+]},
+{h:"03 — السمة 2: الأزمنة البسيطة", items:[
+"تُستخدم الأزمنة البسيطة بدل المستمرة أو التامة، مثل: 'US launches air raids in Iraq'.",
+"تُترجم للعربية بصيغة المضارع: الولايات المتحدة تشن غارات جوية في العراق."
+]},
+{h:"04 — السمة 3: to + المصدر للمستقبل", items:[
+"تُستخدم للدلالة على حدث مستقبلي، مثل: 'Saudi Arabia to extend visa validity'.",
+"تُترجم للعربية بـ سوف/س + المضارع: السعودية ستمدد صلاحية التأشيرات."
+]},
+{h:"05 — السمة 4: حذف أدوات التعريف وفعل الكينونة", items:[
+"مثال: 'Man killed, woman wounded in shooting' (بدل A man was killed and a woman was wounded).",
+"تُترجم للعربية غالبًا بصيغة المصادر (الأسماء الفعلية): مقتل رجل وإصابة امرأة."
+]},
+{h:"06 — السمة 5: التراكيب المبنية للمجهول", items:[
+"تُحذف be من صيغة المبني للمجهول، مثل: 'Stolen vehicle recovered, suspect arrested'.",
+"تُترجم للعربية باستخدام المصادر أيضًا."
+]},
+{h:"07 — السمة 6: المضارع المستمر بدون be", items:[
+"مثال: 'Military sending doctors into New York hospitals'.",
+"تُترجم للعربية بصيغة المضارع البسيط: الجيش يرسل أطباء إلى مستشفيات نيويورك."
+]},
+{h:"08 — السمتان 7 و8: الفاصلة بدل and وعدم وجود نقطة ختامية", items:[
+"تُستبدل and بفاصلة، مثل: 'Iraqi Government, DAE Trade Accusations'، وتُعاد «و» في الترجمة العربية.",
+"العناوين الإنجليزية لا تنتهي بنقطة، وهذا عرف أسلوبي ثابت في الصحافة الإنجليزية."
+]},
+{h:"09 — السمات المعجمية: كلمات قصيرة ودرامية ومعاني خاصة", items:[
+"كلمات قصيرة: Blast = انفجار، Toll = عدد الضحايا، Aid = دعم.",
+"كلمات درامية: Blaze = حريق، Clash = اشتباك، Foil = إحباط نجاح شيء.",
+"معاني خاصة: Back = دعم، Bar = منع، Call for = يطالب/يدعو."
+]},
+{h:"10 — أمثلة مفردات إضافية", items:[
+"Aid: 'UN urges coalition to reopen aid lifeline to Yemen'.",
+"Ban: 'US bans Samsung Note 7 phones from flights'.",
+"Charge: 'Man held in wife's death wants charges dropped'.",
+"Clash: 'Protesters arrested after clash with police'."
+]},
+{h:"11 — التحديات واستراتيجيات الترجمة", items:[
+"الإنجليزية تفضّل الإيجاز بينما العربية تفضّل الوضوح والجمل الكاملة، والفروق الثقافية تؤثر على الفهم.",
+"الإضافة: إضافة كلمات توضيحية غير موجودة صراحة في الأصل.",
+"التكييف: تعديل الزمن والأسلوب ليناسب القارئ العربي.",
+"التوضيح: تقديم سياق مفقود في العنوان الإنجليزي."
+]},
+{h:"12 — دراستا حالة", items:[
+"'US to Change Migration Rules' ← to + infinitive للمستقبل ← سوف يغير.",
+"'Global oil markets heading towards balance' ← حذف are ← تتجه الأسواق (مضارع في العربية)."
+]}
+];
+const SUM_L2_EN = [
+{h:"01 — Introduction: The Headlinese Style", items:[
+"The syntactic, lexical, and stylistic complexity of English headlines sets them apart from ordinary English — known as \"headlinese\".",
+"Headlines are telegraphic and elliptical; their main syntactic features are deletion of \"be\", simplified tenses, special punctuation, and abbreviation."
+]},
+{h:"02 — Feature 1: Incomplete Sentences", items:[
+"A headline may consist only of nouns with no verbs, e.g., \"Mustang Referral Customer Complaint\".",
+"The Arabic translation needs clarifying additions such as \"Ford\" and \"Program\" to clarify the meaning."
+]},
+{h:"03 — Feature 2: Simple Tenses", items:[
+"Simple tenses are used instead of continuous or perfect tenses, e.g., \"US launches air raids in Iraq\".",
+"It is translated into Arabic using the present tense."
+]},
+{h:"04 — Feature 3: To + Infinitive for the Future", items:[
+"Used to indicate a future event, e.g., \"Saudi Arabia to extend visa validity\".",
+"Translated into Arabic with \"sawfa/sa\" + present tense."
+]},
+{h:"05 — Feature 4: Omission of Articles and the Verb \"Be\"", items:[
+"Example: \"Man killed, woman wounded in shooting\" (instead of \"A man was killed and a woman was wounded\").",
+"Usually translated into Arabic using verbal nouns/masdars."
+]},
+{h:"06 — Feature 5: Passive Structures", items:[
+"\"Be\" is omitted from passive structures, e.g., \"Stolen vehicle recovered, suspect arrested\".",
+"Also translated into Arabic using verbal nouns."
+]},
+{h:"07 — Feature 6: Progressive Tense Without \"Be\"", items:[
+"Example: \"Military sending doctors into New York hospitals\".",
+"Translated into Arabic using the simple present tense."
+]},
+{h:"08 — Features 7 & 8: Commas Instead of \"And\", No Final Period", items:[
+"\"And\" is replaced with a comma, e.g., \"Iraqi Government, DAE Trade Accusations\", and \"and\" is restored in the Arabic translation.",
+"English headlines do not end with a period — a consistent stylistic convention in English journalism."
+]},
+{h:"09 — Lexical Features: Short, Dramatic, and Special-Meaning Words", items:[
+"Short words: Blast = explosion, Toll = number of casualties, Aid = support.",
+"Dramatic words: Blaze = fire, Clash = confrontation, Foil = prevent success.",
+"Special meanings: Back = support, Bar = prevent, Call for = demand."
+]},
+{h:"10 — Additional Vocabulary Examples", items:[
+"Aid: \"UN urges coalition to reopen aid lifeline to Yemen\".",
+"Ban: \"US bans Samsung Note 7 phones from flights\".",
+"Charge: \"Man held in wife's death wants charges dropped\".",
+"Clash: \"Protesters arrested after clash with police\"."
+]},
+{h:"11 — Translation Challenges and Strategies", items:[
+"English favors brevity while Arabic favors clarity and full sentences; cultural differences affect comprehension.",
+"Addition: adding clarifying words not explicitly present in the original.",
+"Adaptation: adjusting tense and style to suit the Arabic reader.",
+"Clarification: providing context missing from the English headline."
+]},
+{h:"12 — Two Case Studies", items:[
+"\"US to Change Migration Rules\" → future \"to + infinitive\" → \"sawfa yughayyir\" (will change).",
+"\"Global oil markets heading towards balance\" → omission of \"are\" → rendered in Arabic present tense."
+]}
+];
+
+const SUM_L3_AR = [
+{h:"01 — الخلفية والأهداف: لماذا AVT معقدة", items:[
+"تقييم الجودة في الترجمة السمعية البصرية معقد لأنه يشمل أنماطًا سيميائية متعددة (منطوقة، مكتوبة، بصرية، صوتية) تتفاعل في الزمان والمكان.",
+"الترجمة عالية الجودة يجب أن تكون صحيحة لغويًا وتتزامن مع الصوت والصورة وإيقاع المونتاج."
+]},
+{h:"02 — تعريف الجودة في AVT: الكفاية الوظيفية", items:[
+"الجودة تتجاوز الدقة اللغوية لتشمل التوقيت وسهولة القراءة والوضوح البصري والتزامن مع الصوت.",
+"سطر ترجمة صحيح لغويًا لكنه يُعرض بسرعة أو يحجب الوجه يُعتبر منخفض الجودة من منظور المشاهد.",
+"في الدبلجة، يجب أن يطابق النص حركة الشفاه والنبرة وأسلوب الأداء ليُعتبر طبيعيًا.",
+"يُعرَّف المحترفون الجودة غالبًا عبر الكفاية الوظيفية (مدى خدمة الترجمة لتجربة المشاهدة) لا التكافؤ اللغوي الصارم."
+]},
+{h:"03 — TQA في الدراسات الأكاديمية", items:[
+"تم تكييف نظرية الهدف (Skopos) والدراسات الوصفية للترجمة لتناسب AVT، حيث تُوجَّه الترجمة بالغرض (إخبار، ترفيه، توطين) والقيود (وقت، مساحة، تزامن).",
+"جودة الترجمة السينمائية للحوار تُقاس بقدرة المترجم على تكثيف الحوار مع الحفاظ على التماسك السردي والفكاهة.",
+"دراسة Díaz Cintas وRemael (2021): الترجمة الجيدة توازن بين الأمانة وسهولة القراءة.",
+"النماذج الأكاديمية التقليدية يجب أن تتطور لتشمل الأمانة متعددة الوسائط وسهولة القراءة المرتكزة على المستخدم."
+]},
+{h:"04 — TQA في الصناعة: TAUS DQF وMQM", items:[
+"TAUS: منظمة صناعية عالمية تأسست عام 2004 لتعزيز الابتكار والتوحيد القياسي في تقنيات الترجمة.",
+"DQF: مجموعة أدوات ومقاييس وأفضل ممارسات لقياس وإدارة جودة الترجمة، قابلة للتخصيص حسب الغرض.",
+"MQM: طُوِّر ضمن مشروعي QTLaunchPad وQT21 الأوروبيين (2012-2018)؛ تصنيف هرمي للأخطاء يشمل الدقة والطلاقة والمصطلحات والأسلوب واصطلاحات اللغة والصحة/الأمانة.",
+"منصات مثل Netflix لديها أدلة داخلية مثل Timed Text Style Guides تحدد طول الترجمة وسرعة القراءة والترقيم والنبرة."
+]},
+{h:"05 — أدوات ضبط الجودة الآلية", items:[
+"أدوات مثل Xbench وOOONA QA تكتشف الأخطاء التقنية (التوقيت، التداخل، الترجمات المفقودة).",
+"رغم فعاليتها، لا تزال بحاجة لمراجعين بشريين للحكم على الملاءمة الأسلوبية والثقافية، وهذا يعكس سير عمل هجين بين الإنسان والآلة."
+]},
+{h:"06 — طرق التقييم البشري", items:[
+"يجمع التقييم البشري بين معايير لغوية وتقنية وإدراكية: الدقة والطلاقة والتزامن للترجمة النصية، ومطابقة الشفاه والأداء الصوتي والتكييف الثقافي للدبلجة.",
+"مثال Spirited Away (2001): أُشيدت دبلجته الإنجليزية للحفاظ على النبرة العاطفية مع تكييف المراجع الثقافية.",
+"مثال Squid Game (2021): تعرّض لانتقادات بسبب ترجمات غير دقيقة أثارت جدلًا على وسائل التواصل، مما يوضح أن إدراك الجودة يتأثر بالجمهور والمنصات."
+]},
+{h:"07 — المقيّمون وتغذية الجمهور الراجعة", items:[
+"يشمل المقيّمون المترجمين المحترفين والمراجعين وحتى المستخدمين النهائيين، مع اعتماد متزايد على التقييم الجماعي وملاحظات المشاهدين.",
+"مجتمعات المعجبين (يوتيوب، Viki) تصحح وتُعلّق على الترجمات، وهو ما يُعرف بـ Grassroots TQA.",
+"يستخدم المقيّمون المحترفون قوائم تحقق منظمة مثل اختبار Hermes الخاص بـ Netflix لقياس الدقة والتوقيت.",
+"المقاربات المرتكزة على المستخدم تجادل بأن الجودة الحقيقية تكمن في فهم المشاهد ومتعته، لا الدقة اللغوية فقط."
+]},
+{h:"08 — التقييم الآلي والترجمة الآلية", items:[
+"مقاييس مثل BLEU وTER محدودة في AVT لأنها لا تأخذ بعين الاعتبار التوقيت وتعدد الوسائط والعناصر الأدائية.",
+"أدوات الترجمة الآلية للنصوص المصاحبة (مثل BBC ويوتيوب) تعتمد على التعرف الآلي على الكلام (ASR) مع الترجمة الآلية العصبية (NMT)، ثم يُحرّرها بشريًا للتوقيت وسهولة القراءة.",
+"هذه الأدوات تزيد السرعة وإمكانية الوصول (خصوصًا للترجمة الفورية المباشرة)، لكن تقييمها يتطلب إشرافًا بشريًا لأن المقاييس لا تقيس توقيت الفكاهة أو العاطفة أو الملاءمة البصرية."
+]},
+{h:"09 — سير العمل المتكامل بين الإنسان والآلة", items:[
+"التحرير اللاحق (Post-editing): يقوم المترجم البشري بتنقيح الترجمة أو نص الدبلجة الناتج آليًا.",
+"مثال: ترجمة آلية حرفية لمسلسل إسباني على Netflix تتجاهل الفروق الثقافية، فيقوم المحرر بتعديلها لتناسب نبرة العمل وصوت الشخصية.",
+"يُقاس جهد التحرير اللاحق بالوقت وعدد ضغطات لوحة المفاتيح والحمل المعرفي (عبر تتبع حركة العين)، باستخدام أدوات مثل PET وCASMACAT."
+]},
+{h:"10 — التحديات الأخلاقية والخلاصة", items:[
+"تحديات: هل يجب الإفصاح عن أن الترجمة أُنتجت بالذكاء الاصطناعي؟ وكيف نضمن أجرًا عادلًا للمحررين البشريين؟",
+"تدريب المترجمين والمقيّمين يجب أن يشمل الإلمام التقني (أدوات التحرير اللاحق وضبط الجودة) والحساسية الثقافية (الفكاهة واللهجات والإيماءات).",
+"مستقبل TQA في هذا المجال يكمن في طرق تقييم هجينة تجمع بين المقاييس الآلية والتغذية الراجعة البشرية واختبارات قابلية الاستخدام والتحليل متعدد الوسائط."
+]}
+];
+const SUM_L3_EN = [
+{h:"01 — Background and Aims: Why AVT Is Complex", items:[
+"Assessing quality in audiovisual translation is complex because it involves multiple semiotic modes (spoken, written, visual, acoustic) that interact in time and space.",
+"A high-quality translation must be linguistically correct and synchronize with sound, image, and editing rhythm."
+]},
+{h:"02 — Defining Quality in AVT: Functional Adequacy", items:[
+"Quality goes beyond linguistic accuracy to include timing, readability, visual clarity, and synchronization with audio.",
+"A linguistically correct subtitle that is shown too briefly or blocks the actor's face is perceived as low-quality by viewers.",
+"In dubbing, the text must match lip movements, tone, and performance style to be accepted as \"natural\".",
+"Professionals often define quality through functional adequacy — how well the translation serves the viewing experience — rather than strict linguistic equivalence."
+]},
+{h:"03 — TQA in Academic Translation Studies", items:[
+"Skopos theory and Descriptive Translation Studies have been adapted for AVT, where translation is guided by purpose (inform, entertain, localize) and constraints (time, space, synchronization).",
+"The quality of subtitled dialogue is judged by the translator's ability to condense dialogue while preserving narrative coherence and humor.",
+"Díaz Cintas and Remael (2021) found that good subtitles balance fidelity with readability.",
+"Traditional academic TQA models must evolve to include multimodal fidelity and user-centered readability."
+]},
+{h:"04 — TQA in the Industry: TAUS DQF and MQM", items:[
+"TAUS: a global industry organization founded in 2004 to promote innovation and standardization in translation technologies.",
+"DQF: a set of tools, metrics, and best practices for measuring and managing translation quality, customizable by purpose.",
+"MQM: developed under the EU-funded QTLaunchPad and QT21 projects (2012–2018); a hierarchical error taxonomy covering accuracy, fluency, terminology, style, locale convention, and verity (truthfulness).",
+"Platforms like Netflix have internal guidelines such as Timed Text Style Guides specifying subtitle length, reading speed, punctuation, and tone."
+]},
+{h:"05 — Automatic Quality Assurance Tools", items:[
+"Tools like Xbench and OOONA QA detect technical errors (timing, overlaps, missing subtitles).",
+"Despite their effectiveness, they still rely on human reviewers for stylistic and cultural appropriateness, reflecting a hybrid human-machine workflow."
+]},
+{h:"06 — Human Evaluation Methods", items:[
+"Human evaluation combines linguistic, technical, and perceptual criteria: accuracy, fluency, and synchronization for subtitling; lip-sync, voice acting, and cultural adaptation for dubbing.",
+"Spirited Away (2001): its English dubbing was praised for preserving emotional tone while adapting cultural references.",
+"Squid Game (2021): faced criticism over mistranslated subtitles that sparked controversy on social media, showing that quality perception is mediated by audiences and platforms."
+]},
+{h:"07 — Evaluators and Audience Feedback", items:[
+"Evaluators include professional translators, reviewers, and even end-users, with increasing reliance on crowdsourced evaluation and viewer feedback.",
+"Fan communities (YouTube, Viki) correct and annotate subtitles — a form of \"grassroots TQA\".",
+"Professional evaluators use structured checklists such as Netflix's Hermes test to measure accuracy and timing.",
+"User-centered approaches argue that true quality lies in the viewer's comprehension and enjoyment, not only linguistic precision."
+]},
+{h:"08 — Automated Evaluation and Machine Translation", items:[
+"Metrics like BLEU and TER are limited in AVT because they cannot account for timing, multimodality, or performative elements.",
+"AI subtitling tools (e.g., BBC, YouTube) use automatic speech recognition (ASR) combined with neural machine translation (NMT), then are post-edited by humans for timing and readability.",
+"These tools increase speed and accessibility (especially for live captioning), but their evaluation still requires human oversight since metrics cannot measure humor timing, emotion, or visual fit."
+]},
+{h:"09 — Integrated Human–Machine Workflows", items:[
+"Post-editing: a human translator refines machine-generated subtitles or dubbing scripts.",
+"Example: a literal machine translation of a Spanish Netflix series that ignores cultural nuance is adjusted by a post-editor to match the show's tone and character voice.",
+"Post-editing effort is measured in time, keystrokes, and cognitive load (via eye-tracking), using tools like PET and CASMACAT."
+]},
+{h:"10 — Ethical Challenges and Conclusions", items:[
+"Challenges: should AI-generated subtitles be labeled as such, and how can fair pay be ensured for human post-editors?",
+"Training translators and evaluators must include technological literacy (post-editing, QA automation tools) and cultural sensitivity (humor, dialects, gestures).",
+"The future of TQA in this field lies in hybrid evaluation methods combining automatic metrics with human-centered feedback, usability testing, and multimodal analysis."
+]}
+];
+
+const LECTURES = [
+  { id:"l1", title:{ar:"مقدمة الإعلام", en:"Media Intro"}, bank:{ar:BANK_L1_AR, en:BANK_L1_EN}, summary:{ar:SUM_L1_AR, en:SUM_L1_EN} },
+  { id:"l2", title:{ar:"ترجمة العناوين", en:"Headline Translation"}, bank:{ar:BANK_L2_AR, en:BANK_L2_EN}, summary:{ar:SUM_L2_AR, en:SUM_L2_EN} },
+  { id:"l3", title:{ar:"تقييم الجودة (TQA)", en:"Quality Assessment (TQA)"}, bank:{ar:BANK_L3_AR, en:BANK_L3_EN}, summary:{ar:SUM_L3_AR, en:SUM_L3_EN} }
+];
+
+const UI = {
+  ar:{
+    title:"كويز مقرر ترجمة الإعلام",
+    sub:"اختر محاضرة واحدة أو أكثر من محاضرات المقرر، وابدأ اختبارك. تنسحب الأسئلة عشوائيًا من المحاضرات المختارة، وترتيب الخيارات يتغير كل مرة.",
+    langH:"لغة الأسئلة", lecH:"اختر المحاضرات", modeH:"النمط", countH:"عدد الأسئلة",
+    selAll:"تحديد الكل", avail:n=>"عدد الأسئلة المتاحة حسب اختيارك: "+n, needLec:"اختر محاضرة واحدة على الأقل لتبدأ.",
+    m1:"تصحيح فوري", m1d:"بدون مؤقت. بعد كل إجابة تشوف الصح وسببه.",
+    m2:"محاكاة اختبار", m2d:"مؤقت دقيقة لكل سؤال، والتصحيح بالنهاية فقط.",
+    start:"ابدأ الاختبار", quit:"إنهاء", review:"مراجعة الإجابات", onlyWrong:"الأخطاء فقط", again:"اختبار جديد",
+    noteExam:n=>"الوقت الكلي: "+n+" دقيقة. إذا خلص الوقت ينتهي الاختبار تلقائياً.", noteLearn:"بدون وقت. خذ راحتك.",
+    pos:(i,n)=>"السؤال "+i+" <small>من "+n+"</small>",
+    right:"صح", wrong:l=>"خطأ، الإجابة الصحيحة: "+l,
+    next:"السؤال التالي", showRes:"عرض النتيجة", prev:"السابق", nxt:"التالي", end:"إنهاء الاختبار",
+    pickHint:"اختر إجابة، أو استخدم الأرقام 1 إلى 4.",
+    left:n=>"باقي "+n+" بدون إجابة. تقدر تنتقل لأي سؤال من النقاط فوق.", allDone:"جاوبت على الكل.",
+    confirm:n=>"باقي "+n+" سؤال بدون إجابة. تنهي الاختبار؟",
+    pct:(p,t)=>p+"% خلال "+t, timeout:"، انتهى الوقت",
+    v:["ممتاز، المحتوى واضح عندك.","جيد جداً، راجع الأخطاء وبتقفلها.","مقبول، فيه مفاهيم تحتاج مراجعة.","تحتاج ترجع للمحاضرات قبل الاختبار."],
+    none:"ما جاوبت.", yours:"إجابتك: ", correct:"الصحيح: ", perfect:"ولا غلطة. كل الإجابات صحيحة.",
+    qn:"السؤال ", switchTo:"English", letters:["أ","ب","ج","د"],
+    summaryBtn:"ملخص ومراجعة المحاضرات", summaryTitle:"ملخص المحاضرات", back:"رجوع"
+  },
+  en:{
+    title:"Media Translation Quiz",
+    sub:"Pick one or more lectures from the course, then start your quiz. Questions are drawn randomly from the selected lectures each time, with shuffled answer order.",
+    langH:"Question language", lecH:"Choose Lectures", modeH:"Mode", countH:"Number of questions",
+    selAll:"Select All", avail:n=>"Available questions for your selection: "+n, needLec:"Select at least one lecture to start.",
+    m1:"Instant feedback", m1d:"No timer. After each answer you see the correct one and why.",
+    m2:"Exam simulation", m2d:"One minute per question, graded only at the end.",
+    start:"Start quiz", quit:"End", review:"Review answers", onlyWrong:"Mistakes only", again:"New quiz",
+    noteExam:n=>"Total time: "+n+" minutes. The quiz ends automatically when time runs out.", noteLearn:"No time limit. Take your time.",
+    pos:(i,n)=>"Question "+i+" <small>of "+n+"</small>",
+    right:"Correct", wrong:l=>"Wrong. Correct answer: "+l,
+    next:"Next question", showRes:"See result", prev:"Previous", nxt:"Next", end:"Finish quiz",
+    pickHint:"Pick an answer, or press 1 to 4.",
+    left:n=>n+" unanswered. Tap any dot above to jump to a question.", allDone:"All questions answered.",
+    confirm:n=>n+" questions are unanswered. Finish the quiz?",
+    pct:(p,t)=>p+"% in "+t, timeout:", time ran out",
+    v:["Excellent, you've got this content down.","Very good. Review your mistakes and you're there.","Passable. Some concepts need another look.","Go back to the lectures before the exam."],
+    none:"Not answered.", yours:"Your answer: ", correct:"Correct: ", perfect:"No mistakes. Every answer is correct.",
+    qn:"Question ", switchTo:"العربية", letters:["A","B","C","D"],
+    summaryBtn:"Lecture Summaries & Review", summaryTitle:"Lecture Summaries", back:"Back"
+  }
+};
+const SEC_PER_Q = 60;
+const $ = id => document.getElementById(id);
+
+let lang="ar", mode="learn", count=20;
+let selectedLectures = new Set(LECTURES.map(l=>l.id));
+let activeSumLec = "l1";
+let qs=[], answers=[], idx=0, timeLeft=0, tick=null, startedAt=0, finished=false, lastSecs=0, timedOut=false;
+const T = () => UI[lang];
+
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+function fmt(s){ const m=Math.floor(s/60), r=s%60; return m+":"+String(r).padStart(2,"0"); }
+function show(id){ ["setup","quiz","result","summary"].forEach(s=>$(s).classList.toggle("hidden", s!==id)); window.scrollTo(0,0); }
+function item(q){
+  const lec = LECTURES.find(l=>l.id===q.lec);
+  const bank = lec.bank[lang];
+  const b = bank[q.i];
+  const base=[b[1],...b[2]];
+  return {q:b[0], opts:q.perm.map(k=>base[k]), e:b[3], lecName:lec.title[lang]};
+}
+
+function renderLecChips(){
+  const c=$("lectures"); c.innerHTML="";
+  const allBtn=document.createElement("button"); allBtn.className="chip";
+  allBtn.textContent=T().selAll;
+  allBtn.setAttribute("aria-pressed", selectedLectures.size===LECTURES.length);
+  allBtn.onclick=()=>{ LECTURES.forEach(l=>selectedLectures.add(l.id)); renderLecChips(); updateAvail(); };
+  c.appendChild(allBtn);
+  LECTURES.forEach(l=>{
+    const b=document.createElement("button"); b.className="chip";
+    b.textContent=l.title[lang];
+    b.setAttribute("aria-pressed", selectedLectures.has(l.id));
+    b.onclick=()=>{
+      if(selectedLectures.has(l.id)) selectedLectures.delete(l.id); else selectedLectures.add(l.id);
+      renderLecChips(); updateAvail();
+    };
+    c.appendChild(b);
+  });
+}
+function updateAvail(){
+  const n = selectedLectures.size;
+  if(n===0){ $("availNote").textContent = T().needLec; }
+  else {
+    const total = LECTURES.filter(l=>selectedLectures.has(l.id)).reduce((s,l)=>s+l.bank.ar.length,0);
+    $("availNote").textContent = T().avail(total);
+  }
+  $("startBtn").disabled = n===0;
+}
+
+function applyLang(){
+  const html=document.documentElement;
+  html.lang=lang; html.dir = lang==="ar" ? "rtl" : "ltr";
+  document.title = T().title;
+  document.querySelectorAll("[data-i]").forEach(el=>{ el.textContent=T()[el.dataset.i]; });
+  $("langSwitch").textContent=T().switchTo; $("langSwitch2").textContent=T().switchTo; $("langSwitch3").textContent=T().switchTo;
+  document.querySelectorAll("#langs .chip").forEach(x=>x.setAttribute("aria-pressed", x.dataset.lang===lang));
+  renderLecChips(); updateAvail();
+  updateNote();
+  if(!$("quiz").classList.contains("hidden")) render();
+  if(!$("result").classList.contains("hidden")) renderResult();
+  if(!$("summary").classList.contains("hidden")){ renderSumTabs(); renderSummary(); }
+}
+function updateNote(){ $("timeNote").textContent = mode==="exam" ? T().noteExam(count*SEC_PER_Q/60) : T().noteLearn; }
+function setLang(l){ lang=l; try{localStorage.setItem("mtq-lang",l)}catch(e){} applyLang(); }
+
+document.querySelectorAll("#langs .chip").forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
+document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{
+  mode=b.dataset.mode; document.querySelectorAll(".mode").forEach(x=>x.setAttribute("aria-pressed", x===b)); updateNote();
+});
+document.querySelectorAll("#counts .chip").forEach(b=>b.onclick=()=>{
+  count=+b.dataset.n; document.querySelectorAll("#counts .chip").forEach(x=>x.setAttribute("aria-pressed", x===b)); updateNote();
+});
+$("langSwitch").onclick=$("langSwitch2").onclick=$("langSwitch3").onclick=()=>setLang(lang==="ar"?"en":"ar");
+$("summaryBtn").onclick=()=>{ renderSumTabs(); renderSummary(); show("summary"); };
+$("summaryBackBtn").onclick=()=>show("setup");
+
+function buildPool(){
+  let pool=[];
+  LECTURES.forEach(l=>{ if(selectedLectures.has(l.id)){ for(let i=0;i<l.bank.ar.length;i++) pool.push({lec:l.id, i}); } });
+  return pool;
+}
+
+function start(){
+  const pool = shuffle(buildPool());
+  const n = Math.min(count, pool.length);
+  qs = pool.slice(0,n).map(p=>{
+    const perm=shuffle([0,1,2,3]);
+    return {lec:p.lec, i:p.i, perm, correct:perm.indexOf(0)};
+  });
+  count = n;
+  answers=new Array(count).fill(null); idx=0; finished=false; timedOut=false; startedAt=Date.now();
+  clearInterval(tick);
+  const t=$("timer");
+  if(mode==="exam"){
+    timeLeft=count*SEC_PER_Q; t.classList.remove("hidden","low"); t.textContent=fmt(timeLeft);
+    tick=setInterval(()=>{
+      timeLeft--; t.textContent=fmt(Math.max(timeLeft,0)); t.classList.toggle("low", timeLeft<=60);
+      if(timeLeft<=0){ timedOut=true; finish(); }
+    },1000);
+  } else t.classList.add("hidden");
+  $("rail").classList.toggle("jump", mode==="exam");
+  show("quiz"); render();
+}
+
+function renderRail(){
+  const r=$("rail"); r.innerHTML="";
+  qs.forEach((q,i)=>{
+    const d=document.createElement("button"); d.className="dot"; d.setAttribute("aria-label",T().qn+(i+1));
+    if(answers[i]!==null) d.classList.add(mode==="learn" ? (answers[i]===q.correct?"ok":"bad") : "ans");
+    if(i===idx) d.classList.add("cur");
+    if(mode==="exam") d.onclick=()=>{ idx=i; render(); }; else d.tabIndex=-1;
+    r.appendChild(d);
+  });
+}
+
+function render(){
+  const q=qs[idx], it=item(q), a=answers[idx], L=T().letters;
+  $("pos").innerHTML=T().pos(idx+1,count);
+  $("lecTag").textContent=it.lecName;
+  $("qtext").textContent=it.q;
+  renderRail();
+  const box=$("opts"); box.innerHTML="";
+  const locked = mode==="learn" && a!==null;
+  it.opts.forEach((o,i)=>{
+    const b=document.createElement("button"); b.className="opt";
+    const l=document.createElement("span"); l.className="l"; l.textContent=L[i];
+    const t=document.createElement("span"); t.className="t"; t.textContent=o;
+    b.append(l,t);
+    if(locked){ b.disabled=true; if(i===q.correct) b.classList.add("ok"); else if(i===a) b.classList.add("bad"); }
+    else if(a===i) b.classList.add("sel");
+    b.onclick=()=>pick(i); box.appendChild(b);
+  });
+  const why=$("why");
+  if(locked){
+    const right=a===q.correct;
+    why.className="why"+(right?"":" bad");
+    why.innerHTML=""; const bb=document.createElement("b"); bb.textContent= right?T().right:T().wrong(L[q.correct]);
+    why.append(bb, document.createTextNode(it.e));
+  } else why.className="why hidden";
+  renderNav();
+}
+
+function renderNav(){
+  const n=$("nav"); n.innerHTML=""; $("hint").textContent="";
+  const last=idx===count-1;
+  if(mode==="learn"){
+    const b=document.createElement("button"); b.className="btn main";
+    b.textContent= last?T().showRes:T().next; b.disabled=answers[idx]===null;
+    b.onclick=()=> last?finish():(idx++,render()); n.appendChild(b);
+    if(answers[idx]===null) $("hint").textContent=T().pickHint;
+  } else {
+    const p=document.createElement("button"); p.className="btn"; p.textContent=T().prev; p.disabled=idx===0;
+    p.onclick=()=>{ idx--; render(); };
+    const nx=document.createElement("button"); nx.className="btn main"; nx.textContent= last?T().end:T().nxt;
+    nx.onclick=()=> last?confirmFinish():(idx++,render());
+    n.append(p,nx);
+    const left=answers.filter(x=>x===null).length;
+    $("hint").textContent= left?T().left(left):T().allDone;
+  }
+}
+
+function pick(i){
+  if(finished) return;
+  if(mode==="learn" && answers[idx]!==null) return;
+  answers[idx]=i; render();
+}
+function confirmFinish(){
+  const left=answers.filter(x=>x===null).length;
+  if(left && !confirm(T().confirm(left))) return;
+  finish();
+}
+function finish(){
+  if(finished) return;
+  finished=true; clearInterval(tick);
+  lastSecs=Math.round((Date.now()-startedAt)/1000);
+  $("onlyWrong").setAttribute("aria-pressed","false");
+  renderResult(); show("result");
+}
+function renderResult(){
+  const correct=qs.filter((q,i)=>answers[i]===q.correct).length;
+  const pct=Math.round(correct/count*100);
+  $("bigScore").innerHTML=correct+' <span>/ '+count+'</span>';
+  $("pct").textContent=T().pct(pct,fmt(lastSecs))+(timedOut?T().timeout:"");
+  $("verdict").textContent=T().v[pct>=90?0:pct>=75?1:pct>=60?2:3];
+  renderReview($("onlyWrong").getAttribute("aria-pressed")==="true");
+}
+function renderReview(onlyWrong){
+  const r=$("review"); r.innerHTML="";
+  qs.forEach((q,i)=>{
+    const a=answers[i], ok=a===q.correct; if(onlyWrong && ok) return;
+    const it=item(q), d=document.createElement("div"); d.className="rev"+(ok?"":" bad");
+    const t=(cls,txt)=>{ const e=document.createElement("p"); e.className=cls; e.textContent=txt; d.appendChild(e); };
+    t("rq",(i+1)+". ["+it.lecName+"] "+it.q);
+    if(a===null) t("ra wrong",T().none); else if(!ok) t("ra wrong",T().yours+it.opts[a]);
+    t("ra right",T().correct+it.opts[q.correct]);
+    t("re",it.e);
+    r.appendChild(d);
+  });
+  if(!r.children.length){ const p=document.createElement("p"); p.style.color="var(--muted)"; p.textContent=T().perfect; r.appendChild(p); }
+}
+
+$("onlyWrong").onclick=function(){ const on=this.getAttribute("aria-pressed")!=="true"; this.setAttribute("aria-pressed",on); renderReview(on); };
+$("startBtn").onclick=start;
+$("againBtn").onclick=()=>show("setup");
+$("quitBtn").onclick=()=>{
+  if(mode==="exam") confirmFinish();
+  else if(answers.some(x=>x!==null)) finish();
+  else { clearInterval(tick); show("setup"); }
+};
+document.addEventListener("keydown",e=>{
+  if($("quiz").classList.contains("hidden")) return;
+  const k=e.key;
+  if("1234".includes(k) && k.length===1) pick(+k-1);
+  else if("١٢٣٤".includes(k) && k.length===1) pick("١٢٣٤".indexOf(k));
+  else if(k==="Enter"){
+    const m=document.querySelector("#nav .btn.main");
+    if(m && !m.disabled && document.activeElement.tagName!=="BUTTON") m.click();
+  }
+});
+
+function renderSumTabs(){
+  const c=$("sumTabs"); c.innerHTML="";
+  LECTURES.forEach(l=>{
+    const b=document.createElement("button"); b.className="chip";
+    b.textContent=l.title[lang];
+    b.setAttribute("aria-pressed", activeSumLec===l.id);
+    b.onclick=()=>{ activeSumLec=l.id; renderSumTabs(); renderSummary(); };
+    c.appendChild(b);
+  });
+}
+function renderSummary(){
+  const lec = LECTURES.find(l=>l.id===activeSumLec);
+  const data = lec.summary[lang];
+  const c=$("summaryContent"); c.innerHTML="";
+  data.forEach(sec=>{
+    const d=document.createElement("div"); d.className="sec";
+    const h=document.createElement("h3"); h.textContent=sec.h; d.appendChild(h);
+    const list=document.createElement(sec.ordered?"ol":"ul");
+    sec.items.forEach(t=>{ const li=document.createElement("li"); li.textContent=t; list.appendChild(li); });
+    d.appendChild(list);
+    c.appendChild(d);
+  });
+}
+
+try{ const s=localStorage.getItem("mtq-lang"); if(s==="en"||s==="ar") lang=s; }catch(e){}
+applyLang();
+</script>
+</body>
+</html>
