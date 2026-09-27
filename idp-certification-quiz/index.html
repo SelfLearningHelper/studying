@@ -1,0 +1,1416 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>IDP Competency Certification — Practice Quiz</title>
+<style>
+:root{
+  --bg:#f3f5f9; --surface:#ffffff; --ink:#1b2330; --muted:#5c6773;
+  --line:#e1e6ee; --primary:#1e6fd9; --primary-soft:#e8f1fd;
+  --good:#1e9e63; --good-soft:#e5f7ee; --bad:#d64545; --bad-soft:#fdeaea;
+  --radius:14px;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0f1420; --surface:#171e2b; --ink:#e8edf5; --muted:#93a0b4;
+    --line:#2a3547; --primary:#5b9dff; --primary-soft:#1b2c47;
+    --good:#3ecf8e; --good-soft:#123324; --bad:#ff6b6b; --bad-soft:#3a1414;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding:20px 16px 70px}
+.hidden{display:none !important}
+
+.notice{background:#fff4d6;border:1px solid #e3b23c;color:#5a4200;border-radius:12px;
+  padding:14px 16px;font-weight:600;font-size:.92rem;margin-bottom:18px;display:flex;gap:10px;align-items:flex-start}
+.notice svg{flex:0 0 auto;margin-top:2px}
+@media (prefers-color-scheme:dark){.notice{background:#3a2f10;border-color:#8a6a1c;color:#f3d488}}
+
+h1{font-size:1.55rem;margin:6px 0 2px}
+.sub{color:var(--muted);margin:0 0 20px;font-size:.95rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin-bottom:16px}
+.group{margin-bottom:20px}
+.group h2{font-size:1.02rem;margin:0 0 4px}
+.group .note{color:var(--muted);font-size:.85rem;margin:0 0 10px}
+
+.srcHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:18px 0 8px}
+.srcHead h3{font-size:.95rem;margin:0;color:var(--primary)}
+.srcHead .miniLink{font-size:.78rem;color:var(--muted);background:none;border:1px solid var(--line);
+  border-radius:999px;padding:3px 10px;cursor:pointer}
+.srcHead .miniLink:hover{border-color:var(--primary);color:var(--primary)}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;
+  font-size:.85rem;cursor:pointer;user-select:none;color:var(--ink)}
+.chip.on{background:var(--primary-soft);border-color:var(--primary);color:var(--primary);font-weight:600}
+.chip .cnt{opacity:.65;font-weight:400}
+
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
+select,input[type=number]{background:var(--surface);color:var(--ink);border:1px solid var(--line);
+  border-radius:10px;padding:9px 10px;font-size:.9rem}
+.modeSeg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.modeSeg button{border:0;background:var(--surface);color:var(--ink);padding:9px 14px;font-size:.85rem;cursor:pointer}
+.modeSeg button.on{background:var(--primary);color:#fff}
+
+.start{display:inline-block;background:var(--primary);color:#fff;border:0;border-radius:12px;
+  padding:13px 22px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:16px}
+.start:disabled{opacity:.45;cursor:default}
+.start.secondary{background:var(--surface);color:var(--ink);border:2px solid var(--line)}
+.start.small{padding:9px 16px;font-size:.85rem;margin-top:8px}
+
+.bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}
+.pos{font-weight:700;font-size:.95rem;color:var(--muted)}
+.barside{display:flex;gap:8px;align-items:center}
+.timer{font-variant-numeric:tabular-nums;font-weight:700;color:var(--primary);font-size:.9rem}
+.quit,.mini{background:var(--surface);border:1px solid var(--line);color:var(--ink);border-radius:9px;
+  padding:7px 12px;font-size:.82rem;cursor:pointer}
+.quit:hover,.mini:hover{border-color:var(--bad);color:var(--bad)}
+
+.progressTrack{height:6px;background:var(--line);border-radius:99px;margin-bottom:18px;overflow:hidden}
+.progressFill{height:100%;background:var(--primary);border-radius:99px;transition:width .25s}
+
+.qTag{display:inline-block;background:var(--primary-soft);color:var(--primary);font-size:.75rem;
+  font-weight:700;padding:3px 11px;border-radius:999px;margin-bottom:10px}
+.qText{font-size:1.12rem;font-weight:600;margin:0 0 16px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:block;width:100%;text-align:left;background:var(--surface);border:1.5px solid var(--line);
+  color:var(--ink);border-radius:12px;padding:13px 15px;font-size:.95rem;cursor:pointer}
+.opt:hover{border-color:var(--primary)}
+.opt.correct{border-color:var(--good);background:var(--good-soft);font-weight:600}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt.disabled{pointer-events:none}
+.opt .lab{display:inline-block;width:22px;font-weight:700;opacity:.6}
+
+.qFoot{display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:10px;flex-wrap:wrap}
+.refBtn{background:none;border:1px dashed var(--primary);color:var(--primary);border-radius:10px;
+  padding:8px 14px;font-size:.82rem;cursor:pointer;font-weight:600}
+.refBtn:hover{background:var(--primary-soft)}
+.nextBtn{background:var(--primary);color:#fff;border:0;border-radius:10px;padding:10px 20px;
+  font-size:.9rem;font-weight:700;cursor:pointer}
+.nextBtn:disabled{opacity:.4;cursor:default}
+
+.score{text-align:center;padding:10px 0 6px}
+.score .num{font-size:3rem;font-weight:800;color:var(--primary);margin:0}
+.score .pct{font-size:1.1rem;color:var(--muted);margin:2px 0 8px}
+.score .verdict{font-size:1.05rem;font-weight:700;margin:6px 0 4px}
+.resActions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:18px 0 6px}
+
+.filterRow{display:flex;align-items:center;gap:8px;margin:20px 0 10px}
+.filterRow label{font-size:.85rem;color:var(--muted);display:flex;align-items:center;gap:6px}
+
+.revItem{border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:10px}
+.revItem .rq{font-weight:600;margin:0 0 8px}
+.revItem .ra{font-size:.9rem;margin:3px 0}
+.revItem .ra b{font-weight:700}
+.revItem .you{color:var(--bad)}
+.revItem .correctLine{color:var(--good)}
+.revItem.isCorrect{border-color:var(--good)}
+.revItem.isWrong{border-color:var(--bad)}
+
+.qaPair{border-bottom:1px solid var(--line);padding:10px 0}
+.qaPair:last-child{border-bottom:0}
+.qaPair .qq{font-weight:600;margin:0 0 4px;font-size:.93rem}
+.qaPair .aa{color:var(--good);font-size:.9rem;margin:0}
+.qaPair .aa b{font-weight:700}
+
+.topicBlock{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.topicHead{display:flex;justify-content:space-between;align-items:center;padding:13px 15px;
+  cursor:pointer;background:var(--surface)}
+.topicHead:hover{background:var(--primary-soft)}
+.topicHead .tn{font-weight:600;font-size:.93rem}
+.topicHead .tc{color:var(--muted);font-size:.8rem}
+.topicBody{padding:4px 15px 14px;display:none;border-top:1px solid var(--line)}
+.topicBody.open{display:block}
+.searchBox{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;
+  background:var(--surface);color:var(--ink);font-size:.9rem;margin-bottom:16px}
+
+.overlay{position:fixed;inset:0;background:rgba(10,14,22,.55);display:flex;align-items:flex-end;
+  justify-content:center;z-index:50;padding:0}
+@media (min-width:640px){.overlay{align-items:center;padding:20px}}
+.overlay.hidden{display:none}
+.modal{background:var(--surface);width:100%;max-width:640px;max-height:88vh;overflow-y:auto;
+  border-radius:16px 16px 0 0;padding:20px}
+@media (min-width:640px){.modal{border-radius:16px}}
+.modalHead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px;
+  position:sticky;top:-20px;background:var(--surface);padding-top:2px}
+.modalHead h3{margin:0;font-size:1.02rem}
+.modalHead .src{color:var(--muted);font-size:.78rem;margin-top:2px}
+.closeX{background:var(--bg);border:1px solid var(--line);border-radius:50%;width:32px;height:32px;
+  flex:0 0 auto;font-size:1rem;cursor:pointer;color:var(--ink)}
+
+footer{margin-top:30px;color:var(--muted);font-size:.78rem;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="notice">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/></svg>
+    <div>For personal use only. This practice material is intended solely for individual exam preparation and must not be redistributed, copied, or shared publicly.</div>
+  </div>
+
+  <!-- SETUP -->
+  <section id="setup">
+    <h1>IDP Competency Certification</h1>
+    <p class="sub">Practice quiz built from the full IDP review question banks. Pick your topics below.</p>
+
+    <div class="card">
+      <div class="group">
+        <h2>Select topics</h2>
+        <p class="note" id="topicNote">Loading question bank…</p>
+        <div id="topicGroups"></div>
+      </div>
+
+      <div class="row">
+        <label style="font-size:.85rem;color:var(--muted)">Questions:</label>
+        <input type="number" id="countInput" min="5" max="200" value="20" style="width:80px">
+        <div class="modeSeg">
+          <button id="modeLearn" class="on" type="button">Learn</button>
+          <button id="modeExam" type="button">Exam</button>
+        </div>
+      </div>
+
+      <button class="start" id="startBtn">Start Quiz</button>
+      <br>
+      <button class="start secondary small" id="browseBtn">Browse Reference Library (no test)</button>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz" class="hidden">
+    <div class="bar">
+      <div class="pos" id="posLabel"></div>
+      <div class="barside">
+        <span class="timer hidden" id="timerLabel"></span>
+        <button class="quit" id="quitBtn">Quit</button>
+      </div>
+    </div>
+    <div class="progressTrack"><div class="progressFill" id="progressFill"></div></div>
+    <div class="card">
+      <span class="qTag" id="qTag"></span>
+      <p class="qText" id="qText"></p>
+      <div class="opts" id="opts"></div>
+      <div class="qFoot">
+        <button class="refBtn" id="refBtn">📖 Reference — see full topic</button>
+        <button class="nextBtn" id="nextBtn" disabled>Next</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="result" class="hidden">
+    <div class="bar">
+      <div class="pos">Result</div>
+      <div class="barside"><button class="quit" id="resultBackBtn">Home</button></div>
+    </div>
+    <div class="card score">
+      <p class="num" id="scoreNum"></p>
+      <p class="pct" id="scorePct"></p>
+      <p class="verdict" id="verdict"></p>
+      <div class="resActions">
+        <button class="start small" id="retryBtn">Retry same setup</button>
+        <button class="start secondary small" id="newBtn">New quiz</button>
+      </div>
+    </div>
+    <div class="filterRow">
+      <label><input type="checkbox" id="onlyWrong"> Show only wrong answers</label>
+    </div>
+    <div id="reviewList"></div>
+  </section>
+
+  <!-- REVIEW / BROWSE LIBRARY -->
+  <section id="review" class="hidden">
+    <div class="bar">
+      <div class="pos">Reference Library</div>
+      <div class="barside"><button class="quit" id="reviewBackBtn">Home</button></div>
+    </div>
+    <input type="text" class="searchBox" id="reviewSearch" placeholder="Search a question or keyword…">
+    <div id="reviewTopics"></div>
+  </section>
+
+  <footer>Question bank compiled by Hussain Shehab. Practice tool for personal study only.</footer>
+</div>
+
+<!-- REFERENCE MODAL (used during quiz) -->
+<div class="overlay hidden" id="refOverlay">
+  <div class="modal">
+    <div class="modalHead">
+      <div>
+        <h3 id="refTitle"></h3>
+        <div class="src" id="refSrc"></div>
+      </div>
+      <button class="closeX" id="refClose">✕</button>
+    </div>
+    <div id="refBody"></div>
+  </div>
+</div>
+
+<script>
+/* ============ DATA ============ */
+const TOPICS = [
+{id:"s-permit", src:`IDP ALL safety 2026`, name:`Work Permit, Isolation (LOTO), Confined Space, SCBA & Fire Watch`, qs:[
+[`What is a toxic, corrosive or suffocation atmosphere that causes an immediate threat to life or health called?`,`An Immediately Dangerous to Life and Health (IDLH) Atmosphere`,[`A Permit Required Confined Space (PRCS)`,`An Oxygen Deficient Atmosphere`,`A Hazardous Waste Operations (HAZWOP) zone`]],
+[`Who determines and writes on the work permit the frequency of gas testing or when continuous gas testing is required?`,`The work permit issuer`,[`The gas tester`,`The receiver`,`The shift superintendent`]],
+[`When gas testing is required for the issue of a work permit, what must the certified gas tester do with the result of the test?`,`Enter the results on the work permit and sign the gas tester's section`,[`Report verbally to the issuer only`,`File it with Loss Prevention within 24 hours`,`Discard it once work starts`]],
+[`At what H2S and O2 concentrations must the division head countersign applicable work permits?`,`When H2S is between 10 ppm and 100 ppm, O2 is below 20%`,[`When H2S is above 100 ppm, O2 is below 16%`,`When H2S is below 10 ppm, O2 is above 23.5%`,`When H2S is at 0 ppm, O2 is at 20.9%`]],
+[`When specified conditions on a work permit affect another supervisor's area, what is required?`,`Obtain countersignature from affected area supervisor on the permit`,[`Notify Loss Prevention only`,`Cancel the permit and reissue under the other area`,`No action required if work is temporary`]],
+[`What must be done with the original copy of a closed permit?`,`The issuer must keep it for a minimum of 3 months`,[`The receiver must keep it for 6 months`,`It must be destroyed immediately after closing`,`It must be forwarded to Fire Protection Department`]],
+[`Who must inspect the job site before closing a work permit?`,`Both the issuer (or his designated representative) and receiver`,[`Only the issuer`,`Only the receiver`,`The area Loss Prevention division head`]],
+[`Why must sewers be covered when an "open flame" hot work permit is issued?`,`To stop sparks from igniting hydrocarbons in sewer`,[`To prevent gas monitor false readings`,`To contain acid spills`,`To reduce noise during welding`]],
+[`When issuing a hot work or confined space entry permit, who performs the gas testing?`,`A certified gas tester`,[`The permit issuer`,`The receiver`,`Any operator on shift`]],
+[`A work permit has been issued — can another craft's work on the equipment be done using the same permit even though the work is not mentioned on the permit?`,`No, only the work/craft specified on the permit is allowed`,[`Yes, if the job site is unchanged`,`Yes, with verbal approval from the issuer`,`Only if both crafts are from the same contractor`]],
+[`Can more than one type of permit be issued for a specific job?`,`Yes, frequently more than one permit is required`,[`No, only one permit may be active`,`Only with Division Head approval`,`Only for hot work jobs`]],
+[`When renewing one permit for an oncoming shift, is a joint inspection by the issuer (or his designated representative) and receiver required?`,`Yes, they must inspect the job site and agree on permit/area conditions`,[`No, only the receiver needs to inspect`,`Only required every 48 hours`,`Only required for confined space permits`]],
+[`What is the maximum LEL allowed for a hot work permit?`,`0% LEL`,[`5% LEL`,`10% LEL`,`25% LEL`]],
+[`What work permits are required to open a flange on a hydrocarbon line when using hand tools?`,`Equipment opening/line break permit and cold work permit`,[`Hot work permit only`,`Confined space and hot work permits`,`Release permit only`]],
+[`What work permits are required to weld inside a vessel?`,`Hot work and confined space permits`,[`Hot work permit only`,`Cold work and release permits`,`Equipment opening/line break permit only`]],
+[`What work permit is required when opening an energized breaker cover?`,`Cold work permit`,[`Hot work permit`,`Equipment opening/line break permit`,`Confined space permit`]],
+[`What is the maximum total time that can normally be covered by a work permit when renewed by the issuer and receiver working an 8-hour shift?`,`16 hours`,[`8 hours`,`24 hours`,`12 hours`]],
+[`What action should be taken when a crane operator's certificate is expired and he requests a work permit?`,`Do not issue a work permit`,[`Issue the permit with a supervisor escort`,`Issue the permit and note the expiry`,`Issue a temporary 4-hour permit`]],
+[`What must be done before issuing a work permit for a contractor to erect a 43-foot scaffold?`,`Proponent engineers and area loss prevention division must review the scaffold plan`,[`Only the receiver must approve the plan`,`The scaffold contractor's own engineer must approve it`,`No special review needed under 50 feet`]],
+[`When issuing a hot work permit to allow entry of a vehicle to a restricted area, should a joint site inspection be performed by the issuer and receiver?`,`Yes, hot work permits in these areas require a joint inspection`,[`No, only the receiver inspects`,`Only required if the vehicle carries passengers`,`Only required at night`]],
+[`Who must hold valid work permit certificates to sign a work permit?`,`Both the issuer and receiver`,[`Only the issuer`,`Only the receiver`,`Only the Division Head`]],
+[`What determines the frequency of gas tests to be routinely performed after the initial issue of a confined space permit?`,`The frequency of gas tests is stated on the work permit by the issuer`,[`Fixed at every 2 hours regardless of conditions`,`Determined solely by the gas tester on site`,`Set by the Fire Protection Department`]],
+[`Who should perform a joint site inspection before a work permit is signed?`,`Issuer (or his designated representative) and receiver`,[`Issuer and Loss Prevention representative`,`Receiver and Fire Watch`,`Issuer and Division Head`]],
+[`Who must countersign the first open flame work permit issued in a restricted area by a permit issuer?`,`Operation superintendent or shift superintendent`,[`Loss Prevention division head`,`Fire Protection Department supervisor`,`Area foreman only`]],
+[`What permit is required for the initial opening of equipment, vessel or piping that is part of a closed system that may contain hydrocarbons?`,`Equipment opening/line break permit`,[`Hot work permit`,`Confined space permit`,`Cold work permit`]],
+[`What permit is required for entry into a vessel, tank or other space not normally designed for human occupancy that may contain hazards other than a health hazard?`,`Confined space permit`,[`Equipment opening/line break permit`,`Hot work permit`,`Extended work permit`]],
+[`What permit is required for activities that will not produce energy to ignite flammable atmospheres or combustible materials?`,`Cold work permit`,[`Hot work permit`,`Confined space permit`,`Equipment opening/line break permit`]],
+[`What permit is required for an activity that may develop sparks, flames or heat sufficient to cause ignition of flammable atmospheres or combustible materials?`,`Hot work permit`,[`Cold work permit`,`Equipment opening/line break permit`,`Confined space permit`]],
+[`What is an Extended Work Permit?`,`A work permit that is issued for a period greater than two consecutive operating shifts, but not in excess of 30 days`,[`Issued for any job lasting more than 8 hours`,`Issued for jobs exceeding 30 days with special approval`,`Issued only for hot work exceeding one shift`]],
+[`What must be completed during a joint site inspection by the issuer and receiver (or their designates) before work permit issue?`,`The completion of a Hazards Analysis Checklist`,[`A Job Safety Analysis (JSA) only`,`A Permit-to-Work register entry`,`A Loss Prevention audit form`]],
+[`Which of the following correctly identifies the SA form number and color of Aramco work permits?`,`Cold work is SA-9873-4 (Green), hot work is SA-9873-1 (Yellow), Equip. Opening/Line Breaking is SA-9873-2 (Blue) and confined space entry is SA-9873-3 (Red)`,[`Cold work is SA-9873-1 (Yellow), hot work is SA-9873-4 (Green)`,`Confined space is SA-9873-1 (Yellow), hot work is SA-9873-3 (Red)`,`Equipment opening is SA-9873-4 (Green), cold work is SA-9873-2 (Blue)`]],
+[`What must be done by the issuer when a permit is stopped and cancelled because of a change in work activities?`,`Pull the permit, write on it the reason for work cancellation, the time, and any other relevant information; ensure deficiencies are corrected, and issue a new permit if required`,[`Simply discard the permit and start fresh next shift`,`Notify Loss Prevention only, no paperwork needed`,`File an incident report and suspend the crew for the day`]],
+[`What should be done to ensure that electrical equipment is properly isolated and locked out?`,`4-step process of LOCK, TAG, CLEAR and TRY`,[`3-step process of TAG, CLEAR and TRY`,`2-step process of LOCK and TAG`,`5-step process including a supervisor sign-off`]],
+[`What should be done before attaching a lockout device to the breaker of an electric motor, heater or other electrical equipment?`,`It must be de-energized`,[`It must be tagged first, then de-energized`,`It must be tested under load`,`It must be reported to the electrician on duty`]],
+[`Who must use locks and hold tags to identify isolation equipment being worked on by maintenance?`,`Operations and all craftsmen on the job`,[`Only maintenance craftsmen`,`Only the permit issuer`,`Only the Division Head`]],
+[`Who can authorize cutting of operations and maintenance locks off locked-out equipment?`,`Lock's owner, Superintendent or Operations Superintendent`,[`Any shift supervisor`,`The permit receiver`,`The Fire Protection Department`]],
+[`When a mechanic requests to work on rotating equipment without placing his lock and hold tags on the lock box (isolation point), what action should be taken by the outside operator?`,`Do not allow him to work; inform the supervising operator`,[`Allow him but supervise closely`,`Allow him if the job is under 30 minutes`,`Issue him a temporary lock from the tool room`]],
+[`Whose lock is first on and last off from a locked-out breaker?`,`Operations lock`,[`Maintenance lock`,`Contractor's lock`,`Whichever craft arrived first`]],
+[`Who can authorize the removal of an operations car seal or locks and hold tags that have been installed on equipment for safe operation (no maintenance work)?`,`Supervising operator`,[`Lock owner's superintendent`,`Any craftsman on the job`,`The Fire Protection Department`]],
+[`What action should be taken by the outside operator when an electrician is discovered working on electrical equipment that is locked out but not electrically isolated?`,`Stop him from working; inform the supervising operator`,[`Allow him to continue and monitor`,`Report it only after the job is finished`,`Ask him to isolate it himself and continue`]],
+[`When should operations personnel remove their lock and hold tags from locked-out equipment?`,`After the job is completed and craftsmen have removed their locks`,[`Immediately when their shift ends`,`Before craftsmen remove their locks`,`Only when instructed by the Division Head`]],
+[`Why are lockout devices and padlocks installed on system controllers and isolation points of equipment being prepared for maintenance?`,`To prevent them from being operated`,[`To identify which craft is working`,`To log the equipment's maintenance history`,`To satisfy insurance requirements`]],
+[`What is the main purpose of a hold tag?`,`To show that equipment is out of service`,[`To identify the lock owner`,`To record the isolation date only`,`To warn of a confined space hazard`]],
+[`When must equipment be locked out?`,`When personnel work on equipment and could be injured by an uncontrolled release of energy from the system`,[`Only during night shift maintenance`,`Only for electrical equipment`,`Only when requested by the craftsman`]],
+[`What can be done to reduce the number of locks required when a large number of maintenance personnel work on the isolation points of equipment?`,`A group lockout procedure using a lockout box can be used to reduce the total number of single-keyed locks required`,[`Assign one supervisor lock for the whole crew`,`Use hold tags only, no locks`,`Rotate a single lock among workers`]],
+[`When a craftsman temporarily leaves the job site during the shift but intends to return during the shift, do his tags stay on the isolation point?`,`It is up to the outside permit issuer or designee's discretion — he can allow them to remain installed or require them to be removed`,[`Yes, always, no exceptions`,`No, they must always be removed`,`Only if he is gone less than 15 minutes`]],
+[`What information is required on the hold tag concerning the individual operator/craftsman installing the lockout?`,`Organization code, location, date and time of isolation, equipment number, reason for isolation and lock number`,[`Only the craftsman's name and date`,`Job permit number and supervisor's signature`,`Equipment cost center and shift schedule`]],
+[`What test and inspection dates should be checked when performing a Scott Air Pak Safety Checklist?`,`Cylinder hydro test and fire department inspection date`,[`Manufacture date and last user's name`,`Purchase date and warranty expiry`,`Last function test date only`]],
+[`How many minutes of air is contained in a full Scott Air Pak cylinder?`,`30 minutes`,[`45 minutes`,`60 minutes`,`20 minutes`]],
+[`What condition could cause a fire blanket to fail an inspection?`,`When it has holes, tears, mold or rot on it`,[`Any use within the last 12 months`,`Faded color`,`Missing storage bag`]],
+[`When performing a regular check of a Scott Air Pak model 2.2, the air saver/donning switch is found faulty and causing air to leak — what action should be taken?`,`Close the cylinder valve, tag the regulator for repair and remove it from service`,[`Continue use and report at end of shift`,`Fully open the bypass valve and continue`,`Replace only the switch on site`]],
+[`How tight should the high-pressure coupling on the Scott Air Pak be tightened to the air cylinder?`,`Hand tight`,[`Torque wrench to 20 ft-lb`,`As tight as possible with pliers`,`Finger tight only, no further tightening`]],
+[`When performing a Scott Air Pak Safety Checklist, what reading on the cylinder air gauge would require the cylinder to be replaced?`,`Replace when below the yellow line`,[`Replace when below the red line`,`Replace when below 50% full`,`Replace only when completely empty`]],
+[`What is the operating pressure of the Scott Air Pak model 2.2?`,`2216 psig`,[`3000 psig`,`1800 psig`,`4500 psig`]],
+[`When operationally testing the Scott Air Pak 2.2, what happens when the purge valve is rotated ½ turn counterclockwise?`,`Air should start freely flowing from the regulator`,[`Air flow should stop completely`,`The low-pressure alarm should activate`,`The regulator should lock closed`]],
+[`What action should be taken when a SCBA air cylinder is empty?`,`Get the empty cylinder replaced`,[`Refill it on site using the compressor`,`Tag it for the next shift to replace`,`Continue use until the shift ends`]],
+[`In accordance with Fire Protection Department (FrPD) GI-1781.001-01, how frequently do operations and FrPD inspect SABA and 30-minute SCBAs?`,`Operations inspects SABA and SCBA equipment daily; FrPD inspects monthly`,[`Operations inspects weekly; FrPD inspects daily`,`Operations inspects monthly; FrPD inspects weekly`,`Both inspect quarterly`]],
+[`What is the primary hazard of working in an atmosphere with a concentration of Carbon Monoxide (CO) over 35 ppm?`,`These concentrations of CO can cause unconsciousness or death by suffocation due to the lack of oxygen`,[`Skin irritation and burns`,`Explosive atmosphere formation`,`Corrosion of nearby metal equipment`]],
+[`What must be done before performing the initial gas test for a confined space entry permit?`,`All ventilation systems must be stopped at least 15 minutes prior to testing`,[`Ventilation systems must run continuously during testing`,`The space must be purged with nitrogen first`,`The standby man must enter first to verify`]],
+[`What must be done for the confined space work permit if work is stopped due to a gas monitoring alarm condition?`,`The reason for stopping the work, the time and relevant information should be written on the drawn work permit`,[`The permit is automatically voided and cannot be reissued`,`Only the gas tester needs to note the event verbally`,`Work may resume immediately once the alarm clears`]],
+[`When is a self-contained breathing apparatus (SCBA) such as the Scott Air Pak required to enter a confined space?`,`When CO is between 35 ppm and 1000 ppm, O2 is less than 20%, LEL is between 5% and 10%, H2S is between 10 ppm and 100 ppm`,[`When CO is below 35 ppm, O2 is above 20%`,`When LEL is 0% and H2S is 0 ppm`,`When O2 is between 20% and 23.5%`]],
+[`When are Carbon Monoxide gas tests required for a confined space entry permit?`,`If the confined space activities involve abrasive cleaning (such as sand blasting)`,[`Whenever welding is performed nearby`,`For all confined space entries regardless of task`,`Only when entering tanks over 10 feet deep`]],
+[`When is a confined space entry not permitted even with a self-contained breathing apparatus (SCBA) such as the Scott Air Pak?`,`When CO is at or above 1200 ppm, O2 is below 23.5%, LEL is at or above 5%, H2S is below 100 ppm`,[`When CO is below 35 ppm`,`When O2 is between 20% and 23.5%`,`When LEL is below 5%`]],
+[`What percent oxygen must be available in a confined space entry without an SCBA?`,`20% to 23.5%`,[`19% to 23.5%`,`20% to 25%`,`18% to 21%`]],
+[`What is used to communicate with the standby man when entering a vessel for the first time?`,`By using a portable hard-line two-way telephone`,[`Hand signals only`,`Radio only, no hardwire allowed`,`Shouting through the manway`]],
+[`What excavation depth requires a confined space entry permit for entry?`,`4 feet/1.2 m or more`,[`6 feet/1.8 m or more`,`3 feet/0.9 m or more`,`8 feet/2.4 m or more`]],
+[`When is a confined space entry permitted without a self-contained breathing apparatus (SCBA) such as the Scott Air Pak?`,`When CO is less than 35 ppm, O2 is 20% to 23.5%, LEL is less than 5%, H2S is less than 10 ppm`,[`When CO is less than 35 ppm, O2 is 18% to 20%`,`When CO is less than 100 ppm, O2 is 20% to 23.5%`,`When CO is less than 10 ppm, O2 is 16% to 20%`]],
+[`What steps should be taken to remove flammable, toxic or corrosive chemicals from a vessel to prepare it for a confined space entry?`,`Drain, water wash, air purge to flare, N2 purge to atmosphere, isolate and blind`,[`Drain, seal, and lock the vessel`,`Flush with acid, then air dry`,`Ventilate only, no draining required`]],
+[`What gas tests and units of measure (ppm or %) must be tested for to issue a confined space entry permit?`,`O2%, H2S ppm, CO ppm and LEL%`,[`O2 ppm, H2S %, CO %, LEL ppm`,`Only O2% and LEL%`,`H2S%, CO%, O2 ppm, LEL ppm`]],
+[`Who must be present before personnel can enter a confined space?`,`Standby man`,[`The permit issuer`,`The Fire Protection Department`,`The Division Head`]],
+[`Who must countersign (authorize) the confined space entry permit the first time it is issued?`,`Operations foreman or shift superintendent`,[`Loss Prevention division head`,`Fire Protection Department`,`Area supervisor only`]],
+[`What are the requirements for electrical lighting equipment and tools used inside a confined space?`,`Equipment over 12 volts to 110 volts must be equipped with GFCI, and tools 220 volts and above are prohibited`,[`All tools must be 220 volts with GFCI`,`Only battery-powered tools under 12 volts, no GFCI needed`,`Tools up to 440 volts are allowed with double insulation`]],
+[`When does a confined space entry occur?`,`When any part of an individual's body passes into the confined space`,[`When the standby man opens the manway`,`When gas testing begins`,`When the permit is signed`]],
+[`What hazards must the confined space entry plan/procedure address?`,`The hazards that may exist before, during and after the confined space entry`,[`Only hazards that exist during entry`,`Only pre-entry hazards`,`Only hazards reported by the previous shift`]],
+[`What is used to prevent the accumulation of toxic gas and oxygen deficiency while work is being performed inside a confined space such as a pipeline, vessel or tank?`,`Gas tests are periodically or continuously performed`,[`A single gas test before entry only`,`Sealing the space completely`,`Posting a warning sign at the entrance`]],
+[`What is used to ensure air circulation inside a confined space that has only one entry point and poor or no other ventilation point?`,`Forced ventilation using air movers and duct work to improve circulation of air`,[`Natural ventilation through the same opening`,`A fixed exhaust fan installed permanently`,`Opening additional unauthorized holes`]],
+[`Under what condition would frequent or continuous gas testing be required?`,`During initial entry for cleaning or when coating a vessel with toxic or flammable material`,[`During routine daily entries`,`Only during confined space rescue drills`,`Only when H2S has never been detected before`]],
+[`What should be done with air movers when they are installed on a vessel or tank for air ventilation?`,`Ensure that air movers are grounded or bonded to the vessel or tank`,[`Position them outside without grounding`,`Power them only by battery packs`,`Have only the standby man operate them`]],
+[`What should be done when the confined space standby man has to leave his position and there is no one to replace him?`,`All personnel must exit the confined space until he returns`,[`Work may continue if under 10 minutes`,`The gas tester takes over automatically`,`Only new entrants must exit, others may stay`]],
+[`What action should be taken after an emergency is over within the affected area of workers in a confined space, to restart the work?`,`When all deficiencies are corrected, the issuer shall issue a new confined space entry and work permit`,[`Resume once the alarm resets automatically`,`The receiver alone may authorize restart`,`Wait 30 minutes then resume without a new permit`]],
+[`What are the alarm set points for O2, LEL, H2S and CO for the Saudi Aramco portable gas monitoring instrument?`,`Low O2 at 20% and high O2 at 23.5%, high LEL at 5%, high H2S at 10 ppm and high CO at 35 ppm`,[`Low O2 at 19.5%, high O2 at 23%, LEL at 10%`,`Low O2 at 18%, high H2S at 20 ppm`,`High CO at 50 ppm, high LEL at 10%`]],
+[`When performing a manual "Bump Test" on the MX4, what indicates the gas sensors are operating properly or not?`,`Bump test result screen displays p for pass or bF for fail under the gas icon; if a sensor fails, the system alarm turns on and the gas cylinder icon flashes`,[`Screen shows OK or Error only`,`A green light for pass, red for fail`,`The unit shuts down automatically on failure`]],
+[`What are the MX4 gas monitor's ranges of detection for LEL, H2S, O2 and CO?`,`LEL range is 0% to 100%, H2S range is 0 ppm to 500 ppm, O2 range is 0% to 30% and CO range is 0 ppm to 1000 ppm`,[`LEL 0-50%, H2S 0-100 ppm, O2 0-25%, CO 0-500 ppm`,`LEL 0-100%, H2S 0-1000 ppm, O2 0-21%, CO 0-2000 ppm`,`LEL 0-25%, H2S 0-500 ppm, O2 0-30%, CO 0-500 ppm`]],
+[`While gas monitoring an area, an OR alarm is displayed with an audible alarm on the MX4 or MX6 gas monitor — what action should be taken first?`,`Leave the area immediately`,[`Silence the alarm and continue working`,`Move closer to identify the source`,`Radio the control room before leaving`]],
+[`Who must approve and sign gas test certificates to make them valid?`,`Division Head`,[`The gas tester himself`,`The permit receiver`,`The Fire Protection Department`]],
+[`What is the maximum Oxygen concentration required in the atmosphere to obtain an accurate LEL reading when using the MX4 and MX6 gas monitors?`,`21%`,[`25%`,`18%`,`23.5%`]],
+[`While sampling a vessel, there is a pump fault alarm on an aspirated MX4 or MX6 — what should be checked first?`,`Check that the water stop is clean`,[`Battery charge level`,`Sensor calibration date`,`Tubing length exceeding 100 feet`]],
+[`What daily inspections and actions are performed on all gas monitors and logged in the Daily Inspection and Function Test Log?`,`Visual inspection, Zeroing, Leak Test, Clearing the Peaks and Gas Function Test`,[`Only visual inspection`,`Calibration and bump test only`,`Battery replacement and firmware update`]],
+[`An atmosphere that contains the lowest combustible mixture which will ignite or even explode is referred to as what?`,`Lower Explosive Limit (LEL) Atmosphere`,[`Upper Explosive Limit (UEL) Atmosphere`,`Immediately Dangerous to Life and Health (IDLH) Atmosphere`,`Minimum Ignition Concentration (MIC) Atmosphere`]],
+[`How often does GI 2.709 require all gas monitors to be calibrated, at a minimum?`,`Every three months`,[`Every month`,`Every six months`,`Every year`]],
+[`How often are all portable gas monitors required by GI 2.709 to be inspected, function tested and results logged?`,`Daily`,[`Weekly`,`Monthly`,`Every shift change only`]],
+[`When using the aspirated MX4 or MX6 to sample using tubing, how much time should be allowed before noting the monitor reading?`,`Allow for 2 minutes plus 2 seconds per foot of tubing used, prior to noting the readings`,[`1 minute plus 1 second per foot of tubing`,`30 seconds plus 3 seconds per foot of tubing`,`5 minutes flat regardless of tubing length`]],
+[`What sensors (at a minimum) must normally be installed on the MX4 and MX6 for conducting gas tests for a Confined Space Permit?`,`O2, LEL, CO and H2S`,[`O2, LEL and H2S only`,`LEL, CO and SO2`,`O2, CO and Chlorine`]],
+[`MX4 and MX6 gas monitors are equipped with how many alarm system modes?`,`3 modes (audible, visual and vibration)`,[`2 modes (audible and visual)`,`4 modes (audible, visual, vibration, and radio alert)`,`1 mode (audible only)`]],
+[`When a nearby sewer is not covered and the work permit requires that all sewers be covered, what action should be taken first by the fire watch?`,`Stop all work immediately and withdraw the permit`,[`Continue work and cover it when convenient`,`Note it in the log and continue`,`Ask the receiver to cover it while work continues`]],
+[`What should the fire watch continue checking while hot work is being performed?`,`That work conditions do not change`,[`That the weather does not change`,`That the gas tester remains on site`,`That the crew takes scheduled breaks`]],
+[`When the fire watch observes a craftsman working without required PPE, what action should be taken first?`,`Stop him working and remove him from the job site`,[`Note it and report at shift end`,`Warn him verbally and continue observing`,`Ask the receiver to handle it later`]],
+[`When conditions change and become unsafe on the job site, what should the fire watch do first?`,`Stop the work, withdraw the permit, and inform the supervisor`,[`Inform the supervisor only, keep work going`,`Continue monitoring more closely`,`Sound the site alarm immediately`]],
+[`When should there be a fire watch assigned to a job?`,`During all welding and open flame work`,[`Only for confined space entries`,`Only for jobs lasting over 4 hours`,`Only when requested by the contractor`]],
+[`When is the fire watch allowed to leave the hot work area while hot work is ongoing?`,`When he is relieved by a qualified fire watch`,[`When the job is temporarily paused`,`After 30 minutes if no incident occurs`,`When the receiver gives verbal permission`]],
+[`Who must be notified first by the fire watch when there is a fire?`,`Supervisor/Control man`,[`Fire Protection Department directly`,`Security`,`The nearest operator`]],
+[`What certificate should the fire watch have?`,`A valid gas test certificate`,[`A valid work permit issuer certificate`,`A valid confined space entry certificate`,`A valid rigging certificate`]],
+[`What should the fire watch do first when conditions change and become unsafe on the job site?`,`Stop work, withdraw the work permit, and inform the supervisor`,[`Inform the supervisor only, keep work going`,`Continue monitoring more closely`,`Ask the receiver to pause briefly`]],
+[`Which courses should the fire watch have attended before carrying out fire watch duties?`,`Fire fighting and the work permit issuer/receiver courses`,[`Confined space entry and rigging courses`,`SCBA maintenance and electrical safety courses`,`Crane operation and lifting courses`]],
+[`Why is the power cut to the fire area in case of fire?`,`To remove the shock hazard and the ignition source`,[`To activate the sprinkler system`,`To trigger the evacuation alarm`,`To allow the fire truck access`]],
+[`In accordance with Fire Protection Department (FrPD) GI-178.001-01, how frequently must operations and FrPD inspect fire equipment (excluding pumps)?`,`Operations inspects fire equipment weekly; FrPD inspects monthly`,[`Operations inspects daily; FrPD inspects weekly`,`Operations inspects monthly; FrPD inspects quarterly`,`Both inspect biweekly`]]
+]},
+{id:"s-mx", src:`IDP ALL safety 2026`, name:`MX4 and MX6 Gas Monitors`, qs:[
+[`What is the range and alarm set point for Oxygen (O2) on the MX4/MX6?`,`Range: 0-30% vol | Alarm set points: Low 20%, High 23.5%`,[`Range: 0-25% vol | Alarm set points: Low 19%, High 23%`,`Range: 0-100% vol | Alarm set points: Low 18%, High 21%`,`Range: 0-50% vol | Alarm set points: Low 20.5%, High 24%`]],
+[`What is the range and alarm set point for Lower Explosive Limit (LEL) on the MX4/MX6?`,`Range: 0-100% | Alarm set point: 5%`,[`Range: 0-50% | Alarm set point: 10%`,`Range: 0-100% | Alarm set point: 25%`,`Range: 0-25% | Alarm set point: 2%`]],
+[`What is the range and alarm set point for Hydrogen Sulfide (H2S) on the MX4/MX6?`,`Range: 0-500 PPM | Alarm set point: 10 PPM`,[`Range: 0-100 PPM | Alarm set point: 20 PPM`,`Range: 0-1000 PPM | Alarm set point: 5 PPM`,`Range: 0-250 PPM | Alarm set point: 15 PPM`]],
+[`What is the range and alarm set point for Carbon Monoxide (CO) on the MX4/MX6?`,`Range: 0-1000 PPM | Alarm set point: 35 PPM`,[`Range: 0-500 PPM | Alarm set point: 50 PPM`,`Range: 0-2000 PPM | Alarm set point: 100 PPM`,`Range: 0-100 PPM | Alarm set point: 25 PPM`]],
+[`What is the range and alarm set point for Sulfur Dioxide on the MX4/MX6?`,`Range: 0-150 PPM | Alarm set point: 2 PPM`,[`Range: 0-100 PPM | Alarm set point: 5 PPM`,`Range: 0-50 PPM | Alarm set point: 1 PPM`,`Range: 0-200 PPM | Alarm set point: 10 PPM`]],
+[`What is the range and alarm set point for Chlorine on the MX4/MX6?`,`Range: 0-100 PPM | Alarm set point: 0.5 PPM`,[`Range: 0-50 PPM | Alarm set point: 1 PPM`,`Range: 0-200 PPM | Alarm set point: 2 PPM`,`Range: 0-25 PPM | Alarm set point: 0.1 PPM`]],
+[`What is the range and alarm set point for Ammonia on the MX4/MX6?`,`Range: 0-500 PPM | Alarm set point: 25 PPM`,[`Range: 0-100 PPM | Alarm set point: 10 PPM`,`Range: 0-1000 PPM | Alarm set point: 50 PPM`,`Range: 0-250 PPM | Alarm set point: 5 PPM`]],
+[`How many alarm modes do the MX4 and MX6 have?`,`3 alarms: Audible (95 dB), Visual (red LED), and Vibrating`,[`2 alarms: Audible and Visual`,`4 alarms: Audible, Visual, Vibrating, and Wireless`,`1 alarm: Audible only`]],
+[`How do you zero the MX4 gas monitor?`,`Press the ON/OFF/MODE button until you reach the "days since calibration" screen`,[`Press and hold the ON/OFF button for 10 seconds`,`Remove the battery and reinsert it`,`Press MODE then ENTER twice`]],
+[`How do you zero the MX6 gas monitor?`,`Press the ON/OFF/MODE button two times`,[`Press the ON/OFF/MODE button until the calibration screen appears`,`Hold the enter button for 5 seconds`,`Press MODE three times`]],
+[`How long does the MX4's lithium-ion battery last?`,`With pump: about 12 hours | Without pump: about 20 hours`,[`With pump: about 8 hours | Without pump: about 14 hours`,`With pump: about 16 hours | Without pump: about 24 hours`,`With pump: about 6 hours | Without pump: about 10 hours`]],
+[`How long does the MX4's alkaline (3xAAA) battery last?`,`With pump: 4 hours | Without pump: 8 hours`,[`With pump: 2 hours | Without pump: 5 hours`,`With pump: 6 hours | Without pump: 10 hours`,`With pump: 3 hours | Without pump: 6 hours`]],
+[`How long does the MX6's lithium battery last?`,`About 24 hours standard, 36 hours extended`,[`About 12 hours standard, 18 hours extended`,`About 30 hours standard, 45 hours extended`,`About 8 hours standard, 12 hours extended`]],
+[`How long does the MX6's AA alkaline battery last?`,`About 10.5 hours`,[`About 6 hours`,`About 15 hours`,`About 20 hours`]],
+[`Can the MX4/MX6 alkaline batteries be recharged?`,`No — they must be replaced when discharged`,[`Yes, using the standard charging dock`,`Yes, but only up to 3 times`,`Only the MX6 alkaline batteries can be recharged`]],
+[`What does the MX4 low battery beep sound like?`,`A beep sounds every 30 seconds`,[`A beep sounds every 10 seconds`,`A continuous tone until replaced`,`Two beeps every minute`]],
+[`What does the MX4 low alarm look/sound like?`,`Pulsed tone; LEDs flash and the vibrating alarm is activated`,[`Steady tone; LEDs stay solid red`,`Pulsed tone only, no LED or vibration`,`Vibration only, no audible tone`]],
+[`What does the MX4 high alarm look/sound like?`,`Same as the low alarm, except the audible tone pulses more urgently (often)`,[`A single long beep with no LED change`,`Silent alarm with LED flash only`,`Same as low alarm but LEDs turn blue`]],
+[`What indicates a bump test is overdue on the MX4?`,`Two beeps every 30 seconds`,[`One beep every 30 seconds`,`Continuous alarm until bump test is done`,`The screen goes blank`]],
+[`What indicates a calibration is due on the MX4?`,`Three beeps every 30 seconds`,[`One beep every 30 seconds`,`Four beeps every 30 seconds`,`A steady tone with red screen`]],
+[`What happens on the MX4 when a calibration test is completed?`,`The sensor icon will flash for 5 seconds`,[`The screen goes blank for 5 seconds`,`A single beep sounds once`,`The unit powers off automatically`]],
+[`What does the MX6 low battery indicator look like?`,`Warning beep, flashing "1 hour left" message, and the indicator turns red`,[`Warning beep only, no message or color change`,`Flashing red light with no beep`,`Screen turns off after one warning beep`]],
+[`What does the MX6 high alarm look/sound like?`,`Dual beeps, vibrating alarm and LEDs flash with a short delay`,[`Single beep, steady LED, no vibration`,`Continuous tone with no vibration`,`Triple beep with long delay`]],
+[`What does the MX6 low alarm look/sound like?`,`Single beep, vibrating alarm and LEDs flash with a long delay`,[`Dual beeps, vibrating alarm, short delay`,`Continuous tone, no vibration`,`No sound, LED flash only`]]
+]},
+{id:"n-whv", src:`IDP All Numbers 2026`, name:`Wellhead Control Valves (PT Crown)`, qs:[
+[`What is the required PT that should be performed against a WH valve (on CT)?`,`2500 psi`,[`3000 psi`,`2000 psi`,`5000 psi`]]
+]},
+{id:"n-sssv", src:`IDP All Numbers 2026`, name:`SSSV (Subsurface Safety Valve) Operation`, qs:[
+[`When conducting an above-ground hydraulic pressure test on a SSSV, how long must the SSSV hold the required hydraulic test pressure?`,`10 minutes`,[`5 minutes`,`15 minutes`,`30 minutes`]],
+[`When testing the SSSV, how much pressure must it hold on the ground?`,`3000 PSIG`,[`2500 PSIG`,`4000 PSIG`,`1500 PSIG`]],
+[`How frequently is it required to replace the SSSV?`,`1 year`,[`6 months`,`2 years`,`5 years`]],
+[`How many seals are in a non-ported SSSV?`,`2 seals`,[`3 seals`,`1 seal`,`4 seals`]],
+[`The SSSV hydraulic control line must not exceed what pressure?`,`4000 psig`,[`3000 psig`,`5000 psig`,`2500 psig`]],
+[`To open the SSSV after it has been installed in the well, what must the hand pump pressure be?`,`150 psig over shut-in pressure`,[`100 psig over shut-in pressure`,`250 psig over shut-in pressure`,`50 psig below shut-in pressure`]],
+[`What is the weight for the SSSV tool size?`,`150 lbs`,[`75 lbs`,`200 lbs`,`100 lbs`]]
+]},
+{id:"n-wlsize", src:`IDP All Numbers 2026`, name:`Wire Line Size / Hay Pulley`, qs:[
+[`What is the recommended minimum pulley diameter for 0.125 inch wire line?`,`15 inch`,[`8 inch`,`12 inch`,`20 inch`]],
+[`What is the recommended minimum pulley diameter for .108 wire?`,`8 inch`,[`15 inch`,`10 inch`,`6 inch`]]
+]},
+{id:"n-wlunit", src:`IDP All Numbers 2026`, name:`Wire Line Unit Operation`, qs:[
+[`How long must the wire line engine be allowed to warm up before conducting a wire line job?`,`5 minutes`,[`10 minutes`,`15 minutes`,`2 minutes`]],
+[`While spooling new wire, how many even layers are required on the drum?`,`4 to 6 layers`,[`2 to 3 layers`,`8 to 10 layers`,`1 to 2 layers`]],
+[`How long must the wire be on each side of the stuffing box when inserting new packing?`,`Two feet on each side`,[`One foot on each side`,`Three feet on each side`,`Six inches on each side`]],
+[`In Aramco, what is the total length for new .108 wire?`,`15,000 to 20,000 ft`,[`10,000 to 12,000 ft`,`20,000 to 25,000 ft`,`25,000 to 30,000 ft`]],
+[`Wire line can be on spools of various lengths — what is the maximum spool length available in Aramco?`,`25,000 feet`,[`20,000 feet`,`30,000 feet`,`15,000 feet`]],
+[`On a routine job, what is the standard weight for wire line tools?`,`75 lbs`,[`50 lbs`,`100 lbs`,`150 lbs`]],
+[`In order to use two wrenches to open anything, what is the required gap?`,`6-8 inches`,[`2-4 inches`,`10-12 inches`,`1-2 inches`]],
+[`What percentage should the bypass valve be open before the wireline unit starts up?`,`100% open`,[`50% open`,`75% open`,`25% open`]]
+]},
+{id:"n-tubing", src:`IDP All Numbers 2026`, name:`Tubing & Casing Specifications`, qs:[
+[`What is the inside diameter of the 2-3/8 inch tubing joints?`,`1.995 inches`,[`2.041 inches`,`2.441 inches`,`1.867 inches`]],
+[`What is the inside diameter of the 2-7/8 inch tubing joints?`,`2.441 inches`,[`1.995 inches`,`2.259 inches`,`2.875 inches`]]
+]},
+{id:"n-fire", src:`IDP All Numbers 2026`, name:`Fire Safety & Fire Extinguishers`, qs:[
+[`Dry chemical fire extinguisher hydro test is required every how many years?`,`12 years`,[`5 years`,`10 years`,`15 years`]],
+[`Fire extinguisher hydro test is required every how many years?`,`5 years`,[`12 years`,`3 years`,`10 years`]],
+[`How often does the fire department inspect the fire extinguisher and SCBA?`,`Every 12 months, yearly, annually`,[`Every 6 months`,`Every 3 months`,`Every 2 years`]],
+[`How often does operations inspect/tag the fire extinguisher?`,`Every week`,[`Every day`,`Every month`,`Every quarter`]],
+[`How often does the USER inspect the fire extinguisher?`,`Monthly`,[`Weekly`,`Daily`,`Quarterly`]],
+[`When could the fire watch leave the job site after work is completed?`,`After 30 minutes`,[`Immediately`,`After 15 minutes`,`After 1 hour`]]
+]},
+{id:"n-pce", src:`IDP All Numbers 2026`, name:`PCE`, qs:[
+[`What is the validity of the PCE certification test?`,`12 months`,[`6 months`,`24 months`,`18 months`]]
+]},
+{id:"n-ct", src:`IDP All Numbers 2026`, name:`Coiled Tubing (CT), Killing & Stimulation Operations`, qs:[
+[`When starting RIH with CT, what is the pumping rate?`,`0.25 BPM`,[`0.5 BPM`,`0.1 BPM`,`1.0 BPM`]],
+[`After setting the BPV, the well should be monitored for how long?`,`30 minutes`,[`15 minutes`,`1 hour`,`2 hours`]],
+[`What is the time for testing each choke size when flowing the well on a test line using MPFM?`,`6-10 hrs`,[`1-2 hrs`,`12-24 hrs`,`3-4 hrs`]],
+[`What is the size of the flare line?`,`2 7/8"`,[`3 1/2"`,`2 3/8"`,`4"`]],
+[`During normal CT operation, what should the normal injection rate be?`,`0.25 BPM`,[`0.5 BPM`,`0.1 BPM`,`1 BPM`]],
+[`When a weak point is observed in the CT, how many feet should be cut from the CT?`,`200 ft`,[`100 ft`,`500 ft`,`50 ft`]],
+[`During a failed pull test on the CT connector, what is the correct action?`,`Cut 100 feet, then pull test again`,[`Cut 200 feet, then pull test again`,`Abandon the connector and replace the CT reel`,`Continue without cutting, just repeat the test`]],
+[`How often should injector inspection be performed while RIH with CT?`,`Every 1000 ft`,[`Every 500 ft`,`Every 2000 ft`,`Every 250 ft`]],
+[`How often should a CT reel pull test be performed?`,`Every 500 ft`,[`Every 1000 ft`,`Every 250 ft`,`Every 2000 ft`]],
+[`What is the minimum pull test tension for the CT connector?`,`20,000 lbs`,[`10,000 lbs`,`30,000 lbs`,`15,000 lbs`]],
+[`What is the insertion flange size?`,`3 inch`,[`2 inch`,`4 inch`,`6 inch`]],
+[`How many check valves are tested for CT PT?`,`Test two check valves`,[`Test one check valve`,`Test three check valves`,`Test all check valves on the reel`]]
+]},
+{id:"n-ground", src:`IDP All Numbers 2026`, name:`Grounding, Electrical & Site Safety Infrastructure`, qs:[
+[`How many generators are required for the site?`,`2-4`,[`1-2`,`4-6`,`5-8`]],
+[`What is the required distance between two generators?`,`500 mm - 2000 mm`,[`100 mm - 500 mm`,`2000 mm - 4000 mm`,`1 m - 1.5 m only`]],
+[`What is the standardized minimum diameter of the grounding rod?`,`5/8 in - 16 mm - 0.016 m`,[`1/2 in - 12 mm`,`3/4 in - 20 mm`,`1 in - 25 mm`]],
+[`What is the required length for a generator grounding rod?`,`2.44 meter (8 ft / 2,440 mm)`,[`1.5 meter (5 ft)`,`3.5 meter (11.5 ft)`,`1 meter (3.3 ft)`]],
+[`What is the depth for a portable generator grounding rod?`,`750 mm`,[`300 mm`,`1000 mm`,`500 mm`]],
+[`What is the length for the floodlight grounding rod?`,`2 feet`,[`8 feet`,`1 foot`,`4 feet`]],
+[`At what wind speed must crane operations be stopped?`,`32 km/h`,[`25 km/h`,`50 km/h`,`65 km/h`]],
+[`What is the required length of grounding rod inside the soil?`,`At least 1 foot`,[`At least 2 feet`,`At least 6 inches`,`At least 3 feet`]],
+[`How many flood lights, as a minimum, should be at the well site?`,`6 to 8`,[`2 to 4`,`10 to 12`,`4 to 6`]],
+[`At what wind speed must man-basket operations be stopped?`,`25 km/h`,[`32 km/h`,`20 km/h`,`40 km/h`]],
+[`At what wind speed must scaffolding operations be stopped?`,`65 km/h`,[`32 km/h`,`50 km/h`,`80 km/h`]]
+]},
+{id:"n-admin", src:`IDP All Numbers 2026`, name:`Well Site Administration & Job Documentation`, qs:[
+[`How many wind socks are needed for normal operation?`,`1-2`,[`2-4`,`3-5`,`1 only`]],
+[`What is the allowable minimum distance between the WH and the W/L?`,`50 ft`,[`25 ft`,`100 ft`,`75 ft`]],
+[`At what platform floor level is fall-protective equipment (harness) required?`,`1.8 m (5.9 ft)`,[`1.2 m (4 ft)`,`2.4 m (8 ft)`,`1.5 m (5 ft)`]],
+[`What is the recommended gap in the weight indicator?`,`1/4 inch`,[`1/2 inch`,`1/8 inch`,`1 inch`]],
+[`How many keys does each lock have?`,`1 key`,[`2 keys`,`3 keys`,`No spare keys allowed`]],
+[`How long is a hold tag kept after it has been removed?`,`3 months`,[`1 month`,`6 months`,`1 year`]],
+[`How many elements are in the Safety Management System?`,`11`,[`9`,`13`,`8`]],
+[`How many dogs are on a 6" GS?`,`12 dogs`,[`6 dogs`,`8 dogs`,`16 dogs`]],
+[`How many turns to open/close the 4-inch Cameron valve?`,`23 turns`,[`15 turns`,`30 turns`,`12 turns`]],
+[`What is the maximum period for a work permit?`,`16 hours`,[`8 hours`,`24 hours`,`12 hours`]],
+[`In normal operation with N2 lifting job, what is the depth and pumping rate?`,`2000 feet and 300 scf`,[`1000 feet and 150 scf`,`3000 feet and 500 scf`,`1500 feet and 300 scf`]]
+]},
+{id:"n-scba", src:`IDP All Numbers 2026`, name:`SCBA & Gas Monitoring (GDS, MX4/MX6, SCAPA)`, qs:[
+[`When using a full SCBA, how many minutes must the air supply normally last?`,`30 minutes`,[`45 minutes`,`20 minutes`,`60 minutes`]],
+[`When the warning bell on the SCBA rings, normally how many minutes of air remain?`,`4 to 6 minutes (25%)`,[`10 to 12 minutes (50%)`,`1 to 2 minutes (10%)`,`8 minutes (33%)`]],
+[`What is the minimum oxygen required on the MX4 when performing a combustible gas test?`,`16%`,[`18%`,`20%`,`21%`]],
+[`How long does a fully charged battery normally last in the MX4 during continuous operation?`,`8 hours`,[`4 hours`,`12 hours`,`24 hours`]],
+[`How often should the MX-4 be calibrated?`,`Every 1 month`,[`Every 3 months`,`Every 2 weeks`,`Every 6 months`]],
+[`How often must the SCBA (SCAPA) cylinder be hydro tested?`,`Every 5 years`,[`Every 3 years`,`Every 10 years`,`Every year`]],
+[`What is the normal pressure in the SCAPA?`,`2216 PSIG`,[`3000 PSIG`,`1800 PSIG`,`2500 PSIG`]],
+[`At what percentage will the SCBA alert to escape?`,`25%`,[`10%`,`50%`,`15%`]],
+[`How many GDS sensors are required for a testing job, and for a location site?`,`12 sensors for testing job; 14 sensors for location site`,[`10 sensors for testing job; 12 sensors for location site`,`14 sensors for testing job; 12 sensors for location site`,`8 sensors for testing job; 10 sensors for location site`]],
+[`What is the low alarm setting for SO2?`,`2 PPM`,[`5 PPM`,`1 PPM`,`10 PPM`]],
+[`What is the H2S alarm setting?`,`10 PPM`,[`5 PPM`,`20 PPM`,`35 PPM`]],
+[`How many alarms does the GDS give?`,`Two — audible and visual`,[`Three — audible, visual, vibration`,`One — audible only`,`Four modes including wireless`]],
+[`What is the maximum distance for the MX-4 tube?`,`100 feet`,[`50 feet`,`150 feet`,`200 feet`]]
+]},
+{id:"n-general", src:`IDP All Numbers 2026`, name:`General Safety, Chemical Handling & Emergency Procedures`, qs:[
+[`What is the acceptable atmospheric pressure range for the PRM-5 gauge?`,`9 to 20`,[`5 to 15`,`10 to 25`,`1 to 10`]],
+[`What is the standard atmospheric pressure reference value used?`,`15`,[`14.7`,`20`,`10`]],
+[`What acid solution is normally injected to remove scale?`,`15% Hydrochloric acid`,[`10% Hydrochloric acid`,`20% Sulfuric acid`,`5% Hydrochloric acid`]],
+[`What is the minimum time to flush the eyes and wash the skin?`,`15 minutes`,[`5 minutes`,`30 minutes`,`10 minutes`]],
+[`For an injured person exposed to acid, what is the safety response?`,`55 gallons of water mixed with soda ash`,[`10 gallons of water only`,`55 gallons of water mixed with lime`,`20 gallons of soda ash solution undiluted`]],
+[`For open-flame hot work, sewers within how many feet must be covered?`,`75 feet`,[`50 feet`,`100 feet`,`25 feet`]],
+[`What is the safe smoking distance to avoid fire?`,`100 feet`,[`50 feet`,`75 feet`,`150 feet`]]
+]},
+{id:"n-prestart", src:`IDP All Numbers 2026`, name:`Wire Line Unit Pre-Start-Up and Tools, CT`, qs:[
+[`How many pieces are in the 6 inch flow tube?`,`2 pieces`,[`1 piece`,`3 pieces`,`4 pieces`]],
+[`What are the pre-start-up settings for the wire line unit?`,`Lever: Neutral | Transmission: Neutral | Bypass: 100% open (fully open) | Throttle: 25% up`,[`Lever: Engaged | Transmission: Neutral | Bypass: 50% open | Throttle: 50% up`,`Lever: Neutral | Transmission: Low gear | Bypass: 0% open | Throttle: 10% up`,`Lever: Neutral | Transmission: Neutral | Bypass: 100% closed | Throttle: 25% up`]],
+[`No need for pickling CT if what condition is met?`,`Pickling was performed in the last 7 days`,[`Pickling was performed in the last 30 days`,`CT was never used before`,`Pickling is always required regardless`]],
+[`What is the speed for PLT during logging?`,`30, 50, 70 ft/min`,[`10, 20, 30 ft/min`,`50, 75, 100 ft/min`,`20, 40, 60 ft/min`]],
+[`What is the breaking point for E-Line cable?`,`3000 to 5000 pounds`,[`1000 to 2000 pounds`,`6000 to 8000 pounds`,`2000 to 3000 pounds`]],
+[`What are the set angles for the PX and PXN plugs?`,`PX = 90 degrees, PXN = 45 degrees`,[`PX = 45 degrees, PXN = 90 degrees`,`PX = 60 degrees, PXN = 30 degrees`,`PX = 90 degrees, PXN = 90 degrees`]]
+]},
+{id:"f-whv", src:`IDP Full REVIEW 2026`, name:`Wellhead Control Valves (Crown, Wing, Casing, SSV, Master Valve, BOP)`, qs:[
+[`What is the function of the casing valves?`,`To control annuli pressures.`,[`To allow flow from well to flow line`,`To allow for down hole well operation`,`Serves as a secondary control device on a well`]],
+[`What is the primary function of the wing valve?`,`To allow flow from well to flow line`,[`To control annuli pressures`,`To allow for down hole well operation`,`To isolate well pressure to the lubricator`]],
+[`What is the primary function of the Crown valve?`,`To allow for down hole well operation`,[`To allow flow from well to flow line`,`To control annuli pressures`,`Serves as a secondary control device on a well`]],
+[`What is the function of the SSV?`,`Serves as a secondary control device on a well`,[`To allow flow from well to flow line`,`To control annuli pressures`,`To isolate well pressure to the lubricator`]],
+[`Which of the following is the last or final pressure equipment job at the surface when conducting a wire line job?`,`Blow out preventer`,[`Lubricator`,`Stuffing box`,`Wing valve`]],
+[`What action must be taken to keep the SSV open during wire line operation?`,`Install a fusible cap on the surface safety valve.`,[`Lock the SSV handle in the open position`,`Remove the SSV actuator completely`,`Bypass the SSV with a jumper hose`]],
+[`How must the BOP rams be closed to insulate pressure to wire line lubricator?`,`Turn each rams equally to the closed position.`,[`Close only the top ram fully`,`Close rams one at a time in sequence`,`Turn the rams to the half-closed position`]],
+[`Which of the following must be done before removing the BOP from the crown valve adapter?`,`Close BOP rams to prevent shaft from bending`,[`Open BOP rams fully first`,`Bleed off all pressure through the wing valve`,`Disconnect the hydraulic hoses first`]],
+[`What is the function of the BOP (BLOW OUT PREVENTER)?`,`To isolate well pressure to the lubricator`,[`To control annuli pressures`,`To allow flow from well to flow line`,`Serves as a secondary control device on a well`]],
+[`What is the primary function of the ram elements in the BOP?`,`To seal around the wire line to keep pressure from escaping`,[`To guide wire line into the lubricator`,`To cut the wire line in an emergency`,`To indicate wire line depth`]],
+[`What is the primary function of the ram guides?`,`Ensure that wire line is in the center of the ram element`,[`Seal around the wire line to keep pressure from escaping`,`Cut the wire line in an emergency`,`Support the weight of the lubricator`]],
+[`The ram element on the BOP is made of which of the following material to allow it to function properly?`,`Hard rubber`,[`Stainless steel`,`Brass`,`Cast iron`]],
+[`If BOP rams failed to close, what action should be taken?`,`Replace BOP`,[`Continue the job and monitor pressure`,`Bypass the rams and use the SSV only`,`Increase hydraulic pressure to force closure`]],
+[`What tool is used to set 4" ball valve (SSSV)?`,`X running`,[`GS pulling tool`,`MR tool`,`RB pulling tool`]],
+[`In W/L job, what type of BOP rams should be used?`,`Double rams`,[`Single rams`,`Triple rams`,`Blind rams`]],
+[`What is the required inspection for BOP?`,`Certificate and function test`,[`Visual inspection only`,`Hydro test only, no function test`,`Certificate only, no function test`]],
+[`Purge valve for SCBA is used for?`,`Used if the regulator becomes damaged or inoperative while the air-pack is in use`,[`Used to fill the cylinder with air`,`Used to test the low-air alarm`,`Used to bypass the face mask seal`]],
+[`If the purge valve turned to down side while operation test, what will happen?`,`It will open freely from regulator`,[`It will lock the regulator closed`,`It will trigger the low-pressure alarm`,`It will vent air from the cylinder valve`]],
+[`What valve should be opened first when flowing Oil well?`,`Plot Limit Valve`,[`Wing valve`,`Choke valve`,`Master valve`]],
+[`What is the last main valve that you should open on oil well?`,`Wing valve`,[`Plot Limit Valve`,`Choke valve`,`Crown valve`]],
+[`What valve should be closed first when shut in oil well?`,`Wing Valve`,[`Plot Limit Valve`,`Crown valve`,`Master valve`]],
+[`What is the last main valve that you should close when shut in oil well?`,`Plot Limit Valve`,[`Wing Valve`,`Crown valve`,`Choke valve`]],
+[`What is the first valve that you should open on water injection well?`,`Isolation Valve`,[`Wing Valve`,`Crown valve`,`Choke valve`]],
+[`What is the last main valve that you should open on water injection well?`,`Wing Valve`,[`Isolation Valve`,`Crown valve`,`Master valve`]],
+[`What is the first valve that you should close on water injection well?`,`Wing Valve`,[`Isolation Valve`,`Crown valve`,`Choke valve`]],
+[`What is the last main valve that you should close on water injection well?`,`Isolation Valve`,[`Wing Valve`,`Crown valve`,`Master valve`]],
+[`In which operation condition, WV should be, when opening MV to flow the well?`,`Wing Valve is closed`,[`Wing Valve is fully open`,`Wing Valve is half open`,`Wing Valve position does not matter`]],
+[`Who is allowed to operate well head valves?`,`SA operator`,[`Any contractor employee`,`The wireline supervisor only`,`The production engineer`]],
+[`To perform TCA refiling, the pumping line should be connected to which valve?`,`TCA valve`,[`CCA valve`,`Wing valve`,`Kill valve`]],
+[`What is the required PT that should be perform against WH valve?`,`2500 psi`,[`2000 psi`,`3000 psi`,`1500 psi`]],
+[`What is the correct way to operate WH valves?`,`Open MV gradually until pressure being equalize. Then open it fully`,[`Open MV fully at once to save time`,`Open MV only halfway and leave it`,`Close the wing valve before opening MV`]],
+[`Before performing W/L job, what should be checked in the WH valves?`,`WH valves integrity`,[`WH valve paint condition`,`WH valve manufacturer date only`,`WH valve serial number only`]],
+[`What is the direction of the WH valves should be face to?`,`North`,[`South`,`Toward the access road`,`Away from prevailing wind`]],
+[`What WH valve should be closed during acid bull heading?`,`Wing valve`,[`Crown valve`,`Master valve`,`Choke valve`]],
+[`What is the right procedure should be utilized to avoid damaging downstream line and gauges?`,`To open valve gradually`,[`To open valve fully immediately`,`To close valve gradually while flowing`,`To bypass the gauges during opening`]],
+[`If CV is on closed position and there is no buildup pressure above CV what does that mean?`,`CV is holding pressure`,[`CV is leaking badly`,`CV is damaged and must be replaced`,`CV is stuck in the open position`]],
+[`What is the valve that is used to increased pressure in upstream line?`,`Choke valve`,[`Wing valve`,`Crown valve`,`Isolation valve`]],
+[`If you want to increase upstream line, what you do with choke valve?`,`Decrease`,[`Increase`,`Fully open`,`Leave unchanged`]],
+[`If you want to increase downstream line, what you do with choke valve?`,`Increase`,[`Decrease`,`Fully close`,`Leave unchanged`]],
+[`What valve controls the well flow?`,`Choke valve`,[`Wing valve`,`Master valve`,`Crown valve`]],
+[`What might be the reason of CV adapter leak?`,`O-ring cap is damaged`,[`Choke valve fully closed`,`Excess hydraulic pressure`,`Wing valve left open`]],
+[`What to consider when checking WH valves?`,`All WH valves in good condition`,[`Only the crown valve condition`,`Only the wing valve paint`,`Only valve serial numbers`]],
+[`When you open WH cap and found CV passing, what's your action?`,`Return WH Cap and report it to Supervisor`,[`Ignore it and proceed with the job`,`Replace the CV yourself immediately`,`Bleed off pressure through the choke valve`]],
+[`Before start operation, notice the well head valve & production line valve was passing, what is the action should be taken?`,`Call F/S for WH valves maintenance`,[`Proceed with the job as planned`,`Increase pressure to confirm the leak`,`Close the master valve and continue`]],
+[`If the wing valve failed to hold pressure, which valve you can close?`,`PLV`,[`Crown valve`,`Choke valve`,`Isolation valve`]],
+[`What is the first thing is needed to conduct with BOP before installed at top of WH?`,`Perform function test on the ground`,[`Grease the rams only`,`Check the paint condition`,`Verify the serial number matches the WH`]],
+[`While doing pressure test on lubricator and bleeder valve failed to hold pressure, what procedure should be taken?`,`Stop pumping, depressurize and replace the bleeder valve`,[`Continue pumping to force a seal`,`Ignore it if pressure is close to target`,`Replace the lubricator entirely`]],
+[`How to operate the valve without damaging the DS pressure gauges?`,`Slowly open`,[`Open quickly to equalize fast`,`Leave partially open only`,`Open and close repeatedly`]],
+[`If the wing valve not holding what is the action?`,`Close PLV`,[`Close the crown valve`,`Open the choke valve fully`,`Bleed off through the SSV`]],
+[`What is the last valve you should open before flowing the well for flowback?`,`Choke valve`,[`Wing valve`,`PLV`,`Master valve`]],
+[`Which valve should be close prior flowing back the well?`,`PLV`,[`Choke valve`,`Wing valve`,`Crown valve`]],
+[`To pressure test the lubricator the BOP should be?`,`Fully closed`,[`Fully open`,`Half closed`,`Removed from the stack`]],
+[`In Electric-Line job, what type of BOP rams should be used?`,`Triple rams`,[`Double rams`,`Single rams`,`Blind rams`]],
+[`During CT operation, how is responsible to operate WH valves?`,`Failed operation or certified well completion operator`,[`Any CT crew member`,`The production engineer only`,`The rig supervisor`]],
+[`Who should operate WH valves?`,`SA Operator`,[`Any contractor employee`,`The gas tester`,`The fire watch`]],
+[`During TCA job which valve should we connect the pumping line?`,`TCA Valve`,[`CCA Valve`,`Wing valve`,`Kill valve`]],
+[`What is the WV position in case of opening MV?`,`In Close position`,[`Fully open`,`Half open`,`Position not specified`]],
+[`How can we open MV without damaging the flow line?`,`Open it gradually`,[`Open it fully at once`,`Open it while wing valve is open`,`Open it after closing the choke`]]
+]},
+{id:"f-sssv", src:`IDP Full REVIEW 2026`, name:`SSSV (Subsurface Safety Valve) Operation`, qs:[
+[`Which of the following equipment are used to verify the X lock mandrel have properly seated into the landing nipple?`,`Check ring tool`,[`GS pulling tool`,`Impression block`,`Sand bailer`]],
+[`To verify the flapper valve has properly set into the landing nipple, which of the following must be used?`,`Check ring tool`,[`GS pulling tool`,`RB pulling tool`,`Go-Devil`]],
+[`What is the primary function of the SSSV?`,`To stop well flow when there is an emergency`,[`To control annuli pressures`,`To allow flow from well to flow line`,`To seal the tubing during acidizing`]],
+[`To run or pull the SSSV it must be held in which of the following operational positions?`,`SSSV in the fully open position`,[`SSSV in the fully closed position`,`SSSV in the half-open position`,`Position does not matter`]],
+[`Which of the following metals are used on the tip of the SSSV running /pulling prong?`,`tip =Brass Top= steel`,[`tip = steel, Top = brass`,`tip = aluminum, Top = steel`,`tip = brass, Top = aluminum`]],
+[`When conducting an above ground hydraulic pressure test on a SSSV, how long must the SSSV hold the required hydraulic test pressure?`,`10 Minutes`,[`5 Minutes`,`15 Minutes`,`30 Minutes`]],
+[`When conducting an above ground hydraulic pressure test on SSSV, Which of the following test pressure must be done?`,`3000 Psig`,[`2500 Psig`,`4000 Psig`,`1500 Psig`]],
+[`The SSSV packing seal must be coated with which of the following before running the SSSV into the tubing?`,`Heavy duty grease`,[`Diesel fluid`,`Light machine oil`,`Anti-seize compound only`]],
+[`To keep the SSSV in open position when running it into the hole, which of the following must be used?`,`An equalizing prong`,[`A check ring tool`,`A dummy ball valve`,`A GS pulling tool`]],
+[`Which of the following position must the SSSV be in conducting a pressure or temperature survey?`,`Pulled out of the well`,[`Left in the fully open position downhole`,`Left in the fully closed position downhole`,`Position does not matter`]],
+[`What is the problem when there is a continuous flow of well fluids from the SSSV hydraulic control line when trying to bleed it down to zero pressure?`,`The assembly packing on the safety valve has failed`,[`The control line is simply full of air`,`The hydraulic pump is malfunctioning`,`The equalizing prong was left installed`]],
+[`Before running and setting the SSSV into the well, which of the following must be done?`,`Lubricate the inside of SSSV with Diesel fluid`,[`Coat the SSSV with heavy grease only`,`Pressure test the SSSV at surface only`,`Remove the equalizing prong first`]],
+[`Before conducting a logging job on well, which of the following must be done?`,`Drift the well as specified in the engineering program.`,[`Pull the SSSV only, no drifting needed`,`Pressure test the wellhead only`,`Run a sand bailer first`]],
+[`To open an SSSV after it has been installed in the well, the hydraulic hand pump pressure must be first increase to which of the following pressures?`,`150 psig over shut in pressure`,[`100 psig over shut in pressure`,`250 psig over shut in pressure`,`50 psig below shut in pressure`]],
+[`As a safety precaution, when pressuring up the SSSV hydraulic control line, the hydraulic pressure must not exceed which of the following pressures?`,`4000 psig`,[`3000 psig`,`5000 psig`,`2500 psig`]],
+[`What is the purpose for running a (dummy ball valve)?`,`To test the packer seals`,[`To test the control line`,`To hold pressure during acidizing`,`To retrieve the SSSV`]],
+[`What is the purpose of running a dummy valve into the ported ball valve nipple?`,`To test the control line`,[`To test the packer seals`,`To set the X lock`,`To hold the equalizing valve open`]],
+[`Which of the following equipment is used to protect the hydraulic control line when killing a well for a work-over job?`,`An Isolation Sleeve`,[`A check ring tool`,`A GS pulling tool`,`An FSB hanger`]],
+[`When pulling the flapper valve, which of the following wire line are used?`,`GS pulling tool with equalizing prong`,[`RB pulling tool with equalizing prong`,`X run/pull tool with equalizing prong`,`BE pulling tool`]],
+[`Which of the following must be used to pull a flapper valve?`,`A GS pulling with equalizing prong`,[`An RB pulling tool`,`A BE pulling tool`,`An MR tool`]],
+[`What prevent the SSSV from closing after it has been set into the landing nipple and released from the tool string?`,`Hydraulic pressure`,[`The equalizing prong left in place`,`A mechanical lock pin`,`Spring tension in the flapper`]],
+[`What is the function of the DW plug?`,`To temporarily plug the well from flow,can set anywhere in tubing`,[`To permanently plug the well`,`To test the SSSV seals only`,`To hold the equalizing valve open`]],
+[`Which of the following is a plug and an equalizing prong assembly?`,`PX`,[`XX`,`DW`,`GR`]],
+[`When using the X running tool to set the X lock, which of the following pins are sheared first?`,`The top shear pin`,[`The bottom shear pin`,`Both pins simultaneously`,`The middle shear pin`]],
+[`Which of the following should be done for a well with SSSV, when conducting a pressure or temperature survey?`,`Pull the SSSV out of the hole, then run the survey`,[`Run the survey with the SSSV left in place`,`Close the SSSV, then run the survey`,`Bypass the SSSV electronically`]],
+[`Which of the following must be used to pull the equalizing prong from the PX and PXN plug?`,`RB pulling tool`,[`GS pulling tool`,`X run/pull tool`,`BE pulling tool`]],
+[`How is the control line to the SSSV cleaned or cleared?`,`Pump one gallon of hydraulic oil through`,[`Flush with diesel fluid only`,`Blow it out with nitrogen`,`Pump water through under pressure`]],
+[`What holds the equalizing valve open in the XX plug?`,`Q running prong`,[`RB pulling tool`,`GS pulling tool`,`Check ring tool`]],
+[`In corrosive environment, to avoid damaging the wire line when conducting flowing pressure /T surveys, which of the following equipment must be used?`,`An FSB hanger`,[`An Isolation Sleeve`,`A check ring tool`,`A dummy ball valve`]],
+[`If SSSV can't be retrieved and there is a sand inside fish neck, what tools to be used?`,`Sand bailer`,[`Impression block`,`Go-Devil`,`RB pulling tool`]],
+[`When it's frequently required to replace SSSV?`,`1 year`,[`6 months`,`2 years`,`5 years`]]
+]},
+{id:"f-lubricator", src:`IDP Full REVIEW 2026`, name:`Lubricator, Stuffing Box & Pressure Control Equipment`, qs:[
+[`Which of the following is used to isolate pressure from the lubricator when the tool string is down hole?`,`The blow out preventer`,[`The stuffing box`,`The wing valve`,`The equalizing valve`]],
+[`Before installing new packing into the stuffing box, which of the following must be done first?`,`Piece the packing center with a piece of wire line`,[`Grease the packing heavily first`,`Soak the packing in diesel first`,`Cut the packing to half size`]],
+[`What will happen in the event of a wire failure in the stuffing box?`,`The Blow Out plug will automatically seal off the well flow.`,[`The lubricator will automatically vent to atmosphere`,`The BOP will automatically close`,`Nothing happens until the operator reacts`]],
+[`What would cause load cell gap on the martin-Decker weight indicator to decrease beyond the recommended gap measurement?`,`The system has been over-filled with Hydraulic fluid`,[`The system does not have enough hydraulic fluid`,`The load cell is miscalibrated only`,`The wire line is overweight`]],
+[`What would cause load cell gap on the martin-Decker weight indicator to increase beyond the recommended gap measurement?`,`The system does not have enough hydraulic fluid.`,[`The system has been over-filled with hydraulic fluid`,`The gauge needle is stuck`,`The Hay pulley is misaligned`]],
+[`What is the primary function of the Hay pulley?`,`TO ensure the pull is vertical at the lubricator stuffing box`,[`To measure wire line tension`,`To guide wire onto the reel drum`,`To seal pressure around the wire`]],
+[`The load cell gap of the Martin-Decker weight indicator must be maintained at which of the following measurement?`,`¼ of an gap`,[`½ of an gap`,`1/8 of an gap`,`1 full inch gap`]],
+[`How is the pressure build –up controlled into wire line lubricator?`,`By an equalizing valve on the BOP`,[`By the choke valve at surface`,`By venting through the stuffing box`,`By the wing valve`]],
+[`What action must be taken when a small leak develops from stuffing box during running in hole?`,`Stop the wire line unit and tighten the packing nut`,[`Continue running and monitor the leak`,`Increase line speed to finish quickly`,`Bleed off well pressure first`]],
+[`Which of the following is used to isolate pressure to the lubricator when the tool string is down hole?`,`BOP`,[`Stuffing box`,`Wing valve`,`Crown valve`]],
+[`What must be done before inserting the wire line trough the stuffing box?`,`Remove the plunger stop`,[`Grease the stuffing box fully`,`Close the BOP rams`,`Open the equalizing valve`]],
+[`How long must the length of the wire line be on each side of the stuffing box when inserting after new packing and a stuffing box repair?`,`Two feet on each side`,[`One foot on each side`,`Three feet on each side`,`Six inches on each side`]],
+[`Which of the following require changing out when well pressure can no longer be contained be the lubricator stuffing box?`,`Packing`,[`The entire stuffing box body`,`The Hay pulley`,`The lubricator sections`]],
+[`To adjust the load cell, you first prepare the ….?`,`Hand Pump Cup`,[`Calibration weight set`,`Hydraulic test bench`,`Torque wrench`]],
+[`Which of the following shows the correct order in which wire line equipment is assembled?`,`Stuffing box,lubricator,BOP`,[`BOP, lubricator, stuffing box`,`Lubricator, BOP, stuffing box`,`Stuffing box, BOP, lubricator`]],
+[`During WL/SL operation and when lubricator leaks, what is the first step to stop the leak?`,`Close BOP rams`,[`Close the wing valve`,`Open the equalizing valve`,`Increase pumping rate`]],
+[`What liquid is used to flush pipe and lubricator?`,`Clean water`,[`Diesel fluid`,`Hydraulic oil`,`Inhibited brine`]],
+[`What is the clearance between lubricator ID and OD of the tool?`,`It should be more than 0.25"`,[`It should be less than 0.1"`,`It should be exactly 0.5"`,`Clearance is not required`]],
+[`Before opening lubricator, what must be done?`,`De-pressurized lubricator`,[`Fully pressurize the lubricator first`,`Remove the BOP first`,`Disconnect the stuffing box first`]],
+[`What to do in case of lubricator leak while tool is in hole?`,`Close BOP`,[`Close the wing valve`,`Open the equalizing valve`,`Increase pumping rate`]]
+]},
+{id:"f-runpull", src:`IDP Full REVIEW 2026`, name:`Wire Line Running & Pulling Tools`, qs:[
+[`What type of jar is used to run soft release tools?`,`Knuckle jar`,[`Mechanical jar`,`Tubular jar`,`Hydraulic jar`]],
+[`What is the standard weight of a wire line tool string?`,`75 Pounds`,[`50 Pounds`,`100 Pounds`,`150 Pounds`]],
+[`When assembling a basic string, which of the following must be done first?`,`Check pin and box threads on all tools for burrs and wear. To record the tool string weight`,[`Grease all tool threads only`,`Record tool string length only, no weight check`,`Test the jar mechanism only`]],
+[`When installing the dogs and dog retainer into the GS pulling tools, into what area of the GS pulling tools are the placed?`,`Placed into the GS tool cylinder`,[`Placed into the GS tool body`,`Placed into the GS tool core`,`Placed into the GS tool spring housing`]],
+[`What type of running tools is used to set the soft release tool?`,`An MR Tool`,[`A GS pulling tool`,`An RB pulling tool`,`A BE pulling tool`]],
+[`When shearing off the BE pulling tool, which of the following procedures is correct?`,`Jar up only`,[`Jar down only`,`Jar up then down`,`Rotate and pull`]],
+[`The PX tool is used for which of the following purposes?`,`To shut in a well and hold pressure from above and below`,[`To test the control line only`,`To retrieve the SSSV`,`To set the X lock`]],
+[`What is the function of the Go-Devil?`,`To cut wire from a rope socket`,[`To retrieve broken wire line`,`To set plugs in the X-nipple`,`To clean debris from tubing`]],
+[`The X and XN lock mandrel are alike except for which of the following?`,`Type of locking keys`,[`Overall length`,`Material of construction`,`Running tool type`]],
+[`All R- and S-series pulling tools are designed to retrieve which of the following equipment types?`,`An external fishing neck`,[`An internal fishing neck`,`A ported ball valve nipple`,`An X-nipple`]],
+[`Which of the following type of connections are used in wire line operations?`,`Thread and quick release`,[`Welded connections only`,`Bolted flange connections`,`Magnetic quick-connects`]],
+[`In the R series, what pulling tool has the shortest core and longest reach?`,`RJ pulling tool`,[`RB pulling tool`,`RA pulling tool`,`GS pulling tool`]],
+[`When latching onto an internal fish neck, which of the following tools must be used?`,`A GS pulling tool`,[`A BB pulling tool`,`An RJ pulling tool`,`A BE pulling tool`]],
+[`To run a XX plug which of the following tools must be used?`,`An X run/pull tool with equalizing prong`,[`A GS pulling tool`,`An MR tool`,`A GR pulling tool`]],
+[`What would indicate the X running tool is in the control position?`,`There is up and down movement of the core`,[`The tool string stops moving completely`,`A clicking sound is heard once`,`The weight indicator reads zero`]],
+[`One major difference between the XX plug and the XP and XPN plug is that the XX plug can be landed and locked _____?`,`In one wire line trip`,[`Over two separate wire line trips`,`Only with a workover rig`,`Only using slickline, not braided line`]],
+[`The XX plug performs the same function as the _____?`,`PX and PXN plugs`,[`DW plug only`,`Monolock plug`,`Soft set hanger`]],
+[`The type w running tool is designed to set _____ in the production tubing?`,`Type C,B and W slip mandrels`,[`X and XN lock mandrels only`,`PX and PXN plugs only`,`Ported ball valve nipples only`]],
+[`What is the function of mechanical jar in the tool string?`,`It delivers sudden upward or downward impacts`,[`It measures downhole temperature`,`It seals against tubing pressure`,`It cuts the wire line if stuck`]],
+[`When you believe the sand bailer is filled after opening and closing the mechanical jars, you need to check to see if the sand bailer is full by?`,`Gently jar down two times.`,[`Jar up sharply three times`,`Pull the string to surface immediately`,`Check the weight indicator only`]],
+[`You must be careful when jarring down too hard with the B-series pulling tools because you can?`,`Bend the dogs`,[`Shear the core prematurely`,`Damage the equalizing prong`,`Overheat the packing seal`]],
+[`Saudi aramco uses two models of the b series pulling tool, the BB and BE pulling tools.ALL parts of two models are the same,except for the _____?`,`Length of the dogs.`,[`Diameter of the core`,`Type of shear pin used`,`Material of the dogs`]],
+[`BB and BE pulling tools are used to pull tools in the wells that have _____?`,`Junk or wire on top of external fishing necks`,[`Sand bridges only`,`Scale deposits only`,`Internal fishing necks only`]],
+[`A major feature of the MR running tool is?`,`No jar is needed to set or release the tool.`,[`It requires two jars to release`,`It can only be used with braided line`,`It automatically equalizes pressure`]],
+[`The GR pulling tool _____?`,`Uses a steel shear pin`,[`Uses a brass shear pin`,`Requires no shear pin at all`,`Uses a hydraulic release mechanism`]],
+[`What is the function of lock mandrel?`,`To set plugs and secure/plug the well`,[`To measure wellbore pressure`,`To retrieve broken wire`,`To test the packer seals`]],
+[`Where soft hanger can be set?`,`X-nipple`,[`Ported ball valve nipple`,`Landing nipple only`,`Any point in open tubing`]],
+[`Where PX plug can be set?`,`X-nipple`,[`Landing nipple only`,`Ported ball valve nipple`,`Any point in open tubing`]],
+[`What tools used to run soft set hanger in X nipple?`,`MR tool`,[`GS pulling tool`,`X running tool`,`RB pulling tool`]],
+[`How to shear upper shear pin in X-running?`,`By jarring down`,[`By jarring up`,`By rotating clockwise`,`By applying hydraulic pressure`]],
+[`How to share the pin and release X running tool when setting plug?`,`Jar down to shear upper shear pin then up to shear the lower shear pin`,[`Jar up first, then down`,`Jar down twice in a row`,`Rotate then jar down once`]],
+[`Before starting operation, you need to make sure?`,`Well is drifted by G.C`,[`Well is pressure tested only`,`BOP function test only, no drift needed`,`Tubing size is confirmed from records only`]],
+[`What is the retrieving tool for Monolock plug?`,`GS Pulling Tool`,[`RB Pulling Tool`,`BE Pulling Tool`,`MR Tool`]],
+[`What tools used to run PX Plug in X nipple?`,`X Running`,[`GS pulling tool`,`MR tool`,`RB pulling tool`]],
+[`What tools used to retrieve PX Plug in X nipple?`,`GS pulling tool`,[`X running tool`,`MR tool`,`RB pulling tool`]],
+[`When retrieving plug and there are sand and debris inside internal fish neck and failed latch the plug, what is your action?`,`Sand bailer`,[`Impression block`,`Go-Devil`,`RB pulling tool`]],
+[`How many Year BPV valid on the well?`,`one year`,[`six months`,`two years`,`five years`]],
+[`How to share the upper pin of X running tool?`,`By jarring down`,[`By jarring up`,`By rotating clockwise`,`By applying hydraulic pressure`]]
+]},
+{id:"f-fishing", src:`IDP Full REVIEW 2026`, name:`Fishing & Retrieval Operations`, qs:[
+[`What is the purpose of running a check ring tool?`,`To verify if the X lock has set properly into the nipple`,[`To retrieve broken wire line`,`To cut wire from a rope socket`,`To collect debris from tubing`]],
+[`What is the first important step taken after running an impression block to locate the tool string lost in the well tubing?`,`Determine the depth of the top end of broken wire line.`,[`Pull the tool string immediately`,`Run a sand bailer next`,`Notify the production engineer first`]],
+[`Which of the following is needed to calculate the depth of the broken wire end in the well?`,`Wire line wire and tubing size`,[`Only the tubing size`,`Only the wire line stretch factor`,`Well pressure and temperature`]],
+[`What is the first step taken in fishing for broken wire in well?`,`Locate the top end of broken wire line`,[`Run a Go-Devil first`,`Pull the tubing string`,`Run an acid job first`]],
+[`When fishing for broken wire line, debris and other objects in the production tubing, which of the following is normally used for this task?`,`Tubular jar`,[`Knuckle jar`,`Mechanical jar`,`Hydraulic jar`]],
+[`How many times must the impression block be jarred?`,`Jar one time`,[`Jar two times`,`Jar three times`,`Jar continuously for one minute`]],
+[`When fishing for a broken wire line, the wire line must be grabbed from the….?`,`Top end`,[`Bottom end`,`Middle section`,`Wherever it is easiest to reach`]],
+[`What makes the indentations on the check ring?`,`Collets fingers.`,[`The core of the lock mandrel`,`The equalizing prong`,`The dog retainer`]],
+[`How many jars should be performed for impression block to take mark?`,`One time`,[`Two times`,`Three times`,`Five times`]]
+]},
+{id:"f-acid", src:`IDP Full REVIEW 2026`, name:`Scale Removal & Acidizing Jobs`, qs:[
+[`Why are matrix acidizing jobs performed on production wells?`,`To dissolve mud and other natural flow restrictions.`,[`To increase tubing diameter permanently`,`To test the packer seals`,`To cool the wellbore`]],
+[`Why is it necessary to acid wash wells?`,`To remove scale deposits in the production tubing.`,[`To increase reservoir pressure`,`To lubricate the tubing`,`To neutralize H2S in the wellbore`]],
+[`What effect does scale has wire line operation?`,`The tubing diameter size is reduced.`,[`The tubing becomes more flexible`,`Wire line speed increases`,`No effect on wire line operations`]],
+[`Which of the following acids and solution percentages are used when de-scaling the production tubing?`,`Hydrochloric at 15 percent solution`,[`Hydrochloric at 5 percent solution`,`Sulfuric at 15 percent solution`,`Hydrochloric at 30 percent solution`]],
+[`Which of the following is commonly used by aramco to acidize a well?`,`Hydrochloric acid`,[`Sulfuric acid`,`Nitric acid`,`Acetic acid`]],
+[`A chemical inhibitor is injected into a well to perform which of the following task?`,`To prevent oxidation and rust forming in the tubing.`,[`To increase acid reaction speed`,`To neutralize spilled acid`,`To reduce hydrostatic pressure`]],
+[`What is the purpose of the Nitrogen Kick –off job?`,`To reduce the hydrostatic pressure in the tubing. To prevent the escape of the well fluids`,[`To increase hydrostatic pressure for well control`,`To clean scale from the tubing`,`To test the SSSV`]],
+[`How is the oil flow restored or increased from a rocky or tight oil reservoir?`,`By using explosives to fracture the surrounding formation`,[`By increasing choke size only`,`By running additional acid jobs weekly`,`By replacing the SSSV`]],
+[`What action must be taken first when well acidizing fluids gets onto your clothes?`,`Neutralize with soda ash solution`,[`Rinse with diesel fluid`,`Wipe off with a dry cloth first`,`Apply heavy grease to the area`]],
+[`When conducting an acid job on a well, why is a demulsified mixed into the acid?`,`To assist in dissolving drilling mud and gravel pack.`,[`To neutralize the acid strength`,`To prevent corrosion of tubing`,`To increase acid reaction temperature`]],
+[`Why is soda ash necessary on the well site when conducting an acidizing job on the well?`,`To neutralize accidental acid spills`,[`To increase the acid's dissolving power`,`To lubricate the pumping equipment`,`To cool the acid before pumping`]],
+[`When conducting an acid job on a well, why is inhibitor mixed into the acid?`,`To prevent the formation of emulsion in the reservoir`,[`To speed up the acid reaction`,`To neutralize spilled acid`,`To increase hydrostatic pressure`]],
+[`Nitrogen is used for which of the following procedures?`,`For a well living job`,[`For neutralizing spilled acid`,`For flushing the lubricator only`,`For cooling the wellhead valves`]],
+[`If you expect scale or debris what's your action in well tubing?`,`Run GC & scriber`,[`Run an acid job immediately`,`Run a sand bailer only`,`Pull the SSSV immediately`]],
+[`What PPE should be used when pumping N2?`,`Face shield, protective clothes and insulated gloves`,[`Rubber suit and safety glasses only`,`SCBA and ear plugs only`,`Standard coveralls and hard hat only`]],
+[`How to mix acid with chemicals volumes?`,`By circulation`,[`By manual stirring only`,`By gravity settling overnight`,`By heating the mixture`]],
+[`If the well begin flowing while pumping N2, what action should be taken?`,`Stop pumping N2`,[`Increase N2 pumping rate`,`Continue pumping and monitor`,`Switch to acid pumping immediately`]],
+[`In normal operation with N2 lifting job, what is the depth & pumping rate?`,`2000' & 300 scf`,[`1000' & 150 scf`,`3000' & 500 scf`,`1500' & 300 scf`]],
+[`What should we do before make an acid trench?`,`Obtain underground utility cables' layout`,[`Notify the Fire Protection Department only`,`Pressure test the acid tanks`,`Conduct a gas test only`]]
+]},
+{id:"f-bailing", src:`IDP Full REVIEW 2026`, name:`Bailing, Sand Bridges, Scratching & Drifting`, qs:[
+[`Which of the following tools must be run to remove dents or tight areas in the production tubing?`,`Swaging tool`,[`Gauge cutter`,`Scratcher`,`Impression block`]],
+[`Which of the following must be done after breaking through a blockage or sand bridge in the production tubing?`,`Run the scratcher 10 feet below the blockage`,[`Run the scratcher 10 feet above the blockage`,`Pull out of hole immediately`,`Run an acid job immediately`]],
+[`Which the following attached to the tool string to collect fluid sample from the production tubing?.`,`A thief stick`,[`A sand bailer`,`A hydrostatic bailer`,`A Go-Devil`]],
+[`Why must the production tubing of a well be back flushed?`,`To remove acid water and carbon dioxide from the tubing`,[`To increase tubing pressure`,`To lubricate the packer seals`,`To cool the wellbore`]],
+[`What are the standard wire line tools for a normal well drifting job?`,`Rope socket, Knuckle joint, stem, Mechanical jar and gauge cutter.`,[`Rope socket, stem, sand bailer and Go-Devil`,`Knuckle joint, hydrostatic bailer and check ring tool`,`Stem, mechanical jar and thief stick only`]],
+[`Why is it important to periodically conduct bailing jobs on producing wells?`,`To keep well flow rate as high as possible`,[`To test the SSSV seals`,`To calibrate the weight indicator`,`To neutralize acid residue`]],
+[`When preparing the sample bailer, where is the ball installed in the sample bailer?`,`In the shoe of the bailer.`,[`At the top of the bailer`,`In the middle chamber`,`On the outer body`]],
+[`How is trapped pressure released from the sand bailer?`,`By pushing the ball and loosening the shoe`,[`By opening a bleed valve on top`,`By jarring down repeatedly`,`By waiting for natural venting`]],
+[`Why is it important to be cautions when removing sand bridges in the production tubing?`,`A high pressure differential may below the bridge`,[`The bridge may contain acid residue`,`The bridge may damage the SSSV`,`The bridge may be radioactive`]],
+[`When using a hydraulic bailer to remove difficult obstructions from the well tubing, the bailer is sealed at which of the following atmospheric pressure?`,`15 psig`,[`0 psig`,`30 psig`,`50 psig`]],
+[`Which of the following type sand bailer should not be used to break through bridge in the production tubing?`,`Hydrostatic bailer`,[`Sample bailer`,`Standard sand bailer`,`Thief stick`]],
+[`Which of the following best describes the action of drifting a well?`,`Checking the inside diameter of the tubing for blockage`,[`Removing scale chemically`,`Testing the SSSV function`,`Measuring wellhead pressure`]],
+[`When drifting a well, what does the second weight decrease indicate to the wire line operator?`,`The mechanical jar is in the closed position`,[`The gauge cutter has reached bottom`,`The tool string has parted`,`The wire line has gone slack`]],
+[`You must jar down _____ to fill the sample bailer?`,`Several times the bottom sub`,[`One time only, gently`,`Continuously for one minute`,`Jar up several times instead`]],
+[`What is the pressure inside hydraulic bailer at surface?`,`Atmospheric pressure`,[`Well shut-in pressure`,`Zero absolute pressure`,`Twice atmospheric pressure`]],
+[`If the gauge cutter stopped or tagged at 500', what is the right procedure should be taken?`,`Run impression block`,[`Pull out of hole immediately`,`Run an acid job`,`Increase jarring force`]],
+[`What tool is used to drift and clean the tubing?`,`Gauge cutter`,[`Swaging tool`,`Scratcher`,`Impression block`]],
+[`What is the purpose of the hydrostatic bailer?`,`To collect debris`,[`To collect fluid samples`,`To test the packer seals`,`To clean scale chemically`]],
+[`How to activate hydrostatic bailer?`,`Jar down and break the disk`,[`Jar up sharply once`,`Apply hydraulic pressure from surface`,`Rotate the tool string`]],
+[`What is the objective of sand bailer?`,`Collect sand from bottom of the tubing and debris`,[`Collect fluid samples only`,`Test the SSSV seals`,`Clean scale chemically`]]
+]},
+{id:"f-cable", src:`IDP Full REVIEW 2026`, name:`Wire Line Cable, Spooling, Reel & Weight Indicator`, qs:[
+[`Which of the following is the primary pressure containment on the slick line during wire line operation?`,`The stuffing box`,[`The lubricator`,`The BOP`,`The wing valve`]],
+[`When the tool string is being run into the well tubing, what prevent a pressure leakage around the moving slick line?`,`A Stuffing Box`,[`A grease injection head`,`The BOP rams`,`The Hay pulley`]],
+[`When using braided wire line cable to run the tool string into the well tubing what prevent a pressure leakage around the moving cable?`,`A grease injection head`,[`A stuffing box`,`The BOP rams`,`The equalizing valve`]],
+[`What procedure must be followed when the footage counter stops working as the wire line tool is being run down hole?`,`Inform foreman and follow his instructions`,[`Continue the job by estimating depth`,`Stop the job and replace the counter yourself`,`Pull out of hole immediately without notifying anyone`]],
+[`Wire line can be purchased on spools of various lengths. What is the maximum spool length available to aramco?`,`On spools of 25,000 feet or 20000`,[`On spools of 15,000 feet`,`On spools of 35,000 feet`,`On spools of 10,000 feet`]],
+[`The operation of which of the following controls the weight pulling ability of the wire line until?`,`Bypass valve`,[`Choke valve`,`The wing valve`,`The Hay pulley`]],
+[`Normally how many feet of wire is on a new spool of 0.108 inch wire line wire?`,`15,000 to 20,000 feet`,[`10,000 to 12,000 feet`,`20,000 to 25,000 feet`,`25,000 to 30,000 feet`]],
+[`What is the recommended minimum pulley diameter that must be used for 0.125 inch wire line wire?`,`15 inch`,[`8 inch`,`12 inch`,`20 inch`]],
+[`What is the recommended minimum pulley diameter that must be used for wire.108?`,`8 inch`,[`15 inch`,`10 inch`,`6 inch`]],
+[`What is the function of the spooling wheel?`,`To guide wire line onto the wire line reel dram`,[`To measure wire line tension`,`To guide wire onto the reel drum without a spooling wheel`,`To cut the wire line if stuck`]],
+[`How many layers of new wire must be put to the wireline reel when spooling new wire?`,`4 to 6 even layers`,[`2 to 3 even layers`,`8 to 10 even layers`,`1 to 2 even layers`]],
+[`what you used to push the wire line tightly together on reel?`,`Use a ball peen hammer and screwdriver.`,[`Use a rubber mallet only`,`Use a pry bar and wrench`,`Use a torque wrench`]],
+[`If the Martin-Decker weight indicator is not calibrated properly?`,`The weight limit could be exceeded`,[`The wire line will automatically stop feeding`,`The BOP will fail to close`,`The stuffing box will leak immediately`]],
+[`For how many feet pull test is required for CT reel when RIH?`,`Every 500 ft`,[`Every 1000 ft`,`Every 250 ft`,`Every 2000 ft`]],
+[`What should you do if failure occurred in CT weight indicator reading while running in hole?`,`POOH to surface with very low speed, secure the well and fix the problem`,[`Continue running in hole and monitor closely`,`Increase running speed to finish quickly`,`Ignore it if the failure is brief`]]
+]},
+{id:"f-wlunit", src:`IDP Full REVIEW 2026`, name:`Wire Line Unit Operation & Controls`, qs:[
+[`Which of the following must be done during the pre-start up on the wire line unit?`,`Open the Hydraulic fluid gate valve`,[`Close the bypass valve fully`,`Engage the transmission in low gear`,`Disconnect the battery for safety`]],
+[`During the per-start up checks, in which position must the throttle be put into?`,`Pull the throttle up 25% from the closed Position`,[`Push the throttle to fully open`,`Leave the throttle fully closed`,`Set the throttle to 50% open`]],
+[`When checking an electronic pressure gauge which of the following pressure should be?`,`Between 9 to 20 Pisa`,[`Between 0 to 5 Pisa`,`Between 20 to 40 Pisa`,`Between 5 to 9 Pisa`]],
+[`Pressurzed hydraulic fluid is used to operate the wire line unit. Which of the following is used to control the hydraulic fluid flow?`,`Bypass valve`,[`Choke valve`,`The wing valve`,`The Hay pulley`]],
+[`When setting wire line engine controls, the hydraulic fluid control lever must be placed into which of the following positions?`,`Neutral`,[`Fully engaged`,`Reverse`,`Low gear`]],
+[`Which of the following will prevent the wire line engine from starting if it is engaged (in the on position)?`,`Shut off valve is in the pulled up position`,[`Shut off valve is in the pushed down position`,`The transmission is in neutral`,`The bypass valve is 100% open`]],
+[`Before operating the brake, throttle and transmission on the wire line unit, which of the following must be done?`,`Open bypass valve 100% of full open position`,[`Close bypass valve completely`,`Set bypass valve to 50% open`,`Disconnect the bypass valve`]],
+[`After cleaning and inspecting wire line parts, which of the following must be done next?`,`Lubricate and re-assembly for next use`,[`Store them without lubrication`,`Send them for calibration immediately`,`Discard any part that was disassembled`]],
+[`When must the wire line transmission gear box be put into low gear during a wire line job?`,`When the tool string is down hole and nearing the work zone`,[`At the very start of every job`,`Only when pulling out of hole`,`Only during acid jobs`]],
+[`How long must the wire line engine be allowed to warm-up before conducting a wire line job?`,`5 min`,[`10 min`,`15 min`,`2 min`]],
+[`Which of the following fluids are necessary to operate the wire line unit controls mechanisms?`,`Hydraulic oil`,[`Diesel fluid`,`Inhibited brine`,`Compressed air only`]],
+[`Which of the following must be used when cleaning the PRM3 pressure sensor?`,`Safety solvent`,[`Diesel fluid`,`Hydraulic oil`,`Plain water only`]],
+[`To monitor pressure during TCA refiling, you should install pressure gauges on the TCA, CCA and _____?`,`Wellhead Cap`,[`Choke manifold`,`Flare line`,`Kill valve`]]
+]},
+{id:"f-tubing", src:`IDP Full REVIEW 2026`, name:`Tubing & Casing Specifications`, qs:[
+[`What is the inside diameter of the 2-3/8 inch tubing joints?`,`1.995 inches`,[`2.041 inches`,`2.441 inches`,`1.867 inches`]],
+[`What is the inside diameter of the 2-7/8 inch tubing joints?`,`2.441 inches`,[`1.995 inches`,`2.259 inches`,`2.875 inches`]]
+]},
+{id:"f-profile", src:`IDP Full REVIEW 2026`, name:`Well Profile, Job Planning & Productivity`, qs:[
+[`Which of the following item are listed in the operation section of the job profile?`,`Job steps and Location of tubing restrictions`,[`Only the well's completion date`,`Only the operator's name and badge number`,`Only the production engineer's signature`]],
+[`When must a well profile be issued by the well coordinator?`,`Before each down hole job.`,[`Only once per well's lifetime`,`Only after a workover is completed`,`Only when requested by the customer`]]
+]},
+{id:"f-fire", src:`IDP Full REVIEW 2026`, name:`Fire Safety & Fire Extinguishers`, qs:[
+[`What type of the fire extinguisher is normally used on an electric fire?`,`Carbon dioxide(CO2)`,[`Dry chemical`,`Water`,`Foam`]],
+[`What type of the fire extinguisher is normally used on a small hydrocarbon fire?`,`Dry chemical`,[`Water`,`Carbon dioxide(CO2)`,`Foam only`]],
+[`What type of the fire extinguisher is normally used on a paper or cloth fire?`,`Water`,[`Dry chemical`,`Carbon dioxide(CO2)`,`Foam`]],
+[`How is the fire monitor used to cool a tank that is on fire?`,`Power cone applied to top of vessel`,[`Straight stream applied to the base`,`Fog spray applied to the ground around it`,`Foam applied directly into the fire`]],
+[`How often must fire extinguisher be inspected?`,`Quarterly`,[`Monthly`,`Annually`,`Weekly`]],
+[`What must be done when empty fire extinguisher is found on the work truck?`,`Replace the extinguisher immediately`,[`Tag it and replace at end of shift`,`Note it in the log only`,`Continue the job without an extinguisher`]],
+[`A fire blanket extinguishes a fire on a person clothes because it deprives it the fire of which of the following?`,`Oxygen`,[`Fuel`,`Heat`,`Ignition source`]],
+[`When using CO2 fire extinguisher, the horn must be held in what area to avoid injury to the hand?`,`The Handle`,[`The nozzle tip`,`The base of the cylinder`,`The pressure gauge`]],
+[`Which of the following compressed gases is the propellant used to force the dry chemical from the 150 pound wheel unit extinguisher?`,`Nitrogen`,[`Carbon dioxide`,`Compressed air`,`Argon`]],
+[`When a fire start s after a well blow out, how is the fire extinguished?`,`By drilling into reservoir and pumping mud into it`,[`By spraying foam continuously`,`By using dry chemical extinguishers only`,`By flooding the location with water`]],
+[`When the work has been stopped or is completed, how long must the fire watch remain?`,`He must remain on the site for at least 30 minutes`,[`He may leave immediately`,`He must remain for at least 2 hours`,`He must remain until the next shift arrives`]],
+[`which of the following courses must the firewatch attend before carrying out firewatch duty?`,`Fire figting and gas tester`,[`Rigging and crane operation`,`Confined space entry and SCBA maintenance`,`Electrical safety and LOTO`]],
+[`who must be notified first by the fire watch if there is a fire at well site?`,`Supervisor`,[`Fire Protection Department directly`,`Security`,`The nearest operator`]],
+[`when must a firewatch be assigned to a job site?`,`During any welding or hot cutting`,[`Only for confined space entries`,`Only for jobs lasting over 4 hours`,`Only when requested by the contractor`]],
+[`when is the firewatch allowed to leave the hot work area while the work is on going?`,`When he is relieved of duty`,[`When the job is temporarily paused`,`After 30 minutes if no incident occurs`,`When the receiver gives verbal permission`]],
+[`what must the firewatch keep checking while work is being carried out?`,`Work permit condition do not change`,[`That the weather does not change`,`That the gas tester remains on site`,`That the crew takes scheduled breaks`]],
+[`which of the following certificate must the fire watch have in his possession?`,`A valid gas testing certificate`,[`A valid work permit issuer certificate`,`A valid confined space entry certificate`,`A valid rigging certificate`]],
+[`what must the fire watch do first if the safety condition change on the well site?`,`Stop work and immediately inform supervisor`,[`Continue monitoring more closely`,`Ask the receiver to pause briefly`,`Note it in the log and continue`]],
+[`when approaching a fire to close an isolation valve, which of the following fire equipment and nozzle settings must be used?`,`Hose reel with a fogy spray nozzle`,[`Hose reel with a straight stream nozzle`,`Dry chemical extinguisher only`,`CO2 extinguisher only`]],
+[`Fire extinguisher is inspected by Fire department every _____?`,`Yearly (Annually)`,[`Quarterly`,`Monthly`,`Every 2 years`]],
+[`SCBA is inspected by fire department every _____?`,`Yearly (Annually)`,[`Monthly`,`Quarterly`,`Every 2 years`]],
+[`Fire extinguisher class A is used for what?`,`Wood`,[`Electrical equipment`,`Flammable liquids`,`Combustible metals`]],
+[`For which class, CO2 Fire extinguisher refers?`,`Class B & C`,[`Class A only`,`Class D only`,`Class A & B`]],
+[`For what class CO2 fire extinguisher is used?`,`Class B & C`,[`Class A only`,`Class D only`,`Class A & B`]],
+[`Dry chemicals Fire extinguisher hydro test is required every _____?`,`12 years`,[`5 years`,`10 years`,`15 years`]],
+[`Fire extinguisher hydro test is required every _____?`,`5 years`,[`12 years`,`3 years`,`10 years`]],
+[`What regularly operator should check in fire extinguisher?`,`Valid inspection tag, pin and seal`,[`Weight only`,`Color of the cylinder only`,`Manufacture date only`]],
+[`When fire blanket considered inappropriate for using?`,`After being used`,[`After 6 months in storage`,`Only if it has a manufacturer's label`,`Only if stored outdoors`]],
+[`How oven user inspects the fire extinguisher?`,`Monthly`,[`Weekly`,`Daily`,`Quarterly`]],
+[`What should you do when fire caught on someone's clothes?`,`Cover him with blanket and let him roll over`,[`Spray him directly with a CO2 extinguisher`,`Have him run to find water`,`Remove his clothes while standing`]],
+[`Dry chemical used for?`,`Petroleum fire`,[`Electrical fire only`,`Combustible metal fire`,`Paper and cloth fire`]],
+[`What is the regular check on fire extinguisher?`,`Tag & seal`,[`Weight and color only`,`Manufacture date only`,`Cylinder pressure only`]],
+[`Dry chemicals FEXT hydrotest is every?`,`12 years`,[`5 years`,`10 years`,`15 years`]],
+[`Where should you place the dry chemicals extinguisher nozzle jet?`,`On the base of fire or swing`,[`At the top of the flames only`,`Directly upward into the smoke`,`At the source of fuel supply only, never swinging`]],
+[`If you have empty (used) dry chemicals extinguisher, how will you keep it?`,`Lay it down`,[`Stand it upright as normal`,`Store it pressurized for reuse`,`Return it to service after shaking`]]
+]},
+{id:"f-h2s", src:`IDP Full REVIEW 2026`, name:`Emergency Response & H2S`, qs:[
+[`In an emergency situation at the well site, who takes responsibility for supervising the work to control the event until he is relieved?`,`The senior person`,[`The first person on scene regardless of rank`,`The Fire Protection Department`,`The nearest contractor supervisor`]],
+[`Who must be informed first if there is an emergency at the well site?`,`Supervisor`,[`Security only`,`The Fire Protection Department directly`,`The production engineer only`]],
+[`when an emergency occurs at the well site, which of the following actions must be taken first?`,`Inform the supervisoing operator`,[`Evacuate without notifying anyone`,`Attempt to fix the problem alone first`,`Call the customer directly`]],
+[`when reporting an emergency on 110,what information must be given?`,`Location ,type of emergency,name ,ID and injury`,[`Only the location and name`,`Only the type of emergency`,`Only the badge number and location`]],
+[`when H2S release has occurred at the well site ,which of the following must be done first?`,`Evacuate the area`,[`Put on SCBA and investigate the source`,`Continue work while monitoring`,`Close nearby valves first`]],
+[`what action must be taken when a major H2Sleak occurs during a wireline job?`,`Evacuate and go upwind of the leak`,[`Evacuate and go downwind of the leak`,`Stay in place and don SCBA`,`Continue the job with SCBA on`]],
+[`An operator is discovered unconscious during a gas release, which of the following is the correct action to take?`,`Put on SCBA and evacuate the injured person to a safe area`,[`Enter without SCBA to save time`,`Wait for the Fire Protection Department before any action`,`Drag him out holding your breath`]],
+[`H2S alarm is activated at?`,`10ppm`,[`5ppm`,`20ppm`,`35ppm`]],
+[`What is the color of H2S flashing alarm in GDS?`,`Blue`,[`Red`,`Yellow`,`Green`]],
+[`In the event of an emergency, whom you should call?`,`Security 911`,[`Only the shift supervisor`,`Only the Fire Protection Department`,`Only the production engineer`]],
+[`Who make RER and notify nearby facilities?`,`Site foreman & SUPV`,[`The gas tester only`,`Security only`,`The contractor's safety officer only`]],
+[`Craft man in plant fall down from ladder they notify you as supervisor what should you do?`,`Report it and make investigation`,[`Ignore it if he seems fine`,`Only log it at the end of shift`,`Ask him to continue working`]],
+[`Craft man in plant fall down from ladder and get injured, after you report what you will do?`,`Give him first aid until medical team arrived`,[`Move him immediately to the clinic yourself`,`Leave him and continue the job`,`Wait without giving first aid`]],
+[`Craft man in plant fall down from ladder, what is the first thing to be do?`,`Report and then proceed to incident site`,[`Proceed to the incident site without reporting`,`Call the family first`,`Continue the job and check on him later`]],
+[`For how long we should review the pre-readiness of emergency?`,`Yearly`,[`Monthly`,`Quarterly`,`Every 5 years`]],
+[`Where should shift manager stay during emergency II?`,`ECC Room`,[`ECP at the scene`,`The plant control room only`,`The main gate`]],
+[`Where should non-operative personnel report to in case of an emergency?`,`Assembly area`,[`The main gate`,`The ECC Room`,`Their own vehicles`]]
+]},
+{id:"f-permit", src:`IDP Full REVIEW 2026`, name:`Work Permits`, qs:[
+[`What is the purpose of a car seal/chain?`,`To prevent unauthorized operation of critical equipment`,[`To measure valve torque`,`To record maintenance history`,`To seal against corrosion`]],
+[`What must be done before issuing a work permit?`,`The receiver and the issuer must inspect the job site`,[`Only the receiver must inspect the job site`,`Only the issuer must inspect the job site`,`No inspection required if job is routine`]],
+[`before issuing a work permits what must be check first?`,`The receiver has a valid receiver certificate`,[`The issuer has a valid crane certificate`,`The job site has been painted recently`,`The contractor has liability insurance only`]],
+[`which two work permits cannot be issued same time in the same job site?`,`Hot and release work permits`,[`Cold and confined space permits`,`Hot and confined space permits`,`Release and cold work permits`]],
+[`Hot work is not permitted when combustible gas test is above which of the following?`,`0.00 LEL`,[`5% LEL`,`10% LEL`,`25% LEL`]],
+[`which work permits are required for opening a flange joint on a hydrocarbon line?`,`Release and cold work permits`,[`Hot work permit only`,`Confined space and hot work permits`,`Equipment opening permit only`]],
+[`when locking out equipment for maintenance which of the following is correct?`,`Attach lock and hold tag`,[`Attach hold tag only, no lock needed`,`Verbally inform the operator only`,`Attach a car seal only`]],
+[`what action must be taken when a combustible gas test reading for a welding job is 0.8 LEL?`,`Work can not start ,reading must be 0.00 LEL`,[`Work may proceed with continuous monitoring`,`Work may proceed if below 5% LEL`,`Work may proceed with a fire watch present`]],
+[`Which section of the work permit indicates the required safety and protective equipment that is needed on the work site?`,`Middle section on the front of the work permit`,[`The back page only`,`The top header only`,`The signature block only`]],
+[`Which of the following signatures are required to close a work permit?`,`Issuer and receiver`,[`Receiver only`,`Issuer only`,`Division Head only`]],
+[`What is the color of LEL flashing alarm in GDS?`,`Red`,[`Blue`,`Yellow`,`Green`]],
+[`If you have a confined space task how to perform the gas test?`,`Prior to entry`,[`Only after entry begins`,`Only if H2S was previously detected`,`Only at the end of the shift`]]
+]},
+{id:"f-ppe", src:`IDP Full REVIEW 2026`, name:`PPE & Chemical Hazard Handling`, qs:[
+[`What must be done first before handling hazardous chemical for the first time?`,`Read chemical hazards bulletin for chemical being used`,[`Ask a coworker for a quick summary`,`Only check the container label`,`Wear standard PPE without further review`]],
+[`Which of the following is hazard when fighting a fire a chemical storage area?`,`Some chemical may react violently with water`,[`Chemicals will always neutralize the fire`,`Fire cannot occur near stored chemicals`,`Only electrical hazards exist in that area`]],
+[`When cleaning wire line tools and equipment which of the following you should used?`,`Face shield , chemical filter mask , rubber apron and gloves`,[`Safety glasses and leather gloves only`,`Standard coveralls and hard hat only`,`Ear plugs and steel-toe boots only`]],
+[`what must be done first if the firewatch discovers that a contractor is working at the well site without safety glasses?`,`Stop him working ,remove him from work area`,[`Warn him and let him continue`,`Note it in the log only`,`Ask him to find glasses himself while working`]],
+[`when cleaning wireline tools,Which of the following safety equipment must be used?`,`Face shield, chemical filter mask ,rubber apron and gloves`,[`Safety glasses and leather gloves only`,`Standard coveralls and hard hat only`,`Ear plugs and steel-toe boots only`]],
+[`What is the required PPE for corrosive?`,`Face shield, rubber suit, rubber boots, rubber gloves`,[`Safety glasses and cotton gloves only`,`Standard coveralls and hard hat only`,`Dust mask and leather gloves only`]],
+[`Why operator should be careful when handling chemical?`,`Chemical could cause skin burn`,[`Chemical has no health risk if diluted`,`Chemical only affects clothing, not skin`,`Chemical risk is limited to inhalation only`]],
+[`What safety equipment should be provided in chemical storage area and beside pump and pumping lines?`,`Safety shower and eye wash`,[`Fire extinguisher only`,`First aid kit only`,`Spill containment only`]],
+[`What's required PPE for gas leaking on location?`,`SCBA`,[`Dust mask`,`Chemical filter mask only`,`Ear plugs and safety glasses only`]],
+[`Which certificate is required for SC operator operation task includes chemical handling?`,`Chemical handling Certificate`,[`Gas testing certificate only`,`Confined space certificate only`,`Rigging certificate only`]],
+[`What fluid type of chemical utilized for TCA refilling?`,`Inhibited diesel / inhibited brine`,[`Plain water only`,`Hydrochloric acid solution`,`Raw diesel with no inhibitor`]],
+[`What chemical to be added while flowing back the well to GOSP?`,`Soda Ash`,[`Hydrochloric acid`,`Nitrogen`,`Diesel fluid`]],
+[`After pumping corrosive chemical and flow the well through production line, the chemical should be added is _____?`,`Soda ash`,[`Hydrochloric acid`,`Nitrogen`,`Diesel fluid`]],
+[`In SIS, what will happen to the chemical if the pumping is stopped or interrupt?`,`Premature precipitation of the chemicals`,[`No effect on the chemical at all`,`The chemical evaporates completely`,`The chemical becomes more effective`]],
+[`When chemical received in location, what should be checked and considered?`,`Ensure the provision of labeling, CHB, sheltering, spill containments, Fire equipment, washing station, grounding, signage and PPE, SDS`,[`Only check the quantity received`,`Only check the delivery date`,`Only check the supplier's name`]],
+[`Once you received chemical in location, what should you do?`,`Set chemical in chemical shelter and any chemical more than 1 GAL must have CHB label`,[`Store it in any open area temporarily`,`Leave it on the delivery truck until needed`,`Mix it immediately with existing stock`]],
+[`What to do when body skin exposed to chemical?`,`Remove clothes and use safety shower immediately`,[`Wipe with a dry cloth first`,`Apply grease to the area`,`Wait until the end of shift to report it`]],
+[`If you received a chemical what first thing you should check?`,`SDS`,[`Delivery invoice only`,`Supplier's certificate only`,`Expiry date only`]],
+[`If the employee comes into contact with chemical, what action you do?`,`Remove him to assembly area and give him first aid`,[`Have him continue working if he feels fine`,`Send him home without first aid`,`Wait for the shift to end before reporting`]],
+[`What safety equipment we should put near chemical area?`,`Safety shower, eye wash and fire extinguisher`,[`First aid kit only`,`Fire extinguisher only`,`Spill containment only, no shower`]]
+]},
+{id:"f-lossprev", src:`IDP Full REVIEW 2026`, name:`Loss Prevention, Responsibilities & Training`, qs:[
+[`Why is it allowable to bypass an ESD well control panel device?`,`To keep the SSV open during down hole wire line operation`,[`To save time during routine operations`,`To allow testing of the panel itself`,`To bypass gas monitoring requirements`]],
+[`To whom is a loss prevention policy communicated?`,`To all company employees`,[`Only to supervisors`,`Only to safety officers`,`Only to new hires during orientation`]],
+[`Who is responsible for provide loss prevention information to operators?`,`The supervising operators`,[`The Fire Protection Department`,`The gas tester`,`The Division Head only`]],
+[`who is responsible for Co-Coordinating the review and updating of the loss prevention manual?`,`Safety advisor`,[`Shift superintendent`,`Training coordinator`,`Operations foreman`]],
+[`Who is responsible for nominating employees for safety courses?`,`Training coordinator`,[`Safety advisor`,`Shift superintendent`,`Division Head`]],
+[`What certification is required for SC supervisor?`,`Well control certification`,[`Rigging certification only`,`Chemical handling certification only`,`Gas testing certification only`]],
+[`What certification is required for SC operator?`,`Safety Passport`,[`Well control certification`,`Rigging certification`,`Chemical handling certification`]],
+[`What type of meeting should be held before starting an operation?`,`PJSM/discussed operation or JSA`,[`Only a toolbox talk with no documentation`,`Only a shift handover meeting`,`No meeting required for routine jobs`]],
+[`What is the main function of loss prevention job?`,`To ensure complying with safety guidelines to protect people and company assets`,[`To maximize production output only`,`To reduce insurance costs only`,`To handle equipment procurement`]],
+[`What is the responsibility of shift supervisor?`,`To supervise the work in shift time/out regular working hours`,[`To perform maintenance tasks personally`,`To issue all work permits himself`,`To handle only administrative paperwork`]],
+[`What type of rigger certificates is required during CT rig up/ down?`,`Rigger I`,[`Rigger II`,`Rigger III`,`No certificate required`]],
+[`Validity of PCE certification test is?`,`12 months`,[`6 months`,`24 months`,`18 months`]],
+[`Who implement the SMS for department safety management system?`,`Manager department`,[`Safety advisor only`,`Training coordinator only`,`Shift supervisor only`]],
+[`If the employee loss his ID what is the action?`,`Give time to searching; Report to security; Memo and explain to him the rules`,[`Suspend him immediately`,`Ignore it if he finds it later`,`Issue a new ID with no further action`]],
+[`Why is the supervisor should monitor the operator?`,`To inform him the task`,[`To catch him making mistakes only`,`To reduce his workload`,`To replace him if he is too slow`]],
+[`If there is an operator smoking in hot zone, what action you should do?`,`Stop him and give him memo to file`,[`Ignore it if no one else notices`,`Warn him verbally with no documentation`,`Wait until after his shift to address it`]],
+[`If the employee makes a mistake during operation, when you tell him?`,`Immediately after he complete his work`,[`Wait until his annual review`,`Tell him in front of the whole crew immediately`,`Never mention it if the job succeeded`]],
+[`If you are supervisor and assigned to complete your work, in the same time you coordinate with other crew on other location and they already completed the work on time, when you have to praise them?`,`During communication safety meeting; Monthly meeting; Start of shift; End of shift`,[`Only during the annual performance review`,`Praise is not part of supervisor duties`,`Only in a private one-on-one meeting`]],
+[`What is the minimum safe distance to set smoking area in well completion sites?`,`100ft`,[`50ft`,`75ft`,`150ft`]],
+[`With who loss prevention communicate?`,`All Plant employee`,[`Only supervisors and managers`,`Only safety officers`,`Only contractors on site`]],
+[`Hardware copy should be saved in which SMS?`,`SMS E-5`,[`SMS E-1`,`SMS E-3`,`SMS E-10`]]
+]},
+{id:"f-admin", src:`IDP Full REVIEW 2026`, name:`Well Site Administration & Job Documentation`, qs:[
+[`How many wind socks is needed in normal operation?`,`1-2`,[`2-4`,`3-5`,`1 only`]],
+[`If the operator falls down, what should you do?`,`Give him first Aid and call 911`,[`Wait for him to get up on his own`,`Move him immediately without first aid`,`Report only at the end of shift`]],
+[`What is the allowable minimum distance between WH and W/L?`,`50 ft`,[`25 ft`,`100 ft`,`75 ft`]],
+[`Who dispatch the trips in JMS?`,`Dispatcher`,[`The shift supervisor`,`The production engineer`,`The safety advisor`]],
+[`What is the platform floor level that require using falling protective equipment such as harness?`,`1.8 m or 5.9 ft`,[`1.2 m or 4 ft`,`2.4 m or 8 ft`,`1.5 m or 5 ft`]],
+[`What's document is use to discuss procedures and controls of risks?`,`Job Safety Analysis (JSA)`,[`Work permit only`,`Daily log book only`,`Equipment inspection sheet only`]],
+[`How the operator on well completion can control entrance on job site?`,`Sign in/sign out system`,[`Verbal headcount only`,`No entrance control required`,`Badge scanning by security only`]],
+[`If there are an expected spill in well location, what you will used?`,`Spill containments`,[`Sand bags only, no containment plan`,`Fire extinguishers only`,`Absorbent pads with no containment berm`]],
+[`One of contractor not wearing safety helmet and you already informed him before what should you do?`,`Cancel work permit and informed his supervisor`,[`Warn him again verbally only`,`Ignore it since he was already told once`,`Fine him without stopping the work`]]
+]},
+{id:"f-ct", src:`IDP Full REVIEW 2026`, name:`Coiled Tubing (CT), Killing & Stimulation Operations`, qs:[
+[`While POOH to surface and tool reach 100', what precaution should be taken?`,`Raise tools slowly`,[`Raise tools at maximum speed to save time`,`Stop completely until further notice`,`Increase pumping rate while raising`]],
+[`What to do to confirm well tubing accessibility before running SL/ WL tools?`,`Drift the well with G.C`,[`Pressure test the wellhead only`,`Run an acid job first`,`Check records only, no physical drift needed`]],
+[`What is the information of tool string to be recorded before RIH in W/L?`,`OD, Length and fish neck size`,[`Only the tool string weight`,`Only the manufacturer's serial number`,`Only the tool material type`]],
+[`In which direction flare line should be rigged up?`,`South East / South West`,[`North East / North West`,`Toward the access road only`,`Direction does not matter`]],
+[`What safety precaution is needed before killing operation?`,`Conduct gas test`,[`Pressure test the flare line only`,`Notify the customer only`,`Check the weather forecast only`]],
+[`From where you should pump the killing fluid?`,`Kill valve`,[`Wing valve`,`Choke valve`,`Crown valve`]],
+[`What should operator do before open the well to GOSP?`,`Notify GOSP and take permission`,[`Open the well immediately once ready`,`Notify only the shift supervisor`,`Wait for a scheduled time regardless of readiness`]],
+[`While pumping and the circulation pressure increased suddenly without increased volume what doesn't mean?`,`Nozzle is partly plugged`,[`A leak has developed downstream`,`The pump has lost prime`,`The choke valve was closed`]],
+[`For how long well should be kept shut-in after pumping SIS?`,`72hrs`,[`24hrs`,`48hrs`,`96hrs`]],
+[`For how long well should be kept shut-in after pumping CIS?`,`6hrs`,[`2hrs`,`12hrs`,`24hrs`]],
+[`What tools connected below CT connector?`,`Bottom Hole Assembly (BHA)`,[`Wireline tool string`,`Sand bailer assembly`,`Check valve assembly only`]],
+[`After performing killing job, the well should be monitored for how long?`,`30 min (on SOP-4 shall be monitored for 2 Hrs.)`,[`10 minutes only`,`1 hour only`,`No monitoring required after killing`]],
+[`What is the recommended plug if there is an issue with setting and retrieving 7" BPV?`,`Monolock or equivalent plug`,[`DW plug`,`PX plug`,`XX plug`]],
+[`What are the required pressures reading should be recorded before starting with TCA refiling?`,`Record SIWHP and TCA & CCA`,[`Only record SIWHP`,`Only record TCA pressure`,`Only record CCA pressure`]],
+[`What tools is used to identify communication between TCA and tubing?`,`HPT-SNL`,[`SNL-Noise`,`Check ring tool`,`Impression block`]],
+[`What should be performed before starting Killing operation?`,`Run Gauge Cutter`,[`Run an acid job first`,`Run a sand bailer first`,`Pressure test the flare line only`]],
+[`In which time killing operation to be performed?`,`Early morning`,[`Late at night`,`Midday`,`Anytime, time does not matter`]],
+[`No need for pickling CT if?`,`Pickling performed in last 7th days`,[`Pickling performed in last 30 days`,`CT has never been used before`,`Pickling is never required for CT`]],
+[`What is the next operation step after installing the Threaded connecter into CT?`,`Pull test`,[`RIH immediately`,`Pressure test the wellhead`,`Function test the BOP`]],
+[`For how many feet pull test for CT should be performed?`,`Every 1000 ft`,[`Every 500 ft`,`Every 2000 ft`,`Every 250 ft`]],
+[`Who you can call to flow the well to GOSP?`,`GOSP Boardman`,[`The production engineer only`,`The shift supervisor only`,`The fire watch`]],
+[`What is the speed for PLT during logging?`,`30,50,70ft/min`,[`10,20,30ft/min`,`50,75,100ft/min`,`20,40,60ft/min`]],
+[`When starting RIH with CT, what is the pumping rate?`,`0.25 BPM`,[`0.5 BPM`,`0.1 BPM`,`1.0 BPM`]],
+[`If solid accumulated around CT string, what action should be taken?`,`Increase pumping rate for the maximum BHA`,[`Decrease pumping rate immediately`,`Stop pumping entirely`,`Pull out of hole without adjusting rate`]],
+[`If you observe rubber or welding in the flare line, what should you do?`,`Install a new flare line`,[`Continue using it and monitor`,`Repair it with tape temporarily`,`Ignore it if flow is still normal`]],
+[`After setting BPV, the well should be monitored for how long?`,`30 mins`,[`10 mins`,`1 hour`,`2 hours`]],
+[`What is the purpose of BPV?`,`To prevent down hole pressure`,[`To increase downhole pressure`,`To test the SSSV seals`,`To collect fluid samples`]],
+[`When it is required to re-dress or install BPV?`,`When it is required to remain set for more than one year`,[`Every time it is run, regardless of duration`,`Only if it fails a function test`,`Only when replacing the wellhead tree`]],
+[`What is the time for testing each choke size when flowing the well on test line using MPFM?`,`6-10 hrs.`,[`1-2 hrs.`,`12-24 hrs.`,`3-4 hrs.`]],
+[`When completed pumping required quantity of kill fluid and find the WHP=100 psi, what to do?`,`Pump more kill fluid in batches of 10 bbl`,[`Stop pumping, the well is dead`,`Increase pumping rate dramatically`,`Open the well immediately`]],
+[`Who issues the job program for killing job?`,`Production engineer (PE)`,[`Shift supervisor`,`Safety advisor`,`Site foreman`]],
+[`What type of counter gauges are used to monitor the CT depth?`,`Mechanical & electronic`,[`Mechanical only, no electronic backup`,`Electronic only, no mechanical backup`,`Manual tape measurement only`]],
+[`In TCA refiling operation and pressure is not hold?`,`There is communication between tubing and casing`,[`The TCA valve is simply closed`,`The pump has failed completely`,`The CCA gauge is miscalibrated`]],
+[`What is the size of flare line?`,`2 7/8`,[`3 1/2`,`2 3/8`,`4`]],
+[`After confirming the well is dead what next?`,`Rig down pumping unit and secure the well`,[`Immediately begin the next job`,`Leave the equipment rigged up overnight`,`Open the well to production immediately`]],
+[`When changing choke size in testing operation, you refer to _____?`,`Production engineer (PE)`,[`Shift supervisor only`,`Safety advisor only`,`Site foreman only`]],
+[`During normal CT operation normal injection rate should be?`,`0.25`,[`0.5`,`0.1`,`1.0`]],
+[`The main purpose of killing the well is?`,`To replace WH tree`,[`To increase reservoir pressure`,`To clean scale from the tubing`,`To test the SSSV`]],
+[`What is the first thing should be checked before clamping the platform?`,`Check steps & platform condition`,[`Check the weather forecast only`,`Check the crane's fuel level only`,`Check the customer's approval only`]],
+[`For what modes or conditions, the PLT log can be performed?`,`Flowing & shut-in condition`,[`Flowing condition only`,`Shut-in condition only`,`Only during acid jobs`]],
+[`What is pressure test procedure for DFCV in CT operation?`,`Pressure test against WHVs to 2500 psi, bleed to 1500 psi then quickly bleed reel to test two check valves`,[`Pressure test to 5000 psi and hold for 1 hour`,`Pressure test to 1000 psi only, no bleed sequence`,`Pressure test only the reel, not the WHVs`]],
+[`If the CT got lock up during operation, what SC shall do?`,`POOH to safest depth and discuss with PE in location`,[`Continue forcing the CT downhole`,`Cut the CT immediately`,`Abandon the job without notifying anyone`]],
+[`If you get rupture in the flow line what to do?`,`Cut the source`,[`Continue pumping and monitor`,`Increase pressure to clear the rupture`,`Wait for the rupture to seal itself`]],
+[`When setting TTBP, what to use to cap the plug?`,`Cement`,[`Diesel fluid`,`Heavy grease`,`Sand`]],
+[`What to pump during RIH with CT in normal operation?`,`Diesel or treated water`,[`Raw seawater only`,`Hydrochloric acid solution`,`Compressed nitrogen only`]],
+[`When weak point is observed in CT, how many feet should be cut from the CT?`,`200 ft`,[`100 ft`,`500 ft`,`50 ft`]],
+[`Where personal should stand during CT movement (RIH/ POOH)?`,`No personal between injector and CT reel`,[`Directly beside the injector head is safe`,`Between injector and reel if wearing PPE`,`Anywhere except directly under the crane`]],
+[`How often you should perform injection while RIH with CT?`,`Every 1000 ft`,[`Every 500 ft`,`Every 2000 ft`,`Every 250 ft`]],
+[`What should be done after confirming the well is dead after killing operation?`,`Rig down Secure the well`,[`Begin the next job immediately`,`Leave equipment rigged up overnight`,`Open the well to production`]],
+[`When CT operator plan to work on equipment that capable to move, what should he do before?`,`Stop motor, disable the source and lockout the control`,[`Simply switch off the control panel`,`Ask a coworker to watch the equipment`,`Continue working with the motor running`]],
+[`What is the minimum pull test tension for CT connector?`,`20000 lbs.`,[`10000 lbs.`,`30000 lbs.`,`15000 lbs.`]],
+[`What is the function of water wet filter?`,`Water filter`,[`Air filter`,`Oil filter`,`Pressure regulator`]],
+[`What should Aramco operator check before load any object?`,`Outrigger should be a stable place and good condition`,[`Only the load's weight needs checking`,`Only the crane's fuel level needs checking`,`Only the weather forecast needs checking`]],
+[`During TCA refiling operation has a communication between Tubing and Casing, what is the action?`,`Stop Pumping and communicate with W/L`,[`Continue pumping to force a seal`,`Increase pumping rate to overcome the leak`,`Ignore it if pressure stabilizes`]],
+[`During failure pull test CT connector, what you will do?`,`Cut 100 ft then pull test and RIH again`,[`Cut 500 ft then pull test again`,`Abandon the connector entirely`,`Continue without cutting, repeat the test`]],
+[`What is the tool that collect the debris from top of service line?`,`Hydrostatic bailer`,[`Sand bailer`,`Thief stick`,`Go-Devil`]],
+[`What is the reason for the BPV?`,`For rig, Rig-less, work-over and wellhead replacement.`,[`Only for acidizing jobs`,`Only for pressure testing`,`Only for wireline logging jobs`]],
+[`What is your action if there is a leak on the nickel joint?`,`Replace the joint`,[`Tighten it further and continue`,`Apply sealant tape and continue`,`Ignore it if the leak is minor`]],
+[`During pumping operation what you should install to secure the surface lines between the pump unit and wellhead?`,`FSR`,[`Tag lines only`,`Standard hose clamps only`,`Rope tie-downs only`]],
+[`If you perform TCA job, during pumping into TCA and the pressure not hold (leaking in tubing/casing) what you should do?`,`Perform temperature survey using S/L`,[`Continue pumping to force a seal`,`Increase the pumping rate immediately`,`Abandon the TCA job entirely`]],
+[`In TCA refiling operation and pressure in not hold?`,`Casing leak`,[`TCA valve fully closed`,`Pump malfunction only`,`CCA gauge miscalibration`]],
+[`What is the name of the tool used to detect casing leaks?`,`SNL-Noise`,[`HPT-SNL`,`Impression block`,`Check ring tool`]],
+[`What could be the reason of cap leak?`,`O-ring is damaged`,[`Cap is over-torqued`,`Wing valve left open`,`Choke valve fully closed`]],
+[`How can we increase upstream flow line pressure?`,`By close Choke valve`,[`By opening the choke valve`,`By closing the wing valve`,`By opening the crown valve`]],
+[`How can we secure the pumping lines?`,`By FSR`,[`By tag lines only`,`By standard hose clamps only`,`By rope tie-downs only`]],
+[`When should we start the killing operation?`,`Early morning`,[`Late at night`,`Midday`,`Anytime, time does not matter`]],
+[`How can we control the load while lifting operation?`,`Tag line`,[`Crane boom angle only`,`Wind speed monitoring only`,`Outrigger pads only`]],
+[`Which tool is used to identify the communication between tubing and casing?`,`SNL-Noise`,[`HPT-SNL`,`Impression block`,`Check ring tool`]],
+[`When opening oil well to production what the operator to do first?`,`Take the permission from the supervisor`,[`Open the well immediately once ready`,`Notify the customer only`,`Wait for a scheduled time regardless`]],
+[`If the pressure during the killing job is not drop what is the action?`,`Pump more mud`,[`Stop pumping and declare the well dead`,`Reduce pumping rate significantly`,`Open the well to relieve pressure`]],
+[`What kind of permit should be issued for removing breaker cover while it is working?`,`Hot permit`,[`Cold work permit`,`Confined space permit`,`Equipment opening permit`]]
+]},
+{id:"f-ground", src:`IDP Full REVIEW 2026`, name:`Grounding, Electrical & Site Safety Infrastructure`, qs:[
+[`How many generators are required for site?`,`2-4`,[`1-2`,`4-6`,`5-8`]],
+[`What is the depth for portable generator grounding rod?`,`750 mm, 0.75 m, 30 in or 2.46 ft`,[`500 mm, 0.5 m, 20 in`,`1000 mm, 1 m, 40 in`,`300 mm, 0.3 m, 12 in`]],
+[`What is the required distance that should be kept between two generators?`,`500 mm - 2000 mm`,[`100 mm - 500 mm`,`2000 mm - 4000 mm`,`1 m - 1.5 m only`]],
+[`Connection of grounding system to equipment should be made from________?`,`Bolts & nuts`,[`Welded joints only`,`Adhesive clamps only`,`Tape wraps only`]],
+[`What is the standardized minimum diameter of grounding rod?`,`5/8 in - 16 mm - 0.016 m`,[`1/2 in - 12 mm`,`3/4 in - 20 mm`,`1 in - 25 mm`]],
+[`What is the length for generators grounding rod?`,`At least 2.44 m (8 ft) in length and 5/8 inch or 16 mm diameter or larger`,[`At least 1.5 m (5 ft) in length`,`At least 3.5 m (11.5 ft) in length`,`At least 1 m (3.3 ft) in length`]],
+[`What is the length for floodlight grounding rod?`,`2 feet`,[`8 feet`,`1 foot`,`4 feet`]],
+[`What should be joining connections between the grounding conductor (cable) and Grounding rod?`,`Clamps`,[`Solder joints`,`Adhesive tape`,`Plastic ties`]],
+[`How to control the traffic on location?`,`Warning Signs or tapes`,[`Verbal instructions only`,`Security guards only, no signage`,`No control measures needed on site`]],
+[`What is the correct way to use outrigger for the crane?`,`Pads to be installed/put below outrigger in suitable place`,[`Outriggers used without pads on hard ground`,`Only the front outriggers need pads`,`Pads only required over 50 tons load`]],
+[`In which side in the well location, car parking should be designated?`,`Upwind`,[`Downwind`,`Directly beside the wellhead`,`Anywhere with shade available`]],
+[`Where CTU should be spot?`,`Upwind`,[`Downwind`,`Directly beside the wellhead`,`Wherever access road allows`]],
+[`What are required to be checked for lifting point?`,`Certification and color code`,[`Only the paint condition`,`Only the manufacturer's logo`,`Only the lifting point's age`]],
+[`What is the wind speed that crane operation should be stopped when it is reached?`,`32 Km/h`,[`25 Km/h`,`50 Km/h`,`65 Km/h`]],
+[`What control the load while lifting with a crane?`,`Tag line`,[`Crane boom angle only`,`Wind speed monitoring only`,`Outrigger pads only`]],
+[`The electric grounding rod made of what?`,`Copper or copper jacketed steel or galvanized steel`,[`Aluminum only`,`Plastic-coated steel`,`Stainless steel only`]],
+[`What is required to check before making trench?`,`Undergrounding utilizing cables`,[`Only the soil type`,`Only the weather forecast`,`Only the nearby traffic pattern`]],
+[`What is the color of oil& water sites signboards?`,`Green with White writing`,[`Red with White writing`,`Yellow with Black writing`,`Blue with White writing`]],
+[`What to be checked before using Forklift?`,`Inspection Sticker`,[`Fuel level only`,`Operator's lunch schedule`,`Tire pressure only, no sticker required`]],
+[`What are required to check in crane?`,`Aramco certification and sticker`,[`Only the operator's ID`,`Only the fuel gauge`,`Only the manufacturer's warranty`]],
+[`One of contractor hit the floodlight on well location what should you do?`,`Report to location and investigate; Report to transportation`,[`Ignore it if the light still works`,`Fix it yourself without reporting`,`Only note it in the daily log`]],
+[`What is the length for grounding road inside soil?`,`At least 1 foot`,[`At least 2 feet`,`At least 6 inches`,`At least 3 feet`]],
+[`If you work on rotating machine, what is the safety precaution you do?`,`Turn machine off, stop and disable engine remove ignition key`,[`Simply stand clear while it runs`,`Only reduce the speed before working`,`Warn coworkers verbally and proceed`]],
+[`What should you do with guard line before you start rig up operation?`,`Remove guard line; Open gate guard line; Close gate guard line; Grease gate guard line`,[`Leave the guard line untouched`,`Cut the guard line permanently`,`Replace the guard line with tape`]],
+[`How many flood lights as a minimum should be at well site?`,`From 6 to 8`,[`From 2 to 4`,`From 10 to 12`,`From 4 to 6`]],
+[`What is the required length for generator grounding rod?`,`2.44 meter, 8 ft or 2,440 mm`,[`1.5 meter, 5 ft`,`3.5 meter, 11.5 ft`,`1 meter, 3.3 ft`]],
+[`What is the wind speed that man basket operation should be stopped when it is reached?`,`25 Km/h`,[`32 Km/h`,`20 Km/h`,`40 Km/h`]],
+[`What is the wind speed that Scaffolding operation should be stopped when it is reached?`,`65 Km/h`,[`32 Km/h`,`50 Km/h`,`80 Km/h`]],
+[`Who should approve 40 feet of scaffolding?`,`Requires CSD, LP and proponent approval`,[`Only the site foreman's approval`,`Only the scaffold contractor's approval`,`No special approval needed under 50 feet`]],
+[`How many flood lights should be on location?`,`From 6 to 8`,[`From 2 to 4`,`From 10 to 12`,`From 4 to 6`]]
+]},
+{id:"f-escape", src:`IDP Full REVIEW 2026`, name:`Escape Capsule and Helicopter`, qs:[
+[`What is the purpose of swing rope?`,`To allow personal transfer (swing) to and from boat.`,[`To secure cargo during transport`,`To measure wind speed on deck`,`To anchor the helicopter during landing`]],
+[`Who is in-charge during chopper emergency?`,`Pilot and co-pilot.`,[`The senior passenger`,`The ground crew supervisor`,`The company safety officer aboard`]],
+[`What should you do before using swing rope action?`,`Put on life vest before boarding boat.`,[`Remove your safety helmet first`,`Secure loose items only, no vest needed`,`Wait for pilot signal before boarding`]],
+[`What must not transport at helicopter?`,`Compressed gas.`,[`Personal luggage`,`Documents and paperwork`,`Small hand tools`]],
+[`What should you do before approaching a chopper?`,`Removing safety helmet (hat).`,[`Putting on ear plugs only`,`Removing safety glasses`,`Loosening your seat belt`]],
+[`When you approaching helicopter how you carry the package?`,`Below the waist and horizontally if possible.`,[`Above the head for visibility`,`Vertically in front of the chest`,`On the shoulder, upright`]],
+[`How do you approach chopper?`,`Approach from the front.`,[`Approach from the rear`,`Approach from either side`,`Approach from beneath the tail`]],
+[`What is helicopter SA policy?`,`Clear deck policy.`,[`Open deck policy`,`No policy required for short flights`,`Priority boarding policy`]],
+[`What is safety violation at helicopter?`,`Unfasten your seat belt.`,[`Wearing the provided life vest`,`Keeping ear plugs in during flight`,`Following pilot instructions`]],
+[`What is safety equipment to approaching helicopter?`,`Ear plugs & safety glasses.`,[`Hard hat and gloves only`,`SCBA and face shield`,`Life vest and harness only`]],
+[`What is information requirement before approaching helicopter?`,`ID, baggage, weight and destination.`,[`Only ID and destination`,`Only baggage weight`,`Only the passenger's name`]],
+[`When you can remove seat belt and life vest on helicopter?`,`Helicopter land and pilot signal OK.`,[`As soon as the helicopter touches down`,`When the rotor begins to slow down`,`At the pilot's discretion mid-flight`]],
+[`What is the clear deck policy?`,`Reducing number of people in-case of emergency.`,[`Keeping the deck free of cargo at all times`,`Restricting smoking on the helideck`,`Limiting flights to daylight hours only`]],
+[`What should your arrival before flight?`,`30 minutes.`,[`10 minutes.`,`1 hour.`,`15 minutes.`]],
+[`What should you do for emergency helicopter water land?`,`Wait until rotor stop, exit helicopter and inflate life vest.`,[`Inflate life vest immediately while rotor spins`,`Exit immediately before the rotor stops`,`Remain seated until rescue arrives`]],
+[`How do you wear life vest correctly?`,`Red inflation tabs on the front and green tab on the shoulder.`,[`Red inflation tabs on the shoulder only`,`Green inflation tabs on the front only`,`Inflation tabs are interchangeable, no set position`]]
+]},
+{id:"f-loto", src:`IDP Full REVIEW 2026`, name:`Lockout, Tagout and Isolation`, qs:[
+[`Operation lock out and hold tag safe or removed whose authority?`,`SUPVG operation.`,[`Any craftsman on the job`,`The Fire Protection Department`,`The Division Head only`]],
+[`Who lock is first & last off?`,`Operation lock.`,[`Maintenance lock.`,`Contractor's lock.`,`Whichever craft arrived first.`]],
+[`When craftsman ask to work on rotating equipment without LOCK OUT and HOLD TAGS. What should you do?`,`Don't allow him to work and inform SUPVG operation.`,[`Allow him to work if supervised closely`,`Allow him if the job is under 15 minutes`,`Issue him a temporary lock immediately`]],
+[`Who can authorize to cut off operation and maintenance lock out?`,`Lock owner's superintendent or operations shift superintendent.`,[`Any shift supervisor`,`The permit receiver`,`The Fire Protection Department`]],
+[`Who responsible for isolation equipment?`,`Operation and all craftsmen on the job.`,[`Only the maintenance craftsmen`,`Only the permit issuer`,`Only the Division Head`]],
+[`What action be taken before lockout an electrical breaker?`,`It must be de-energized.`,[`It must be tagged first, then de-energized`,`It must be tested under load first`,`It must be reported to the electrician only`]],
+[`What is the process when isolation of equipment and lockout electrical equipment?`,`4-step process (LOCK, TAG, CLEAR and TRY).`,[`3-step process (TAG, CLEAR, TRY)`,`2-step process (LOCK, TAG)`,`5-step process including supervisor sign-off`]],
+[`Each lock on a piece of electrical equipment, or on a multiple lockout clip, must be identified?`,`Name, badge number, organization, contact phone number and signature.`,[`Only the craftsman's name`,`Only the job permit number`,`Only the equipment cost center`]],
+[`What is the common method for isolating process piping and equipment to prevent the release of harmful energy or materials into the work area during modification, maintenance, inspection, repair, testing, or construction activities?`,`Line disconnection and blinding, close single block valve, and double block and bleed.`,[`Verbal notification to operations only`,`Posting a warning sign only`,`Shutting off power at the main breaker only`]],
+[`What is the requirement when the proponent's shift change occurs?`,`The oncoming shift supervisor shall review isolation locations and placement of lockout devices and tags.`,[`No review is required if the job is unfinished`,`Only the outgoing supervisor must review`,`Locks may be removed automatically at shift change`]],
+[`Can craftsman leave his lockout and held tag on the job site?`,`It is up to the permit issuer; he can allow them to remain installed or require craft locks and tags to be removed.`,[`No, tags must always be removed immediately`,`Yes, always, with no exceptions`,`Only security can authorize this`]],
+[`Who can manage when a craft shift change occurs and work has not been completed?`,`The oncoming shift may replace the previous shift's locks and tags with their own locks and tags.`,[`The job must be re-permitted from scratch`,`Locks from both shifts must be removed`,`Only the shift superintendent may swap locks`]]
+]},
+{id:"f-scba", src:`IDP Full REVIEW 2026`, name:`SCBA & Gas Monitoring (GDS, MX4/MX6)`, qs:[
+[`After putting on the "SCBA" how must the face mask be tested for leaks?`,`Block off quick connect coupling with your hand and breaths.`,[`Blow air out forcefully through the mask`,`Submerge the mask in water briefly`,`Listen for a hissing sound only`]],
+[`What is the daily check that must be performed on the portable gas monitor?`,`Visual inspection, function test`,[`Calibration only, no visual check`,`Battery replacement only`,`Firmware update only`]],
+[`what does discolored or blistered paint on a self-contained breathing apparatus SCBA cylinder indicate?`,`Cylinder is defective, not safe to use`,[`Cylinder needs repainting only`,`Cylinder is due for hydro test soon`,`Cylinder is safe if pressure is normal`]],
+[`what must be done when empty SCBA cylinder is found in your truck?`,`Replace the cylinder`,[`Refill it on site`,`Tag it for next shift to replace`,`Continue using it until empty confirmed twice`]],
+[`what must be checked when performing an inspection of SCBA?`,`Pressure, hose leakage, mask is clean and inspection date`,[`Only the cylinder color`,`Only the manufacture date`,`Only the regulator brand`]],
+[`when using a full SCBA, how many minutes must the air supply normally last?`,`30`,[`45`,`20`,`60`]],
+[`when the warning bell on SCBA rings, normally how many minutes of air remain?`,`4 to 6 minutes`,[`10 to 12 minutes`,`1 to 2 minutes`,`8 minutes`]],
+[`what must be done if the regulator is damaged while using SCBA?`,`Partially close cylinder isolation valve, open bypass valve`,[`Fully close the cylinder valve immediately`,`Remove the mask and hold your breath`,`Continue using the regulator as-is`]],
+[`how test the face mask of SCBA?`,`Block off quick connect coupling with your hand breath in hole`,[`Submerge the mask in water briefly`,`Blow air out forcefully through the mask`,`Listen for a hissing sound only`]],
+[`how often must the MX-4 gas monitor be sent for inspection and calibration?`,`Every month`,[`Every 3 months`,`Every 2 weeks`,`Every 6 months`]],
+[`during a routine well inspection, OR is display on MX-4 gas monitor, what action must be taken?`,`Leave the well area immediately`,[`Silence the alarm and continue`,`Move closer to identify the source`,`Radio the control room before leaving`]],
+[`what is the minimum oxygen required on the MX-4 when performing a combustible gas test?`,`16%`,[`18%`,`20%`,`21%`]],
+[`how long fully charged battery normally last in the MX-4 during continues operation?`,`08 hours`,[`4 hours`,`12 hours`,`24 hours`]],
+[`while the MX-4 is in continues operation, which of the following is an indication that it is working property?`,`A single beep every 15 seconds`,[`A double beep every 15 seconds`,`A continuous tone`,`No sound at all when working normally`]],
+[`what are the high alarm set points on MX-4?`,`OXYGEN 23.5 %,LEL 10 % ,H2S 10 PPM`,[`OXYGEN 20%, LEL 5%, H2S 20 PPM`,`OXYGEN 25%, LEL 25%, H2S 50 PPM`,`OXYGEN 21%, LEL 15%, H2S 5 PPM`]],
+[`which of the following is a low alarm on the MX-4gas monitor?`,`OXYGEN 20 %`,[`OXYGEN 18 %`,`OXYGEN 23.5 %`,`OXYGEN 16 %`]],
+[`what does the PEAK display indicate the MX-4 gas monitor?`,`Highest values recorded for H2S, LEL, and the lowest O2`,[`Lowest values recorded for all gases`,`Average values over the shift`,`Current instantaneous readings only`]],
+[`how often must the MX-4 tested by the operator or gas tester?`,`Every shift`,[`Once daily regardless of shifts`,`Once weekly`,`Only before confined space entries`]],
+[`what must be done to the battery on the MX-4 every month?`,`Fully discharged before recharged`,[`Charged without discharging first`,`Replaced with a new battery`,`Stored disconnected without charging`]],
+[`for a gas testing certificate to be valid , which of the following is correct?`,`Issued by loss prevention , signed by division head`,[`Issued by the gas tester himself`,`Issued by the shift supervisor only`,`Valid without any signature if urgent`]],
+[`What is the indication that the battery is low on the MX-4 gas monitor?`,`A double beep every 15 seconds`,[`A single beep every 15 seconds`,`A continuous tone`,`Three beeps every 30 seconds`]],
+[`GDS function test is required to be conduct it?`,`Weekly`,[`Daily`,`Monthly`,`Quarterly`]],
+[`When should Gas Detection System (GDS) technician be in site location?`,`All the time`,[`Only during confined space entries`,`Only during the day shift`,`Only when called for a specific test`]],
+[`What are the materials and accessories used when performing function test for the Diffusion monitor with Positive Flow regulator for MX4 and MX6?`,`Gas cylinder, 2 feet tube and calibration cup`,[`Only a gas cylinder, no tube needed`,`A calibration cup and battery pack only`,`A spare sensor and screwdriver only`]],
+[`What enter button in MX4 is used for?`,`To turn off alarm and turn on LEL sensor in clean air, reset the peak values, start the Bump Test process, to start the zeroing, to confirm your selection.`,[`Only to power the unit on and off`,`Only to mute the audible alarm`,`Only to switch between gas readings`]],
+[`What is the meaning of the cylinder icons in MX4 screen?`,`Calibration related information`,[`Battery status only`,`Sensor failure warning only`,`Network connectivity status`]],
+[`What is activated alarm reading for SO2?`,`2PPM`,[`5PPM`,`1PPM`,`10PPM`]],
+[`What is the meaning of the calendar icons in MX4 screen?`,`Overdue warnings for service items (calibration, bump testing)`,[`Current date and time only`,`Shift schedule reminders`,`Battery replacement history`]],
+[`What is the function of MX4 filter?`,`To prevent sensor from getting dust and water`,[`To slow down gas readings for accuracy`,`To filter out only combustible gases`,`To reduce alarm sound volume`]],
+[`What is the meaning of the clock icons in MX4 screen?`,`Indicates a process is in-progress`,[`Battery charge remaining`,`Time until next calibration due`,`Shift countdown timer`]],
+[`How many alarms for GDS sensors?`,`Two; Audible and visual alarms`,[`Three; audible, visual, vibration`,`One; audible only`,`Four including a wireless alert`]],
+[`How many alarms for MX4?`,`Three; audible, visual, and vibration alarms`,[`Two; audible and visual only`,`One; audible only`,`Four including a wireless alert`]],
+[`The sampling rule for conducting gas sampling using pump and tubing is?`,`2 seconds per feet of tubing plus two minutes for stabilization`,[`1 second per foot with no stabilization time`,`5 seconds per foot plus one minute`,`Instant reading, no wait required`]],
+[`What is the minimum GDS sensors should be in oil well site location?`,`(14)`,[`(10)`,`(12)`,`(8)`]],
+[`Lowest combustible mixture can also be identified as _____?`,`Lower Explosive Limit (LEL)`,[`Upper Explosive Limit (UEL)`,`Immediately Dangerous to Life and Health (IDLH)`,`Minimum Ignition Concentration (MIC)`]],
+[`When should GDS technician conduct pump test for sensors?`,`Before starting the job and/or weekly`,[`Only at the end of the month`,`Only when a sensor fails`,`Only during confined space entries`]],
+[`Who should ensure spot check, recertification and record keeping of WAP and gas testing procedures?`,`Shift Superintendent`,[`The gas tester himself`,`The Fire Protection Department`,`The Division Head only`]],
+[`If the gas canister empty or expired, what is the action should be taken?`,`Contact with shift supervisor to send it to STORE House reclamation`,[`Dispose of it in regular trash`,`Refill it manually on site`,`Keep using it until fully depleted`]],
+[`What is the minimum team members when handling a task using SCBA?`,`Team of two`,[`One person is sufficient`,`A team of three minimum`,`No minimum team size specified`]],
+[`What should be the SCBA gauge indicating before usage?`,`Full Reading`,[`50% reading is acceptable`,`Any reading above the red line`,`Reading does not need checking before use`]],
+[`For how long SCBA remains if reading is full?`,`30 minutes`,[`45 minutes`,`20 minutes`,`60 minutes`]],
+[`What to do, when working in hazardous area and using SCBA if SCBA alarm started vibration?`,`Evacuate immediately`,[`Continue working, vibration is a low priority`,`Silence the alarm and continue`,`Wait to confirm the alarm is not false`]],
+[`In which percentage SCBA will be alert to scape?`,`25%`,[`10%`,`50%`,`15%`]],
+[`How do you perform the bump test for the MX6?`,`Chose the longest answer`,[`Chose the shortest answer`,`Perform it only once per year`,`Bump test is not required for MX6`]],
+[`How to perform the peak on the MX6?`,`Chose the longest answer`,[`Chose the shortest answer`,`Peak reading is not available on MX6`,`Reset it manually every hour`]],
+[`How many GDS sensor should be installed if you have testing job?`,`12 Sensors`,[`10 Sensors`,`14 Sensors`,`8 Sensors`]],
+[`When connecting the high-pressure hose to the air cylinder on SCBA, how to tight it?`,`By hand`,[`Using a wrench for maximum tightness`,`Using a torque wrench to spec`,`As tight as physically possible`]],
+[`What should you do with empty SCBA cylinder?`,`Replace it`,[`Refill it on site`,`Tag it for the next shift`,`Continue using it until the next inspection`]],
+[`How to perform the pump test for MX4?`,`2 seconds per feet of tubing plus two minutes for stabilization`,[`1 second per foot with no stabilization time`,`5 seconds per foot plus one minute`,`Instant reading, no wait required`]],
+[`What is the meaning of the clock icons in MX4 screen? (monitoring status)`,`Monitoring in progress`,[`Battery charge remaining`,`Time until next calibration due`,`Shift countdown timer`]],
+[`What will happen to LCD light in case of MX4 alarm?`,`Flashing`,[`Turns off completely`,`Stays solid without flashing`,`Changes color to blue`]],
+[`What should we check in SCBA?`,`Inspection tag, pressure`,[`Only the manufacturer's logo`,`Only the cylinder color`,`Only the regulator brand`]],
+[`What is the benefit of wet filter in MX4?`,`To prevent sensor from getting dust and water`,[`To slow down gas readings for accuracy`,`To filter out only combustible gases`,`To reduce alarm sound volume`]],
+[`What is the action when gas test sensor goes OR?`,`Send if for calibration`,[`Continue using it, OR is a minor fault`,`Replace the battery only`,`Ignore it if readings still display`]],
+[`Where is the GDS control unit should be located?`,`Site office.`,[`Inside the wellhead cabin`,`At the main gate`,`In the fire truck`]]
+]},
+{id:"f-conduct", src:`IDP Full REVIEW 2026`, name:`Operator Conduct and Incident Response`, qs:[
+[`An operator complains of pain due to a previous injury that's been documented, what action should be taken first?`,`Put him on light duty, until he can be relieved.`,[`Send him home immediately without follow-up`,`Ignore it since it was already documented`,`Require him to continue full duty regardless`]],
+[`An operator, from the on-coming shift, claims he can't perform his duties due to an injury, the shift is already one operator short, what action should be taken?`,`Hold over operator from previous shift and call out an available operator.`,[`Force the injured operator to work anyway`,`Leave the shift short-staffed with no action`,`Cancel all non-critical operations for the shift`]],
+[`A revised RIM is received, how should the operators be informed of the changes to the RIM?`,`Discuss and explain RIM changes with all operators.`,[`Post it on the bulletin board only`,`Email it with no discussion`,`Assume operators will read it independently`]],
+[`An outside operator is not following the recently revised RIM, what action should be taken?`,`Find out why, then show and explain the changes to him.`,[`Issue a suspension immediately`,`Ignore it if the outcome was still safe`,`Report him without discussion first`]],
+[`An operator has trouble understanding the new OIM changes, what action should be taken to solve this problem?`,`Immediately arrange training for him.`,[`Wait until his next annual review`,`Reassign him to a different unit`,`Let another operator explain informally only`]],
+[`An operator is observed using the wrong tool for a job, it is not a safe tool for this job. What action should be taken?`,`Tell him to stop doing the job immediately.`,[`Let him finish the task first`,`Note it and address it later`,`Ask a coworker to supervise him instead`]],
+[`When advising an operator he is using an unsafe tool for the job, he argues and asks why he is being counseled. What action should be taken?`,`Explain to him how he could injure himself.`,[`End the discussion and walk away`,`Issue a suspension immediately`,`Report him without further explanation`]],
+[`An outside operator does not know how to start-up some of the standby equipment, what action should be taken?`,`Instruct and show him how to do the job.`,[`Do the task for him without explanation`,`Report him for lacking knowledge`,`Tell him to figure it out on his own`]],
+[`After being told not to use a wrong and unsafe tool to do a job, an operator uses the tool again. He explains that the correct tool is broken, what action should be taken?`,`Stop him working, counsel him and provide a new tool.`,[`Let him continue since the tool is broken`,`Ignore it since he explained the reason`,`Suspend him immediately without a tool replacement`]],
+[`A DCS operator is arguing, on the radio, with an outside operator about a vessel's pressure reading, what action should be taken?`,`Stop the arguing, find out what is going on.`,[`Let them resolve it themselves`,`Side with the DCS operator immediately`,`Ignore it since it's a minor disagreement`]],
+[`A vessel pressure gauge reading does not match the DCS indication, the gauge is found to be broken, what action should be taken?`,`Have operator replace the faulty gauge.`,[`Ignore the gauge and trust DCS only`,`Shut down the unit immediately`,`Wait until the next scheduled maintenance`]],
+[`A vessel gauge was replaced with a new metric scale type and does not match the P&ID specifications, what action should be taken?`,`Replace with original type of gauge, check reading.`,[`Convert readings manually and continue using it`,`Leave it installed since it still works`,`Report it but keep using it until replaced`]],
+[`An operator reported to work, cannot be found in his assigned unit of the plant, what action should be taken first?`,`Ask other operators where is the missing operator.`,[`Call his home phone immediately`,`Assume he left the site and mark him absent`,`Wait until end of shift to investigate`]],
+[`An operator reported to work, he cannot be found anywhere in the plant, however his car is still in the parking area. What action should be taken next?`,`Inform shift superintendent and continue search for him.`,[`Wait until the next shift to search`,`Assume he is on a break and take no action`,`Mark him as absent without further search`]]
+]},
+{id:"f-plantemerg", src:`IDP Full REVIEW 2026`, name:`Plant Emergencies`, qs:[
+[`What action should be taken if an operator has been splashed with an acid solution?`,`Shower the victim immediately with water.`,[`Apply a neutralizing chemical first`,`Wipe the area with a dry cloth first`,`Wait for medical staff before any action`]],
+[`An explosion and fire in a plant unit was reported, the stop work and disaster alarms have sounded. What action must be taken?`,`Evacuate all unneeded personnel from the plant.`,[`Continue working until instructed otherwise`,`Investigate the cause before evacuating`,`Wait for a second alarm to confirm`]],
+[`An uncontrollable fire has occurred in the plant. What action must be taken?`,`Activate ESD, inform shift coordinator, evacuate your plant.`,[`Attempt to fight the fire personally first`,`Continue normal operations while monitoring`,`Wait for the Fire Protection Department before any action`]],
+[`What action must be taken if a fire is detected in the plant substation?`,`Isolate the electrical power to the substation.`,[`Spray water directly on the substation`,`Continue operations and monitor only`,`Wait for the fire to spread before acting`]],
+[`Where must personnel be directed to in the event of an emergency in the plant?`,`Marshalling area.`,[`The main gate only`,`Their vehicles in the parking lot`,`The nearest control room`]],
+[`During T&I on the unit it is reported that 3 people are unconscious inside a vessel. What action must be taken?`,`Get help, put on SCBA and life-line, retrieve the injured.`,[`Enter immediately without SCBA to save time`,`Wait for the Fire Protection Department only`,`Call for help and wait outside without acting`]],
+[`There is a gas leak on the plant. What information would be needed from the outside operators?`,`Location, wind direction and any injuries.`,[`Only the location`,`Only the type of gas`,`Only the number of personnel nearby`]],
+[`When an operator collapses in an area containing H2S, what action should be taken?`,`Call 110, send two operators with SCBA to rescue him.`,[`Enter immediately without SCBA to save time`,`Wait for the Fire Protection Department only`,`Send one operator without SCBA quickly`]],
+[`When a vehicle engine stops in a restricted area, what action should be taken?`,`Gas test area before attempting a re-start.`,[`Restart the vehicle immediately`,`Push the vehicle out manually without testing`,`Leave the vehicle and walk away`]],
+[`When an operator is involved in a motor vehicle accident on his way to work the night shift, who should the supervising operator notify?`,`Unit foreman.`,[`Only security`,`Only the shift superintendent`,`No notification required if he is unhurt`]],
+[`When an operator has a cold burn injury from liquid gas, what action should be taken?`,`Call 110 for medical emergency, make report.`,[`Apply direct heat to the injury`,`Rub the area vigorously to warm it`,`Wait to see if it improves before reporting`]],
+[`When plant personnel gather at the evacuation assembly area during an emergency, what action should be taken next?`,`Conduct a head count to identify missing personnel.`,[`Dismiss everyone immediately`,`Wait for further instructions with no action`,`Return to work once the alarm stops`]],
+[`During the emergency activation of a command post, who takes immediate control of the emergency situation?`,`Operations foreman.`,[`The first responder on scene`,`The Fire Protection Department only`,`The nearest contractor supervisor`]],
+[`What are the duties of a flag man during an emergency incident in the plant?`,`To direct emergency vehicles and stop unauthorized traffic.`,[`To fight the fire directly`,`To perform first aid on victims`,`To operate the ESD system`]],
+[`When a machinist is working on a pump that is not electrically isolated, what action should be taken?`,`Stop him from working, inform his foreman.`,[`Allow him to continue if he is experienced`,`Isolate it yourself without informing anyone`,`Wait until the job is finished to report it`]],
+[`Which of the following must be informed first, when smoke is seen coming from substation?`,`Foreman/Shift Superintendent.`,[`Only the Fire Protection Department`,`Only security`,`Only the electrician on duty`]],
+[`What action must be taken first if a running pump is on fire?`,`Report the fire, then shut down the pump.`,[`Shut down the pump before reporting`,`Attempt to extinguish it personally first`,`Evacuate without reporting or shutting down`]]
+]},
+{id:"f-attendance", src:`IDP Full REVIEW 2026`, name:`Attendance and Conduct Policy`, qs:[
+[`When an operator is missing during the shift for two hours, he arrives back to the unit and says he went home in a borrowed car. What action should be taken?`,`Find out why he left, counsel him, with memo to file or inform the foreman.`,[`Terminate him immediately`,`Take no action since he returned safely`,`Only verbally warn him with no documentation`]],
+[`When an operator does not report to work and does not answer the telephone, what action should be taken?`,`Mark it as "Z" time.`,[`Mark it as paid leave automatically`,`Assume he quit and remove him from roster`,`Send security to his home immediately`]],
+[`An operator reports to work, then goes to the clinic and is given an off-duty slip for the rest of the day. How will the operator's work time be reported?`,`8 hours regular time.`,[`4 hours regular time only`,`No pay for the remainder of the day`,`8 hours overtime`]],
+[`When an operator comes to work on the seventh day, then goes to the clinic and gets an off-duty slip. How is the operator's work time reported?`,`8 hours regular time with seventh day overtime.`,[`8 hours regular time only, no overtime`,`No pay since he left early`,`4 hours regular time with overtime`]],
+[`When an operator takes a company vehicle without permission and is involved in an accident, what action should be taken?`,`Inform all concerned, issue memo, make report.`,[`Cover the incident to avoid paperwork`,`Only repair the vehicle with no report`,`Terminate him without an investigation`]],
+[`When an outside operator refuses to obey instructions from the Control Room Operator, what action should be taken?`,`Counsel outside operator, decide an action.`,[`Ignore it since instructions were minor`,`Immediately terminate the operator`,`Report it only if it happens again`]],
+[`When two operators are seen misbehaving on the plant, what action should be taken immediately?`,`Stop the misbehaving and warn them.`,[`Ignore it if no one is hurt`,`Report it only at the end of shift`,`Separate them with no further action`]],
+[`When an operator loses his plant ID card, what action should be taken?`,`Inform security immediately.`,[`Wait until his next shift to report it`,`Borrow a coworker's ID temporarily`,`Continue working without reporting it`]],
+[`When an outside operator assigned to fire watch duties leaves his post without being relieved, what action should be taken?`,`Counsel him, put memo in his file.`,[`Terminate him immediately`,`Take no action if the job was almost done`,`Only verbally warn him with no documentation`]],
+[`When an outside operator is seen smoking in a restricted area, what action should be taken?`,`Order him to stop, put memo in his file.`,[`Ignore it if he stops on his own`,`Terminate him immediately`,`Only verbally warn him with no documentation`]],
+[`When an off-duty operator is involved in a road accident, what action should be taken?`,`Log incident, inform foreman and shift superintendent.`,[`No action needed since he was off-duty`,`Only log it in his personal file`,`Wait for him to report it himself`]],
+[`When an operator certified to issue work permits ignores safety rules, what action should be taken?`,`Stop him issuing work permits, inform foreman.`,[`Allow him to continue with a warning only`,`Ignore it if no incident occurred`,`Revoke his employment immediately`]],
+[`When an operator is five minutes late for his duty for the first time, what action should be taken?`,`Advise him not to repeat the mistake.`,[`Issue a formal suspension immediately`,`Deduct a full day's pay`,`Terminate him for tardiness`]],
+[`When an outside operator is seen not wearing a safety hat, what action should be taken?`,`Tell him to wear safety hat inside the plant.`,[`Ignore it if he is only inside briefly`,`Issue a formal suspension immediately`,`Send him home for the day`]],
+[`What is the job duties of the Shift Supervising Operator?`,`Provide work directions to operators.`,[`Perform all maintenance tasks personally`,`Handle only administrative paperwork`,`Issue all work permits himself`]],
+[`When two operators are fighting inside the control room after normal working hours, what action should be taken?`,`Stop the fight, report incident to shift superintendent.`,[`Let them settle it themselves`,`Only separate them with no report`,`Terminate both immediately without investigation`]],
+[`When an operator is found sleeping while on duty, what action should be taken?`,`Wake him and issue a memo to file.`,[`Let him sleep if no incident occurs`,`Terminate him immediately`,`Ignore it if his shift is almost over`]],
+[`When an operator refuses to carry out instructions, what action should be taken?`,`Issue a warning memo.`,[`Ignore it if the task was minor`,`Terminate him immediately`,`Report it only if it happens again`]],
+[`When an operator on vacation phones and says he will be three days late returning to work, what action should be taken?`,`Inform unit foreman.`,[`Take no action until he actually returns late`,`Automatically extend his vacation`,`Mark him as terminated for the delay`]],
+[`When an operator on duty is seen reading a newspaper, what action should be taken?`,`Advise him to stop reading.`,[`Ignore it if work is caught up`,`Issue a formal suspension immediately`,`Terminate him for the infraction`]],
+[`How many days of absence can be approved by the Supervisor for an operator with a personal excuse?`,`None, supervisor is not authorized.`,[`Up to 2 days`,`Up to 1 week`,`Up to 3 days with HR notification`]]
+]},
+{id:"f-mentor", src:`IDP Full REVIEW 2026`, name:`Mentoring, Training and Communications`, qs:[
+[`What is used to keep a record of tasks that a trainee outside operator has completed?`,`Phase three JTS book.`,[`The daily shift log only`,`The operator's personal notebook`,`An informal supervisor checklist`]],
+[`Who is responsible for keeping the operator's phase three JTS book in good condition and updated?`,`The operator himself.`,[`The training coordinator only`,`The shift supervisor only`,`The Division Head only`]],
+[`When and where must a supervisor motivate his operators?`,`During all shifts and anywhere they work.`,[`Only during monthly meetings`,`Only at the start of a new job`,`Only when performance drops`]],
+[`When a trainee outside operator has been mentored, has practiced his tasks, and can perform them correctly, what happens next?`,`A qualified evaluator signs the task completion list.`,[`He is automatically promoted`,`No further action is needed`,`He repeats the training regardless`]],
+[`Why must a supervisor motivate his operators?`,`To make them more productive and safe.`,[`To reduce the need for training`,`To meet quarterly performance quotas only`,`To reduce staffing requirements`]],
+[`Why must a supervisor mentor operators?`,`To guide, advise and train operators.`,[`To evaluate them for termination`,`To reduce the supervisor's own workload`,`To replace formal training entirely`]],
+[`Who must a supervisor mentor?`,`All operators.`,[`Only new trainees`,`Only underperforming operators`,`Only operators requesting it`]],
+[`When must a supervisor mentor?`,`During the shift when needed.`,[`Only during scheduled training sessions`,`Only once per quarter`,`Only when requested formally`]],
+[`Why must the people that work in an area be developed?`,`To improve their knowledge and productivity.`,[`To reduce the total workforce needed`,`To meet a fixed annual training quota`,`To qualify them for transfer only`]],
+[`When an operator is doing a task on the plant for the first time, how is he mentored?`,`Show and explain each task step in the plant.`,[`Give him a manual and let him proceed alone`,`Have him watch a video with no follow-up`,`Assign a coworker with no formal explanation`]],
+[`What is the purpose of having meetings?`,`To share information and direct people.`,[`Only to fill scheduled time`,`Only for management to speak, no discussion`,`Only to distribute paperwork`]],
+[`What is a meeting agenda?`,`List of topics for discussion at the meeting.`,[`A record of attendance only`,`A list of who spoke and for how long`,`A summary written after the meeting ends`]],
+[`What is two way communications?`,`An exchange of information.`,[`One person giving instructions only`,`Written memos only, no verbal exchange`,`Information flowing only from supervisor to worker`]],
+[`What key skill is required to be a good communicator?`,`Listen effectively.`,[`Speak loudly and clearly only`,`Use technical language at all times`,`Interrupt to clarify points quickly`]],
+[`What is the purpose of the E-log?`,`To record and share information.`,[`Only to track attendance`,`Only for payroll purposes`,`Only to log equipment repairs`]],
+[`Why must supervising operators write reports?`,`To record detailed information.`,[`Only to satisfy a paperwork requirement`,`Only for annual performance reviews`,`Only when an incident occurs`]],
+[`What does MIS mean?`,`Management Information System.`,[`Maintenance Inspection Schedule.`,`Material Issue Sheet.`,`Mentoring and Incident System.`]],
+[`Why is the main purpose of MIS?`,`To help monitor and improve plant operations.`,[`To track employee attendance only`,`To manage payroll only`,`To schedule vacations only`]],
+[`What is the main function of the plant communication system?`,`Exchange information, save time and operate more effectively.`,[`Only to broadcast emergency alarms`,`Only for management announcements`,`Only to log maintenance requests`]],
+[`What is the main purpose of the Safety Management System (SMS)?`,`Maintain the highest levels of safety, security, health, and environmental standard.`,[`To reduce insurance premiums only`,`To track employee attendance only`,`To manage production quotas only`]],
+[`The Safety Management System (SMS) is composed of how many elements?`,`11 elements.`,[`9 elements.`,`13 elements.`,`8 elements.`]],
+[`The "Safe Operation Committee" (SOC) is classified under which element of the Safety Management System (SMS)?`,`Element 3 – Communications.`,[`Element 6 – Safe Operations.`,`Element 4 – Competency and Training.`,`Element 1 – Leadership.`]],
+[`"Visitor Orientation" is classified under which element of the Safety Management System (SMS)?`,`Element 4 – Competency and Training.`,[`Element 3 – Communications.`,`Element 6 – Safe Operations.`,`Element 1 – Leadership.`]],
+[`"Lock/Tag and Hold" is classified under which element of the Safety Management System (SMS)?`,`Element 6 – Safe Operations.`,[`Element 3 – Communications.`,`Element 4 – Competency and Training.`,`Element 1 – Leadership.`]]
+]},
+{id:"f-ecs", src:`IDP Full REVIEW 2026`, name:`Emergency Command Structure`, qs:[
+[`Who is in charge of the Emergency Command Post (ECP)?`,`The Incident Commander`,[`The Emergency Manager`,`The Shift Superintendent`,`The Fire Protection Department`]],
+[`Who is in charge of the Emergency Command Center (ECC)?`,`The Emergency Manager`,[`The Incident Commander`,`The Shift Superintendent`,`The Operations Foreman`]],
+[`Where is the Emergency Command Center (ECC) located?`,`In the main operations building`,[`Close to the scene of the emergency`,`At the main gate`,`In a mobile trailer near the wellhead`]],
+[`Who does the Incident Commander report to?`,`The Emergency Manager`,[`The Shift Superintendent`,`The Division Head`,`Security`]]
+]},
+/*TOPIC_INSERT_POINT*/
+];
+
+/* ============ HELPERS ============ */
+const $ = id => document.getElementById(id);
+function shuffle(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+let selectedTopics = new Set(TOPICS.map(t=>t.id));
+let mode = "learn";
+let SEC_PER_Q = 60;
+
+/* ============ SETUP SCREEN ============ */
+function groupBySrc(){
+  const g = {};
+  TOPICS.forEach(t=>{ (g[t.src] = g[t.src]||[]).push(t); });
+  return g;
+}
+function renderTopicGroups(){
+  const g = groupBySrc();
+  const el = $("topicGroups");
+  el.innerHTML = "";
+  Object.keys(g).forEach(src=>{
+    const head = document.createElement("div");
+    head.className = "srcHead";
+    const total = g[src].reduce((s,t)=>s+t.qs.length,0);
+    head.innerHTML = `<h3>${esc(src)} <span style="color:var(--muted);font-weight:400">(${total} questions)</span></h3>
+      <button class="miniLink" data-src="${esc(src)}">toggle all</button>`;
+    el.appendChild(head);
+    const chips = document.createElement("div");
+    chips.className = "chips";
+    g[src].forEach(t=>{
+      const c = document.createElement("div");
+      c.className = "chip" + (selectedTopics.has(t.id) ? " on" : "");
+      c.dataset.id = t.id;
+      c.innerHTML = `${esc(t.name)} <span class="cnt">(${t.qs.length})</span>`;
+      c.onclick = ()=>{ if(selectedTopics.has(t.id)) selectedTopics.delete(t.id); else selectedTopics.add(t.id); renderTopicGroups(); updateNote(); };
+      chips.appendChild(c);
+    });
+    el.appendChild(chips);
+  });
+  el.querySelectorAll(".miniLink").forEach(btn=>{
+    btn.onclick = ()=>{
+      const src = btn.dataset.src;
+      const ts = g[src];
+      const allOn = ts.every(t=>selectedTopics.has(t.id));
+      ts.forEach(t=> allOn ? selectedTopics.delete(t.id) : selectedTopics.add(t.id));
+      renderTopicGroups(); updateNote();
+    };
+  });
+}
+function updateNote(){
+  const n = selectedTopics.size;
+  const total = TOPICS.filter(t=>selectedTopics.has(t.id)).reduce((s,t)=>s+t.qs.length,0);
+  $("topicNote").textContent = n===0 ? "Select at least one topic to begin." : `${total} questions available from ${n} selected topic(s).`;
+  $("startBtn").disabled = n===0 || total===0;
+}
+$("modeLearn").onclick = ()=>{ mode="learn"; $("modeLearn").classList.add("on"); $("modeExam").classList.remove("on"); };
+$("modeExam").onclick = ()=>{ mode="exam"; $("modeExam").classList.add("on"); $("modeLearn").classList.remove("on"); };
+
+/* ============ QUIZ ENGINE ============ */
+let qs = [], cur = 0, score = 0, answers = [], count = 20, timerId = null, timeLeft = 0, locked = false;
+
+function buildPool(){
+  let pool = [];
+  TOPICS.forEach((t,ti)=>{ if(selectedTopics.has(t.id)){ for(let i=0;i<t.qs.length;i++) pool.push({t:ti,i}); } });
+  return pool;
+}
+function start(){
+  const pool = shuffle(buildPool());
+  count = Math.max(1, Math.min(parseInt($("countInput").value)||20, pool.length));
+  qs = pool.slice(0,count).map(p=>{
+    const perm = shuffle([0,1,2,3]);
+    return {t:p.t, i:p.i, perm, correct: perm.indexOf(0)};
+  });
+  cur = 0; score = 0; answers = [];
+  show("quiz");
+  render();
+}
+function item(q){
+  const topic = TOPICS[q.t];
+  const b = topic.qs[q.i];
+  const base = [b[1], ...b[2]];
+  return { q: b[0], opts: q.perm.map(k=>base[k]), topicId: topic.id, topicName: topic.name, src: topic.src };
+}
+function render(){
+  locked = false;
+  const q = qs[cur];
+  const it = item(q);
+  $("posLabel").textContent = `Question ${cur+1} / ${qs.length}`;
+  $("progressFill").style.width = ((cur)/qs.length*100)+"%";
+  $("qTag").textContent = it.topicName;
+  $("qText").textContent = it.q;
+  const optsEl = $("opts");
+  optsEl.innerHTML = "";
+  const labels = ["A","B","C","D"];
+  it.opts.forEach((opt,idx)=>{
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.innerHTML = `<span class="lab">${labels[idx]}.</span> ${esc(opt)}`;
+    b.onclick = ()=>selectOption(idx);
+    optsEl.appendChild(b);
+  });
+  $("nextBtn").disabled = true;
+  $("nextBtn").textContent = cur === qs.length-1 ? "Finish" : "Next";
+  clearInterval(timerId);
+  if(mode==="exam"){
+    $("timerLabel").classList.remove("hidden");
+    timeLeft = SEC_PER_Q;
+    $("timerLabel").textContent = timeLeft+"s";
+    timerId = setInterval(()=>{
+      timeLeft--;
+      $("timerLabel").textContent = Math.max(timeLeft,0)+"s";
+      if(timeLeft<=0){ clearInterval(timerId); if(!locked) selectOption(-1); }
+    },1000);
+  } else {
+    $("timerLabel").classList.add("hidden");
+  }
+}
+function selectOption(idx){
+  if(locked) return;
+  locked = true;
+  clearInterval(timerId);
+  const q = qs[cur];
+  const correct = q.correct;
+  const isRight = idx === correct;
+  if(isRight) score++;
+  answers.push({q, chosen: idx, correct: isRight});
+  const btns = $("opts").querySelectorAll(".opt");
+  btns.forEach((b,i)=>{
+    b.classList.add("disabled");
+    if(mode==="learn" || true){
+      if(i===correct) b.classList.add("correct");
+      else if(i===idx) b.classList.add("wrong");
+    }
+  });
+  $("nextBtn").disabled = false;
+}
+$("nextBtn").onclick = ()=>{
+  if(cur < qs.length-1){ cur++; render(); }
+  else finish();
+};
+function finish(){
+  clearInterval(timerId);
+  $("progressFill").style.width = "100%";
+  show("result");
+  const pct = Math.round(score/qs.length*100);
+  $("scoreNum").textContent = `${score} / ${qs.length}`;
+  $("scorePct").textContent = pct+"%";
+  let verdict = "Keep practicing.";
+  if(pct>=90) verdict = "Excellent — exam ready.";
+  else if(pct>=75) verdict = "Solid — a bit more review.";
+  else if(pct>=50) verdict = "Getting there — revisit weak topics.";
+  $("verdict").textContent = verdict;
+  renderReviewList();
+}
+function renderReviewList(){
+  const onlyWrong = $("onlyWrong").checked;
+  const el = $("reviewList");
+  el.innerHTML = "";
+  answers.forEach((a,idx)=>{
+    if(onlyWrong && a.correct) return;
+    const it = item(a.q);
+    const div = document.createElement("div");
+    div.className = "revItem " + (a.correct ? "isCorrect" : "isWrong");
+    const yourAns = a.chosen>=0 ? it.opts[a.chosen] : "(no answer — time expired)";
+    const correctAns = it.opts[a.q.correct];
+    div.innerHTML = `
+      <p class="rq">${idx+1}. [${esc(it.topicName)}] ${esc(it.q)}</p>
+      ${a.correct ? "" : `<p class="ra you">Your answer: <b>${esc(yourAns)}</b></p>`}
+      <p class="ra correctLine">Correct answer: <b>${esc(correctAns)}</b></p>
+      <button class="refBtn" data-topic="${esc(it.topicId)}">📖 Reference</button>
+    `;
+    div.querySelector(".refBtn").onclick = ()=>openReference(it.topicId);
+    el.appendChild(div);
+  });
+}
+$("onlyWrong").onchange = renderReviewList;
+
+/* ============ REFERENCE MODAL ============ */
+function openReference(topicId){
+  const topic = TOPICS.find(t=>t.id===topicId);
+  if(!topic) return;
+  $("refTitle").textContent = topic.name;
+  $("refSrc").textContent = topic.src + " — " + topic.qs.length + " questions";
+  const body = $("refBody");
+  body.innerHTML = "";
+  topic.qs.forEach(b=>{
+    const p = document.createElement("div");
+    p.className = "qaPair";
+    p.innerHTML = `<p class="qq">${esc(b[0])}</p><p class="aa">Answer: <b>${esc(b[1])}</b></p>`;
+    body.appendChild(p);
+  });
+  $("refOverlay").classList.remove("hidden");
+}
+$("refBtn").onclick = ()=>{ const it = item(qs[cur]); openReference(it.topicId); };
+$("refClose").onclick = ()=> $("refOverlay").classList.add("hidden");
+$("refOverlay").onclick = (e)=>{ if(e.target.id==="refOverlay") $("refOverlay").classList.add("hidden"); };
+
+/* ============ REVIEW / BROWSE LIBRARY ============ */
+function renderReviewBrowse(filter){
+  const el = $("reviewTopics");
+  el.innerHTML = "";
+  const g = groupBySrc();
+  const f = (filter||"").trim().toLowerCase();
+  Object.keys(g).forEach(src=>{
+    const srcHead = document.createElement("h3");
+    srcHead.style.cssText = "font-size:.95rem;color:var(--primary);margin:18px 0 8px";
+    srcHead.textContent = src;
+    let any = false;
+    const frag = document.createElement("div");
+    g[src].forEach(t=>{
+      const qsList = f ? t.qs.filter(b=> b[0].toLowerCase().includes(f) || b[1].toLowerCase().includes(f)) : t.qs;
+      if(f && qsList.length===0) return;
+      any = true;
+      const block = document.createElement("div");
+      block.className = "topicBlock";
+      const head = document.createElement("div");
+      head.className = "topicHead";
+      head.innerHTML = `<span class="tn">${esc(t.name)}</span><span class="tc">${qsList.length} q${f?` / ${t.qs.length}`:""}</span>`;
+      const body = document.createElement("div");
+      body.className = "topicBody" + (f ? " open" : "");
+      qsList.forEach(b=>{
+        const p = document.createElement("div");
+        p.className = "qaPair";
+        p.innerHTML = `<p class="qq">${esc(b[0])}</p><p class="aa">Answer: <b>${esc(b[1])}</b></p>`;
+        body.appendChild(p);
+      });
+      head.onclick = ()=> body.classList.toggle("open");
+      block.appendChild(head); block.appendChild(body);
+      frag.appendChild(block);
+    });
+    if(any){ el.appendChild(srcHead); el.appendChild(frag); }
+  });
+}
+$("reviewSearch").oninput = (e)=> renderReviewBrowse(e.target.value);
+
+/* ============ NAV ============ */
+function show(id){
+  ["setup","quiz","result","review"].forEach(s=> $(s).classList.toggle("hidden", s!==id));
+  window.scrollTo(0,0);
+}
+$("startBtn").onclick = start;
+$("browseBtn").onclick = ()=>{ show("review"); $("reviewSearch").value=""; renderReviewBrowse(""); };
+$("reviewBackBtn").onclick = ()=> show("setup");
+$("quitBtn").onclick = ()=>{ if(confirm("Quit this quiz? Your progress will be lost.")) show("setup"); };
+$("resultBackBtn").onclick = ()=> show("setup");
+$("retryBtn").onclick = start;
+$("newBtn").onclick = ()=> show("setup");
+
+/* ============ INIT ============ */
+renderTopicGroups();
+updateNote();
+</script>
+</body>
+</html>
