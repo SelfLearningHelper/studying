@@ -43,18 +43,35 @@ h1{font-size:1.55rem;margin:6px 0 2px}
   border-radius:999px;padding:3px 10px;cursor:pointer}
 .srcHead .miniLink:hover{border-color:var(--primary);color:var(--primary)}
 
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;
-  font-size:.85rem;cursor:pointer;user-select:none;color:var(--ink)}
-.chip.on{background:var(--primary-soft);border-color:var(--primary);color:var(--primary);font-weight:600}
-.chip .cnt{opacity:.65;font-weight:400}
+.topicGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.topicCard{position:relative;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;
+  padding:12px 34px 12px 14px;cursor:pointer;user-select:none;color:var(--ink);min-height:58px;
+  display:flex;flex-direction:column;justify-content:center;gap:3px}
+.topicCard:hover{border-color:var(--primary)}
+.topicCard .tName{font-size:.85rem;font-weight:600;line-height:1.32}
+.topicCard .tCount{font-size:.76rem;color:var(--muted)}
+.topicCard.on{background:var(--primary-soft);border-color:var(--primary)}
+.topicCard.on .tName{color:var(--primary)}
+.topicCard.on .tCount{color:var(--primary);opacity:.75}
+.topicCard .chk{position:absolute;top:10px;right:10px;width:17px;height:17px;border-radius:5px;
+  border:1.5px solid var(--line);background:var(--surface);font-size:12px;line-height:14px;
+  text-align:center;color:transparent;font-weight:700}
+.topicCard.on .chk{background:var(--primary);border-color:var(--primary);color:#fff}
 
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
-select,input[type=number]{background:var(--surface);color:var(--ink);border:1px solid var(--line);
-  border-radius:10px;padding:9px 10px;font-size:.9rem}
+.pillGroup{display:flex;gap:8px;flex-wrap:wrap}
+.pillGroup button{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);
+  border-radius:10px;padding:9px 16px;font-size:.88rem;font-weight:600;cursor:pointer}
+.pillGroup button.on{background:var(--primary);color:#fff;border-color:var(--primary)}
 .modeSeg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.modeSeg button{border:0;background:var(--surface);color:var(--ink);padding:9px 14px;font-size:.85rem;cursor:pointer}
+.modeSeg button{border:0;background:var(--surface);color:var(--ink);padding:9px 14px;font-size:.85rem;cursor:pointer;flex:1}
 .modeSeg button.on{background:var(--primary);color:#fff}
+.modeInfo{display:flex;gap:10px;align-items:flex-start;background:var(--primary-soft);border-radius:10px;
+  padding:12px 14px;margin-top:10px;font-size:.85rem;color:var(--ink);line-height:1.5}
+.modeInfo .ic{font-size:1.15rem;line-height:1.3}
+.modeInfo b{display:block;margin-bottom:2px}
+.examTimeRow{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+.examTimeRow .timeLabel{font-size:.85rem;color:var(--muted);font-weight:600}
 
 .start{display:inline-block;background:var(--primary);color:#fff;border:0;border-radius:12px;
   padding:13px 22px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:16px}
@@ -82,6 +99,7 @@ select,input[type=number]{background:var(--surface);color:var(--ink);border:1px 
 .opt:hover{border-color:var(--primary)}
 .opt.correct{border-color:var(--good);background:var(--good-soft);font-weight:600}
 .opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt.selected{border-color:var(--primary);background:var(--primary-soft);font-weight:600}
 .opt.disabled{pointer-events:none}
 .opt .lab{display:inline-block;width:22px;font-weight:700;opacity:.6}
 
@@ -165,12 +183,30 @@ footer{margin-top:30px;color:var(--muted);font-size:.78rem;text-align:center}
         <div id="topicGroups"></div>
       </div>
 
-      <div class="row">
-        <label style="font-size:.85rem;color:var(--muted)">Questions:</label>
-        <input type="number" id="countInput" min="5" max="200" value="20" style="width:80px">
+      <div class="group">
+        <h2>Number of questions</h2>
+        <div class="pillGroup" id="countSeg">
+          <button data-n="40" type="button" class="on">40</button>
+          <button data-n="80" type="button">80</button>
+          <button data-n="120" type="button">120</button>
+          <button data-n="160" type="button">160</button>
+          <button data-n="200" type="button">200</button>
+        </div>
+      </div>
+
+      <div class="group">
+        <h2>How do you want to practice?</h2>
         <div class="modeSeg">
           <button id="modeLearn" class="on" type="button">Learn</button>
           <button id="modeExam" type="button">Exam</button>
+        </div>
+        <div class="modeInfo" id="modeInfo"></div>
+        <div class="examTimeRow hidden" id="examTimeRow">
+          <span class="timeLabel">Time per question:</span>
+          <div class="pillGroup" id="timeSeg">
+            <button data-t="30" type="button">30 sec</button>
+            <button data-t="60" type="button" class="on">60 sec</button>
+          </div>
         </div>
       </div>
 
@@ -1168,7 +1204,8 @@ function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/
 
 let selectedTopics = new Set(TOPICS.map(t=>t.id));
 let mode = "learn";
-let SEC_PER_Q = 60;
+let questionCount = 40;
+let examSeconds = 60;
 
 /* ============ SETUP SCREEN ============ */
 function groupBySrc(){
@@ -1187,17 +1224,17 @@ function renderTopicGroups(){
     head.innerHTML = `<h3>${esc(src)} <span style="color:var(--muted);font-weight:400">(${total} questions)</span></h3>
       <button class="miniLink" data-src="${esc(src)}">toggle all</button>`;
     el.appendChild(head);
-    const chips = document.createElement("div");
-    chips.className = "chips";
+    const grid = document.createElement("div");
+    grid.className = "topicGrid";
     g[src].forEach(t=>{
       const c = document.createElement("div");
-      c.className = "chip" + (selectedTopics.has(t.id) ? " on" : "");
+      c.className = "topicCard" + (selectedTopics.has(t.id) ? " on" : "");
       c.dataset.id = t.id;
-      c.innerHTML = `${esc(t.name)} <span class="cnt">(${t.qs.length})</span>`;
+      c.innerHTML = `<span class="chk">✓</span><span class="tName">${esc(t.name)}</span><span class="tCount">${t.qs.length} questions</span>`;
       c.onclick = ()=>{ if(selectedTopics.has(t.id)) selectedTopics.delete(t.id); else selectedTopics.add(t.id); renderTopicGroups(); updateNote(); };
-      chips.appendChild(c);
+      grid.appendChild(c);
     });
-    el.appendChild(chips);
+    el.appendChild(grid);
   });
   el.querySelectorAll(".miniLink").forEach(btn=>{
     btn.onclick = ()=>{
@@ -1212,11 +1249,41 @@ function renderTopicGroups(){
 function updateNote(){
   const n = selectedTopics.size;
   const total = TOPICS.filter(t=>selectedTopics.has(t.id)).reduce((s,t)=>s+t.qs.length,0);
-  $("topicNote").textContent = n===0 ? "Select at least one topic to begin." : `${total} questions available from ${n} selected topic(s).`;
+  if(n===0 || total===0){
+    $("topicNote").textContent = "Select at least one topic to begin.";
+  } else {
+    const willUse = Math.min(questionCount, total);
+    $("topicNote").textContent = willUse < questionCount
+      ? `Only ${total} questions available from ${n} selected topic(s) — the quiz will use all ${total}.`
+      : `${total} questions available from ${n} selected topic(s). This quiz will use ${willUse}.`;
+  }
   $("startBtn").disabled = n===0 || total===0;
 }
-$("modeLearn").onclick = ()=>{ mode="learn"; $("modeLearn").classList.add("on"); $("modeExam").classList.remove("on"); };
-$("modeExam").onclick = ()=>{ mode="exam"; $("modeExam").classList.add("on"); $("modeLearn").classList.remove("on"); };
+$("countSeg").querySelectorAll("button").forEach(b=>{
+  b.onclick = ()=>{
+    questionCount = parseInt(b.dataset.n);
+    $("countSeg").querySelectorAll("button").forEach(x=>x.classList.toggle("on", x===b));
+    updateNote();
+  };
+});
+function updateModeInfo(){
+  const info = $("modeInfo");
+  if(mode==="learn"){
+    info.innerHTML = `<span class="ic">✅</span><div><b>Learn Mode</b>You'll see instantly whether each answer is right or wrong, with the correct answer highlighted. No timer — take your time.</div>`;
+    $("examTimeRow").classList.add("hidden");
+  } else {
+    info.innerHTML = `<span class="ic">⏱️</span><div><b>Exam Mode</b>No feedback while you answer — you'll only see your results at the end, just like the real test. Each question is timed; pick your time limit below.</div>`;
+    $("examTimeRow").classList.remove("hidden");
+  }
+}
+$("modeLearn").onclick = ()=>{ mode="learn"; $("modeLearn").classList.add("on"); $("modeExam").classList.remove("on"); updateModeInfo(); };
+$("modeExam").onclick = ()=>{ mode="exam"; $("modeExam").classList.add("on"); $("modeLearn").classList.remove("on"); updateModeInfo(); };
+$("timeSeg").querySelectorAll("button").forEach(b=>{
+  b.onclick = ()=>{
+    examSeconds = parseInt(b.dataset.t);
+    $("timeSeg").querySelectorAll("button").forEach(x=>x.classList.toggle("on", x===b));
+  };
+});
 
 /* ============ QUIZ ENGINE ============ */
 let qs = [], cur = 0, score = 0, answers = [], count = 20, timerId = null, timeLeft = 0, locked = false;
@@ -1228,7 +1295,7 @@ function buildPool(){
 }
 function start(){
   const pool = shuffle(buildPool());
-  count = Math.max(1, Math.min(parseInt($("countInput").value)||20, pool.length));
+  count = Math.max(1, Math.min(questionCount, pool.length));
   qs = pool.slice(0,count).map(p=>{
     const perm = shuffle([0,1,2,3]);
     return {t:p.t, i:p.i, perm, correct: perm.indexOf(0)};
@@ -1266,7 +1333,7 @@ function render(){
   clearInterval(timerId);
   if(mode==="exam"){
     $("timerLabel").classList.remove("hidden");
-    timeLeft = SEC_PER_Q;
+    timeLeft = examSeconds;
     $("timerLabel").textContent = timeLeft+"s";
     timerId = setInterval(()=>{
       timeLeft--;
@@ -1289,9 +1356,11 @@ function selectOption(idx){
   const btns = $("opts").querySelectorAll(".opt");
   btns.forEach((b,i)=>{
     b.classList.add("disabled");
-    if(mode==="learn" || true){
+    if(mode==="learn"){
       if(i===correct) b.classList.add("correct");
       else if(i===idx) b.classList.add("wrong");
+    } else if(i===idx){
+      b.classList.add("selected");
     }
   });
   $("nextBtn").disabled = false;
@@ -1411,6 +1480,7 @@ $("newBtn").onclick = ()=> show("setup");
 /* ============ INIT ============ */
 renderTopicGroups();
 updateNote();
+updateModeInfo();
 </script>
 </body>
 </html>
