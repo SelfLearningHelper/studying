@@ -153,12 +153,19 @@ h1{font-size:1.55rem;margin:6px 0 2px}
 .modal{background:var(--surface);width:100%;max-width:640px;max-height:88vh;overflow-y:auto;
   border-radius:16px 16px 0 0;padding:20px}
 @media (min-width:640px){.modal{border-radius:16px}}
-.modalHead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px;
-  position:sticky;top:-20px;background:var(--surface);padding-top:2px}
+.modalPinned{position:sticky;top:-20px;background:var(--surface);padding-top:2px;margin:-2px -20px 14px;
+  padding-inline:20px;z-index:2;box-shadow:0 8px 10px -8px rgba(0,0,0,.12)}
+.modalHead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding-bottom:10px}
 .modalHead h3{margin:0;font-size:1.02rem}
 .modalHead .src{color:var(--muted);font-size:.78rem;margin-top:2px}
+.modalHeadBtns{display:flex;gap:8px;align-items:center;flex:0 0 auto}
 .closeX{background:var(--bg);border:1px solid var(--line);border-radius:50%;width:32px;height:32px;
   flex:0 0 auto;font-size:1rem;cursor:pointer;color:var(--ink)}
+.refSearchBox{margin-bottom:14px}
+.qaPair.hl{background:var(--primary-soft);border-radius:10px;padding:12px 14px;margin:6px 0;border-bottom:none}
+.qaPair.hl .qq{color:var(--primary)}
+.hlTag{display:inline-block;background:var(--primary);color:#fff;font-size:.7rem;font-weight:700;
+  padding:2px 9px;border-radius:999px;margin-bottom:6px}
 
 footer{margin-top:30px;color:var(--muted);font-size:.78rem;text-align:center}
 </style>
@@ -274,12 +281,18 @@ footer{margin-top:30px;color:var(--muted);font-size:.78rem;text-align:center}
 <!-- REFERENCE MODAL (used during quiz) -->
 <div class="overlay hidden" id="refOverlay">
   <div class="modal">
-    <div class="modalHead">
-      <div>
-        <h3 id="refTitle"></h3>
-        <div class="src" id="refSrc"></div>
+    <div class="modalPinned">
+      <div class="modalHead">
+        <div>
+          <h3 id="refTitle"></h3>
+          <div class="src" id="refSrc"></div>
+        </div>
+        <div class="modalHeadBtns">
+          <button class="mini hidden" id="refJump">📍 Jump to question</button>
+          <button class="closeX" id="refClose">✕</button>
+        </div>
       </div>
-      <button class="closeX" id="refClose">✕</button>
+      <input type="text" class="searchBox refSearchBox" id="refSearchBox" placeholder="Search within this topic…">
     </div>
     <div id="refBody"></div>
   </div>
@@ -1400,29 +1413,52 @@ function renderReviewList(){
       <p class="ra correctLine">Correct answer: <b>${esc(correctAns)}</b></p>
       <button class="refBtn" data-topic="${esc(it.topicId)}">📖 Reference</button>
     `;
-    div.querySelector(".refBtn").onclick = ()=>openReference(it.topicId);
+    div.querySelector(".refBtn").onclick = ()=>openReference(it.topicId, a.q.i);
     el.appendChild(div);
   });
 }
 $("onlyWrong").onchange = renderReviewList;
 
 /* ============ REFERENCE MODAL ============ */
-function openReference(topicId){
+let refTopic = null, refHighlight = null;
+function openReference(topicId, highlightIndex){
   const topic = TOPICS.find(t=>t.id===topicId);
   if(!topic) return;
+  refTopic = topic;
+  refHighlight = (typeof highlightIndex === "number") ? highlightIndex : null;
   $("refTitle").textContent = topic.name;
   $("refSrc").textContent = topic.src + " — " + topic.qs.length + " questions";
+  $("refJump").classList.toggle("hidden", refHighlight===null);
+  $("refSearchBox").value = "";
+  renderRefList("");
+  $("refOverlay").classList.remove("hidden");
+  requestAnimationFrame(scrollToHighlight);
+}
+function renderRefList(filter){
   const body = $("refBody");
   body.innerHTML = "";
-  topic.qs.forEach(b=>{
+  const f = (filter||"").trim().toLowerCase();
+  refTopic.qs.forEach((b,i)=>{
+    if(f && !b[0].toLowerCase().includes(f) && !b[1].toLowerCase().includes(f)) return;
     const p = document.createElement("div");
-    p.className = "qaPair";
-    p.innerHTML = `<p class="qq">${esc(b[0])}</p><p class="aa">Answer: <b>${esc(b[1])}</b></p>`;
+    p.className = "qaPair" + (i===refHighlight ? " hl" : "");
+    p.dataset.i = i;
+    p.innerHTML = (i===refHighlight ? `<span class="hlTag">📍 This question</span>` : "")
+      + `<p class="qq">${esc(b[0])}</p><p class="aa">Answer: <b>${esc(b[1])}</b></p>`;
     body.appendChild(p);
   });
-  $("refOverlay").classList.remove("hidden");
+  if(f && !body.children.length){
+    body.innerHTML = `<p style="color:var(--muted);font-size:.88rem;padding:10px 0">No matches in this topic.</p>`;
+  }
 }
-$("refBtn").onclick = ()=>{ const it = item(qs[cur]); openReference(it.topicId); };
+function scrollToHighlight(){
+  if(refHighlight===null) return;
+  const hl = $("refBody").querySelector(".hl");
+  if(hl) hl.scrollIntoView({block:"center"});
+}
+$("refSearchBox").oninput = (e)=> renderRefList(e.target.value);
+$("refJump").onclick = ()=>{ $("refSearchBox").value=""; renderRefList(""); scrollToHighlight(); };
+$("refBtn").onclick = ()=>{ const q = qs[cur]; const it = item(q); openReference(it.topicId, q.i); };
 $("refClose").onclick = ()=> $("refOverlay").classList.add("hidden");
 $("refOverlay").onclick = (e)=>{ if(e.target.id==="refOverlay") $("refOverlay").classList.add("hidden"); };
 
