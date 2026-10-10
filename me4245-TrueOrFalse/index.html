@@ -148,8 +148,15 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .opts.tf{display:grid; grid-template-columns:1fr 1fr; gap:12px}
 .opts.tf .opt{justify-content:center; align-items:center; min-height:64px; font-weight:700; font-size:1.05rem}
 .opts.tf .opt .t{flex:none}
-#counts{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; max-width:340px}
-#counts .chip{min-width:0; padding:8px 0; flex:none}
+.countBox{display:flex; flex-direction:column; gap:12px; max-width:420px}
+.countRow{display:flex; align-items:center; gap:10px}
+.stepBtn{flex:none; width:48px; height:48px; border-radius:12px; border:2px solid var(--line); background:var(--surface); font-size:1.4rem; font-weight:700; line-height:1}
+.countInput{flex:1; min-width:0; height:48px; border-radius:12px; border:2px solid var(--primary); background:var(--surface); color:var(--ink); text-align:center; font:inherit; font-size:1.25rem; font-weight:700; font-variant-numeric:tabular-nums}
+.countInput:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
+.countRange{width:100%; accent-color:var(--primary); margin:0; height:28px}
+.rangeEnds{display:flex; justify-content:space-between; color:var(--muted); font-size:.82rem; font-variant-numeric:tabular-nums; margin-top:-8px}
+#countQuick{flex-wrap:wrap}
+#countQuick .chip{flex:1 1 auto; min-width:56px; min-height:44px; padding:6px 14px; white-space:nowrap; border-radius:999px}
 .confirmBox{margin-top:18px; padding:14px 16px; border-radius:12px; background:var(--bad-soft); border:1px solid var(--bad)}
 .confirmBox p{margin:0 0 4px; font-weight:600}
 .confirmBox .nav{margin-top:10px}
@@ -206,8 +213,17 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
           </div>
         </div>
         <div class="group">
-          <h2 data-i="countH"></h2>
-          <div class="chips" id="counts"></div>
+          <h2 data-i="countH" id="countH"></h2>
+          <div class="countBox">
+            <div class="countRow">
+              <button class="stepBtn" id="countMinus" type="button" aria-label="-1">−</button>
+              <input class="countInput" id="countInput" type="number" inputmode="numeric" min="10" step="1" aria-labelledby="countH">
+              <button class="stepBtn" id="countPlus" type="button" aria-label="+1">+</button>
+            </div>
+            <input class="countRange" id="countRange" type="range" min="10" step="1" aria-labelledby="countH">
+            <div class="rangeEnds"><span>10</span><span id="countMax"></span></div>
+            <div class="chips" id="countQuick"></div>
+          </div>
           <p class="note" id="timeNote"></p>
         </div>
         <button class="start" id="startBtn" data-i="start"></button>
@@ -945,7 +961,7 @@ function item(q){
   return {q: ar?b[0]:b[1], e: ar?b[3]:b[4], lecName: lec.short[lang]};
 }
 function availCount(){ return LECTURES.filter(l=>selectedLectures.has(l.id)).reduce((s,l)=>s+l.bank.length,0); }
-function planned(){ return Math.min(countSel, availCount()); }
+function planned(){ return clampCount(countSel); }
 
 function renderLecChips(){
   const c=$("lectures"); c.innerHTML="";
@@ -995,19 +1011,32 @@ document.querySelectorAll("#langs .chip").forEach(b=>b.onclick=()=>setLang(b.dat
 document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{
   mode=b.dataset.mode; document.querySelectorAll(".mode").forEach(x=>x.setAttribute("aria-pressed", x===b)); updateNote();
 });
-// one lecture: 10–40, two or more lectures: 10–80
-function countOptions(){ const max = selectedLectures.size>1 ? 80 : 40; const o=[]; for(let n=10;n<=max;n+=10) o.push(n); return o; }
+// question count: free choice from 10 up to every statement in the selected lectures
+const MIN_Q = 10;
+function clampCount(n){ const max=availCount(); return Math.max(Math.min(MIN_Q,max), Math.min(max, Math.round(n)||MIN_Q)); }
+function setCount(n){ countSel=clampCount(n); renderCounts(); updateNote(); }
 function renderCounts(){
-  const opts=countOptions(), c=$("counts");
-  if(countSel>opts[opts.length-1]) countSel=opts[opts.length-1];
-  c.innerHTML="";
-  opts.forEach(n=>{
-    const b=document.createElement("button"); b.className="chip"; b.textContent=n; b.dataset.n=n;
+  const max=availCount(); countSel=clampCount(countSel);
+  const r=$("countRange"), inp=$("countInput");
+  r.max=max; r.value=countSel; inp.max=max; inp.value=countSel;
+  r.disabled=inp.disabled=$("countMinus").disabled=$("countPlus").disabled = max===0;
+  $("countMax").textContent=max;
+  const q=$("countQuick"); q.innerHTML="";
+  [10,20,40].filter(n=>n<max).concat([max]).forEach(n=>{
+    if(!n) return;
+    const b=document.createElement("button"); b.className="chip"; b.type="button";
+    b.textContent = n===max ? T().allQ+" ("+max+")" : n;
     b.setAttribute("aria-pressed", n===countSel);
-    b.onclick=()=>{ countSel=n; renderCounts(); updateNote(); };
-    c.appendChild(b);
+    b.onclick=()=>setCount(n);
+    q.appendChild(b);
   });
 }
+$("countRange").oninput=e=>setCount(+e.target.value);
+$("countInput").oninput=e=>{ const v=+e.target.value; if(v>=MIN_Q && v<=availCount()){ countSel=v; $("countRange").value=v; renderQuickState(); updateNote(); } };
+$("countInput").onchange=e=>setCount(+e.target.value);
+$("countMinus").onclick=()=>setCount(countSel-1);
+$("countPlus").onclick=()=>setCount(countSel+1);
+function renderQuickState(){ document.querySelectorAll("#countQuick .chip").forEach(b=>{ const n=b.textContent.includes("(")?availCount():+b.textContent; b.setAttribute("aria-pressed", n===countSel); }); }
 $("langSwitch").onclick=$("langSwitch2").onclick=$("langSwitch3").onclick=()=>setLang(lang==="ar"?"en":"ar");
 $("summaryBtn").onclick=()=>{ renderSumTabs(); renderSummary(); show("summary"); };
 $("summaryBackBtn").onclick=()=>show("setup");
