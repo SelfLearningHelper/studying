@@ -216,11 +216,11 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
           <h2 data-i="countH" id="countH"></h2>
           <div class="countBox">
             <div class="countRow">
-              <button class="stepBtn" id="countMinus" type="button" aria-label="-1">−</button>
-              <input class="countInput" id="countInput" type="number" inputmode="numeric" min="10" step="1" aria-labelledby="countH">
-              <button class="stepBtn" id="countPlus" type="button" aria-label="+1">+</button>
+              <button class="stepBtn" id="countMinus" type="button" aria-label="-10">−</button>
+              <input class="countInput" id="countInput" type="number" inputmode="numeric" min="10" step="10" aria-labelledby="countH">
+              <button class="stepBtn" id="countPlus" type="button" aria-label="+10">+</button>
             </div>
-            <input class="countRange" id="countRange" type="range" min="10" step="1" aria-labelledby="countH">
+            <input class="countRange" id="countRange" type="range" min="10" step="10" aria-labelledby="countH">
             <div class="rangeEnds"><span id="countMin"></span><span id="countMax"></span></div>
             <div class="chips" id="countQuick"></div>
           </div>
@@ -1022,7 +1022,8 @@ function countRange(){
   const r=COUNT_RANGES[key]; if(!r) return [0,0];
   const avail=availCount(); return [Math.min(r[0],avail), Math.min(r[1],avail)];
 }
-function clampCount(n){ const [lo,hi]=countRange(); return Math.max(lo, Math.min(hi, Math.round(n)||lo)); }
+const COUNT_STEP = 10;
+function clampCount(n){ const [lo,hi]=countRange(); return Math.max(lo, Math.min(hi, Math.round(n/COUNT_STEP)*COUNT_STEP||lo)); }
 function setCount(n){ countSel=clampCount(n); renderCounts(); updateNote(); }
 function quickCounts(){
   const [lo,hi]=countRange(); if(!hi) return [];
@@ -1044,10 +1045,10 @@ function renderCounts(){
   });
 }
 $("countRange").oninput=e=>setCount(+e.target.value);
-$("countInput").oninput=e=>{ const v=+e.target.value, [lo,hi]=countRange(); if(v>=lo && v<=hi){ countSel=v; $("countRange").value=v; renderQuickState(); updateNote(); } };
+$("countInput").oninput=e=>{ const v=+e.target.value, [lo,hi]=countRange(); if(v>=lo && v<=hi && v%COUNT_STEP===0){ countSel=v; $("countRange").value=v; renderQuickState(); updateNote(); } };
 $("countInput").onchange=e=>setCount(+e.target.value);
-$("countMinus").onclick=()=>setCount(countSel-1);
-$("countPlus").onclick=()=>setCount(countSel+1);
+$("countMinus").onclick=()=>setCount(countSel-COUNT_STEP);
+$("countPlus").onclick=()=>setCount(countSel+COUNT_STEP);
 function renderQuickState(){ document.querySelectorAll("#countQuick .chip").forEach(b=>b.setAttribute("aria-pressed", +b.textContent===countSel)); }
 $("langSwitch").onclick=$("langSwitch2").onclick=$("langSwitch3").onclick=()=>setLang(lang==="ar"?"en":"ar");
 $("summaryBtn").onclick=()=>{ renderSumTabs(); renderSummary(); show("summary"); };
