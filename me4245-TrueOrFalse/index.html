@@ -221,7 +221,7 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
               <button class="stepBtn" id="countPlus" type="button" aria-label="+1">+</button>
             </div>
             <input class="countRange" id="countRange" type="range" min="10" step="1" aria-labelledby="countH">
-            <div class="rangeEnds"><span>10</span><span id="countMax"></span></div>
+            <div class="rangeEnds"><span id="countMin"></span><span id="countMax"></span></div>
             <div class="chips" id="countQuick"></div>
           </div>
           <p class="note" id="timeNote"></p>
@@ -1011,32 +1011,44 @@ document.querySelectorAll("#langs .chip").forEach(b=>b.onclick=()=>setLang(b.dat
 document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{
   mode=b.dataset.mode; document.querySelectorAll(".mode").forEach(x=>x.setAttribute("aria-pressed", x===b)); updateNote();
 });
-// question count: free choice from 10 up to every statement in the selected lectures
-const MIN_Q = 10;
-function clampCount(n){ const max=availCount(); return Math.max(Math.min(MIN_Q,max), Math.min(max, Math.round(n)||MIN_Q)); }
+// question count: a fixed range for each lecture combination
+const COUNT_RANGES = {
+  "l1":[10,60], "l2":[10,90], "l3":[10,110],
+  "l1+l2":[30,150], "l1+l3":[30,150], "l2+l3":[30,150],
+  "l1+l2+l3":[60,200]
+};
+function countRange(){
+  const key=LECTURES.map(l=>l.id).filter(id=>selectedLectures.has(id)).join("+");
+  const r=COUNT_RANGES[key]; if(!r) return [0,0];
+  const avail=availCount(); return [Math.min(r[0],avail), Math.min(r[1],avail)];
+}
+function clampCount(n){ const [lo,hi]=countRange(); return Math.max(lo, Math.min(hi, Math.round(n)||lo)); }
 function setCount(n){ countSel=clampCount(n); renderCounts(); updateNote(); }
+function quickCounts(){
+  const [lo,hi]=countRange(); if(!hi) return [];
+  const v=[lo, Math.round((lo+(hi-lo)/3)/10)*10, Math.round((lo+2*(hi-lo)/3)/10)*10, hi];
+  return v.filter((x,i)=>v.indexOf(x)===i);
+}
 function renderCounts(){
-  const max=availCount(); countSel=clampCount(countSel);
+  const [lo,hi]=countRange(); if(hi) countSel=clampCount(countSel);
   const r=$("countRange"), inp=$("countInput");
-  r.max=max; r.value=countSel; inp.max=max; inp.value=countSel;
-  r.disabled=inp.disabled=$("countMinus").disabled=$("countPlus").disabled = max===0;
-  $("countMax").textContent=max;
+  r.min=lo; r.max=hi; r.value=countSel; inp.min=lo; inp.max=hi; inp.value=countSel;
+  r.disabled=inp.disabled=$("countMinus").disabled=$("countPlus").disabled = hi===0;
+  $("countMin").textContent=lo; $("countMax").textContent=hi;
   const q=$("countQuick"); q.innerHTML="";
-  [10,20,40].filter(n=>n<max).concat([max]).forEach(n=>{
-    if(!n) return;
+  quickCounts().forEach(n=>{
     const b=document.createElement("button"); b.className="chip"; b.type="button";
-    b.textContent = n===max ? T().allQ+" ("+max+")" : n;
-    b.setAttribute("aria-pressed", n===countSel);
+    b.textContent=n; b.setAttribute("aria-pressed", n===countSel);
     b.onclick=()=>setCount(n);
     q.appendChild(b);
   });
 }
 $("countRange").oninput=e=>setCount(+e.target.value);
-$("countInput").oninput=e=>{ const v=+e.target.value; if(v>=MIN_Q && v<=availCount()){ countSel=v; $("countRange").value=v; renderQuickState(); updateNote(); } };
+$("countInput").oninput=e=>{ const v=+e.target.value, [lo,hi]=countRange(); if(v>=lo && v<=hi){ countSel=v; $("countRange").value=v; renderQuickState(); updateNote(); } };
 $("countInput").onchange=e=>setCount(+e.target.value);
 $("countMinus").onclick=()=>setCount(countSel-1);
 $("countPlus").onclick=()=>setCount(countSel+1);
-function renderQuickState(){ document.querySelectorAll("#countQuick .chip").forEach(b=>{ const n=b.textContent.includes("(")?availCount():+b.textContent; b.setAttribute("aria-pressed", n===countSel); }); }
+function renderQuickState(){ document.querySelectorAll("#countQuick .chip").forEach(b=>b.setAttribute("aria-pressed", +b.textContent===countSel)); }
 $("langSwitch").onclick=$("langSwitch2").onclick=$("langSwitch3").onclick=()=>setLang(lang==="ar"?"en":"ar");
 $("summaryBtn").onclick=()=>{ renderSumTabs(); renderSummary(); show("summary"); };
 $("summaryBackBtn").onclick=()=>show("setup");
