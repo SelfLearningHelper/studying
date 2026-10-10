@@ -148,6 +148,8 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .opts.tf{display:grid; grid-template-columns:1fr 1fr; gap:12px}
 .opts.tf .opt{justify-content:center; align-items:center; min-height:64px; font-weight:700; font-size:1.05rem}
 .opts.tf .opt .t{flex:none}
+#counts{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; max-width:340px}
+#counts .chip{min-width:0; padding:8px 0; flex:none}
 .confirmBox{margin-top:18px; padding:14px 16px; border-radius:12px; background:var(--bad-soft); border:1px solid var(--bad)}
 .confirmBox p{margin:0 0 4px; font-weight:600}
 .confirmBox .nav{margin-top:10px}
@@ -205,12 +207,7 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
         </div>
         <div class="group">
           <h2 data-i="countH"></h2>
-          <div class="chips" id="counts">
-            <button class="chip" data-n="10" aria-pressed="false">10</button>
-            <button class="chip" data-n="20" aria-pressed="true">20</button>
-            <button class="chip" data-n="30" aria-pressed="false">30</button>
-            <button class="chip" data-n="40" aria-pressed="false">40</button>
-          </div>
+          <div class="chips" id="counts"></div>
           <p class="note" id="timeNote"></p>
         </div>
         <button class="start" id="startBtn" data-i="start"></button>
@@ -711,7 +708,7 @@ function item(q){
   return {q: ar?b[0]:b[1], e: ar?b[3]:b[4], lecName: lec.short[lang]};
 }
 function availCount(){ return LECTURES.filter(l=>selectedLectures.has(l.id)).reduce((s,l)=>s+l.bank.length,0); }
-function planned(){ const a=availCount(); return countSel==="all" ? a : Math.min(countSel,a); }
+function planned(){ return Math.min(countSel, availCount()); }
 
 function renderLecChips(){
   const c=$("lectures"); c.innerHTML="";
@@ -732,7 +729,7 @@ function updateAvail(){
   const n = selectedLectures.size;
   $("availNote").textContent = n===0 ? T().needLec : T().avail(availCount());
   $("startBtn").disabled = n===0;
-  updateNote();
+  renderCounts(); updateNote();
 }
 
 function applyLang(){
@@ -754,10 +751,19 @@ document.querySelectorAll("#langs .chip").forEach(b=>b.onclick=()=>setLang(b.dat
 document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{
   mode=b.dataset.mode; document.querySelectorAll(".mode").forEach(x=>x.setAttribute("aria-pressed", x===b)); updateNote();
 });
-document.querySelectorAll("#counts .chip").forEach(b=>b.onclick=()=>{
-  countSel = b.dataset.n==="all" ? "all" : +b.dataset.n;
-  document.querySelectorAll("#counts .chip").forEach(x=>x.setAttribute("aria-pressed", x===b)); updateNote();
-});
+// one lecture: 10–40, both lectures: 10–80
+function countOptions(){ const max = selectedLectures.size>1 ? 80 : 40; const o=[]; for(let n=10;n<=max;n+=10) o.push(n); return o; }
+function renderCounts(){
+  const opts=countOptions(), c=$("counts");
+  if(countSel>opts[opts.length-1]) countSel=opts[opts.length-1];
+  c.innerHTML="";
+  opts.forEach(n=>{
+    const b=document.createElement("button"); b.className="chip"; b.textContent=n; b.dataset.n=n;
+    b.setAttribute("aria-pressed", n===countSel);
+    b.onclick=()=>{ countSel=n; renderCounts(); updateNote(); };
+    c.appendChild(b);
+  });
+}
 $("langSwitch").onclick=$("langSwitch2").onclick=$("langSwitch3").onclick=()=>setLang(lang==="ar"?"en":"ar");
 $("summaryBtn").onclick=()=>{ renderSumTabs(); renderSummary(); show("summary"); };
 $("summaryBackBtn").onclick=()=>show("setup");
