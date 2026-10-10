@@ -641,17 +641,254 @@ const SUM_L2_EN = [
 ];
 
 
+/* ============ Lecture 3: Solar Electric Systems (Part 1: PV fundamentals & modules, Part 2: system components & types) ============ */
+const BANK_L3 = [
+["الخلايا الكهروضوئية (PV) تحوّل ضوء الشمس مباشرةً إلى طاقة كهربائية.","PV converts sunlight directly into electrical energy.",1,"What is PV: PV converts sunlight directly into electrical energy.","What is PV: PV converts sunlight directly into electrical energy."],
+["التأثير الكهروضوئي ظاهرة فيزيائية تحدث في أشباه الموصلات.","The photovoltaic effect is a physical phenomenon in a semiconductor.",1,"الشريحة: This conversion takes place due to the photovoltaic effect – a physical phenomenon in a semiconductor.","Slide: the conversion takes place due to the photovoltaic effect, a physical phenomenon in a semiconductor."],
+["فجوة الطاقة (Band gap) هي كمية الطاقة اللازمة لرفع الإلكترون من نطاق التكافؤ إلى نطاق التوصيل.","The band gap is the amount of energy required to excite an electron from the valence band to the conduction band.",1,"This required amount of energy to excite an electron is defined as band gap.","This required amount of energy to excite an electron is defined as the band gap."],
+["فجوة الطاقة ليس لها أي تأثير على جهد الخلية الكهروضوئية.","The band gap has no influence on the PV cell voltage.",0,"العكس: Band gap… has a direct influence on the photovoltaic cell voltage.","The opposite: the band gap has a direct influence on the PV cell voltage."],
+["فجوة الطاقة للسيليكون (Si) حوالي 1.11 eV.","The band gap of silicon (Si) is about 1.11 eV.",1,"من جدول المواد: Si = 1.11 eV.","Materials table: Si = 1.11 eV."],
+["فجوة الطاقة للسيليكا (SiO₂) حوالي 1.1 eV.","The band gap of silica (SiO₂) is about 1.1 eV.",0,"السيليكا 9 eV. اللي فجوته 1.11 هو السيليكون (Si).","Silica is 9 eV. Silicon (Si) is the one at 1.11 eV."],
+["فجوة الطاقة لـ CdTe حوالي 1.5 eV.","The band gap of CdTe is about 1.5 eV.",1,"Cadmium telluride = 1.5 eV.","Cadmium telluride = 1.5 eV."],
+["فوتون طاقته 2 eV يصطدم بالسيليكون: 1.1 eV تحرر الإلكترون، والباقي 0.9 eV يتبدد كحرارة.","A 2 eV photon hitting silicon: 1.1 eV frees an electron and the remaining 0.9 eV is dissipated as heat.",1,"مثال الشريحة حرفيًا.","The slide's own example."],
+["فوتون طاقته 2 eV يكفي لتحرير إلكترون في أكسيد النحاس (Cu₂O).","A 2 eV photon is enough to free an electron in copper oxide (Cu₂O).",0,"فجوة Cu₂O هي 2.1 eV، فـ 2 eV ما تكفي ونحتاج فوتون أعلى طاقة.","Cu₂O has a 2.1 eV band gap, so 2 eV is not enough; a higher-energy photon is needed."],
+["الفوتون الواحد يقدر يحرر أكثر من إلكترون إذا كانت طاقته أعلى بكثير من فجوة الطاقة.","One photon can free more than one electron if its energy is much higher than the band gap.",0,"مهما كانت طاقة الفوتون، فوتون واحد يحرر إلكترون واحد فقط، وهذا سبب محدودية كفاءة الخلايا.","No matter how high its energy, one photon frees only one electron, which limits PV efficiency."],
+["تحرير إلكترون واحد فقط لكل فوتون هو سبب محدودية كفاءة الخلايا الكهروضوئية.","Only one electron being freed per photon is the reason for the limited efficiency of PV cells.",1,"This is the reason for the limited efficiency of the photovoltaic cells.","Slide: this is the reason for the limited efficiency of PV cells."],
+["إذا كانت فجوة الطاقة صغيرة جدًا مقارنةً بطاقة الفوتون، يتحول جزء كبير من الطاقة إلى حرارة.","If the band gap is too small compared with the photon energy, a significant amount of energy is converted to heat.",1,"وهذا شيء مو جيد للخلية نفسها.","That is not good for the PV cell itself."],
+["إذا كانت فجوة الطاقة عالية جدًا، فمعظم الفوتونات تسبب التأثير الكهروضوئي.","If the band gap is too high, most photons will cause the photovoltaic effect.",0,"العكس: لو الفجوة عالية جدًا، معظم الفوتونات ما تسبب التأثير الكهروضوئي.","The opposite: if the band gap is too high, most photons will not cause the PV effect."],
+["أشباه الموصلات التجارية مثل السيليكون (1.1 eV) وCdTe (1.5 eV) فجواتها قريبة من قمة منحنى الكفاءة.","Commercial semiconductors such as silicon (1.1 eV) and CdTe (1.5 eV) have band gaps near the peak of the efficiency curve.",1,"Commonly used… have band gaps near the peak of this curve.","Slide: commonly used semiconductors have band gaps near the peak of this curve."],
+["التأثير الكهروضوئي يتضمن ثلاث خطوات: امتصاص الفوتونات، توليد حاملات الشحنة، ثم فصلها بين الأقطاب.","The PV effect includes three steps: absorption of photons, generation of charge carriers, and their separation between electrical contacts.",1,"الخطوات الثلاث كما في الشريحة.","The three steps as listed on the slide."],
+["وصلة P-N تفصل الإلكترونات والفجوات (holes) في الخلية الشمسية لتكوين جهد وشغل مفيد.","A P-N junction separates electron and hole carriers in a solar cell to create a voltage and useful work.",1,"تعريف P-N Junction.","Definition of the P-N junction."],
+["خلايا السيليكون أحادي البلورة (Monocrystalline) هي أحدث أنواع الخلايا الشمسية.","Monocrystalline silicon cells are the newest type of solar cells.",0,"العكس: The oldest type of solar cells، مصنوعة من بلورة سيليكون نقية.","The opposite: they are the oldest type, made from pure silicon crystal."],
+["كفاءة الخلايا أحادية البلورة النموذجية ~15%، والتطويرات الحديثة رفعتها إلى 22–24%.","Typical monocrystalline efficiency is ~15%, and recent developments raised it to 22–24%.",1,"Efficiency (typical ~15%; recent developments up to 22–24%).","As stated on the slide."],
+["تصنيع الخلايا أحادية البلورة بسيط ورخيص.","Monocrystalline cells are simple and cheap to manufacture.",0,"Complicated Manufacturing → High Cost.","Complicated manufacturing → high cost."],
+["لون الخلايا أحادية البلورة عادةً أسود أو أزرق متقزح.","Monocrystalline cells are typically black or iridescent blue.",1,"Color: typical black or iridescent blue.","Color: typically black or iridescent blue."],
+["الخلايا متعددة البلورات (Polycrystalline) أعلى كفاءة من أحادية البلورة.","Polycrystalline cells are more efficient than monocrystalline cells.",0,"Polycrystalline أقل كفاءة (~12%) لكن تصنيعها أسهل وأرخص.","Polycrystalline is less efficient (~12%) but easier and cheaper to make."],
+["الخلايا أحادية البلورة ومتعددة البلورات تعيش أكثر من 25 سنة.","Both monocrystalline and polycrystalline cells last over 25 years.",1,"Last over 25 years، والأحادية تقل كفاءتها تدريجيًا.","Both last over 25 years; mono efficiency gradually decreases."],
+["السيليكون غير المتبلور (Amorphous) ممكن يكون مرنًا وبأشكال مختلفة، وأقل عرضة للسخونة الزائدة.","Amorphous silicon can be made flexible in different shapes and is less prone to overheating.",1,"Can be made flexible… Less prone to overheating.","Slide: can be flexible, different shapes, less prone to overheating."],
+["كفاءة السيليكون غير المتبلور المحققة حاليًا حوالي 20%.","Realized efficiencies of amorphous silicon are currently about 20%.",0,"الحد النظري ~15%، والكفاءة المحققة 6–10%. اللي حوالي 20% هي CIGS.","Theoretical limit ~15%, realized 6–10%. About 20% is CIGS."],
+["أفضل كفاءة تم الحصول عليها لخلايا CdTe حوالي 16%، وهي مشهورة بسبب انخفاض التكلفة لكل kWh.","The best CdTe efficiency is around 16%, and it is popular due to lower cost per kWh.",1,"CdTe: Quite popular due to the lower cost per kW-hour; best efficiency ~16%.","CdTe: popular for lower cost per kWh; best efficiency ~16%."],
+["CIGS هي الأعلى كفاءة بين تقنيات الأغشية الرقيقة (Thin-film) بحوالي 20%.","CIGS is the most efficient thin-film PV technology, at around 20%.",1,"Most efficient among the thin-film PV technologies. Around 20%. ومقاومتها للحرارة جيدة.","Most efficient thin-film (~20%), with good resistance to heating."],
+["خلايا البوليمر والعضوية (Organic PV) أعلى كفاءة من خلايا السيليكون.","Polymer and organic PV cells are more efficient than silicon cells.",0,"أقل بكثير: حوالي ثلث كفاءة خلية السيليكون، وعمرها أقصر، لكنها خفيفة الوزن.","Much less: about 1/3 of a typical Si cell, with shorter life, but lightweight."],
+["الخلية الشمسية (Solar cell) هي أصغر وحدة كهروضوئية تحوّل ضوء الشمس إلى كهرباء DC.","A solar cell is the smallest PV unit that converts sunlight into DC electricity.",1,"تعريف Solar cell.","Definition of a solar cell."],
+["المصفوفة (PV array) هي أصغر وحدة في النظام الكهروضوئي.","A PV array is the smallest unit in a PV system.",0,"الترتيب: Cell ← Module ← Panel ← Array. المصفوفة هي الأكبر.","Order: cell → module → panel → array. The array is the largest."],
+["عدد الألواح في المصفوفة يُختار حسب قدرة النظام المطلوبة ومستوى الجهد والحمل.","The number of modules in an array is selected according to required power, voltage level and load demand.",1,"العبارة تحت رسم Cell/Module/Panel/Array.","Stated under the cell/module/panel/array figure."],
+["الإطار الألمنيوم يحمي حافة الطبقات ويوفّر هيكلًا صلبًا لتركيب اللوح.","The aluminum frame protects the laminate edge and provides a solid structure for mounting.",1,"1- Aluminum Frame.","1- Aluminum frame."],
+["الزجاج الأمامي المقسّى في اللوح سماكته حوالي 3–4 مم.","The tempered front glass of a module is about 3–4 mm thick.",1,"Tempered Glass (3–4 mm Thick): يحمي من الطقس والبَرَد والحطام.","Tempered glass (3–4 mm): protects from weather, hail and debris."],
+["طبقة EVA معتمة وتستخدم لعزل اللوح كهربائيًا من الخلف.","The EVA film is opaque and used to electrically insulate the module from the back.",0,"EVA بوليمر شفاف جدًا يغلّف الخلايا ويثبتها ويمنع دخول الرطوبة والأوساخ. العزل الخلفي وظيفة Back sheet.","EVA is a highly transparent polymer that encapsulates the cells; back insulation is the back sheet's job."],
+["الطبقة الخلفية (Back sheet) حاجز للرطوبة وتوفر حماية ميكانيكية وعزلًا كهربائيًا.","The back sheet is a moisture barrier providing mechanical protection and electrical insulation.",1,"5- Back sheet.","5- Back sheet."],
+["صندوق التوصيل (Junction box) يحتوي على الدايودات الجانبية (Bypass diodes).","The junction box houses the bypass diodes.",1,"يمنع التيار العكسي اللي يصير لما تتظلل الخلايا أو تتسخ.","They prevent back current when cells are shaded or dirty."],
+["ظروف الاختبار القياسية (STC): 1000 W/m²، و25°C، وAM1.5.","Standard Test Conditions (STC) are 1000 W/m², 25 °C and AM1.5.",1,"STC كما في الشريحة.","STC as on the slide."],
+["ظروف الاختبار القياسية تعتمد درجة حرارة الخلية 45°C.","Standard Test Conditions use a cell temperature of 45 °C.",0,"STC = 25°C.","STC = 25 °C."],
+["في منحنيات I-V، كلما قل الإشعاع قلّ التيار والقدرة القصوى.","In the I-V curves, lower irradiance gives lower current and lower maximum power.",1,"من 1000 W/m² بـ 75 Wmax إلى 200 W/m² بـ 15 Wmax.","From 1000 W/m² (75 Wmax) down to 200 W/m² (15 Wmax)."],
+["جهد الدائرة المفتوحة (Voc) هو أقصى جهد تنتجه الخلية الشمسية.","Open circuit voltage (Voc) is the maximum voltage a solar cell produces.",1,"ويعتمد بشكل رئيسي على تقنية الخلية ودرجة حرارة التشغيل.","It mainly depends on cell technology and operating temperature."],
+["تيار القصر (Isc) هو أقصى تيار تنتجه الخلية الشمسية.","Short circuit current (Isc) is the maximum current a solar cell can produce.",1,"ويعتمد على تقنية الخلية ومساحتها والإشعاع وزاوية الخلية.","It depends on cell technology, area, radiation and cell angle."],
+["كثافة تيار القصر Jsc = Isc × A.","Short circuit current density Jsc = Isc × A.",0,"قسمة وليس ضرب: Jsc = Isc / A.","Divide, not multiply: Jsc = Isc / A."],
+["الجهد عند نقطة القدرة القصوى (Vm) دائمًا أقل من Voc.","The voltage at the maximum power point (Vm) is always lower than Voc.",1,"The Vm will always be lower than Voc.","Stated on the slide."],
+["التيار عند نقطة القدرة القصوى (Im) دائمًا أكبر من Isc.","The current at the maximum power point (Im) is always higher than Isc.",0,"العكس: Im دائمًا أقل من Isc.","The opposite: Im is always lower than Isc."],
+["معامل التعبئة FF = (Im × Vm) / (Isc × Voc).","Fill factor FF = (Im × Vm) / (Isc × Voc).",1,"وتساوي أيضًا Pm / (Isc × Voc).","Also equal to Pm / (Isc × Voc)."],
+["الكفاءة η = Pm / Pin، وPin في ظروف STC تساوي 1000 W/m².","Efficiency η = Pm / Pin, with Pin at STC taken as 1000 W/m².",1,"η = Pm/Pin = (Isc × Voc × FF)/(Pin × A).","η = Pm/Pin = (Isc × Voc × FF)/(Pin × A)."],
+["عند توصيل الخلايا على التوالي، الجهد الكلي = مجموع الجهود، والتيار نفسه.","In series, the total voltage is the sum of the cell voltages and the current stays the same.",1,"Solar Cells or Modules in Series.","Solar cells or modules in series."],
+["عند توصيل الخلايا على التوازي، الجهد الكلي = مجموع الجهود.","In parallel, the total voltage is the sum of the cell voltages.",0,"على التوازي: الجهد ثابت، والتيار الكلي = مجموع التيارات.","In parallel: voltage stays the same; total current is the sum."],
+["36 خلية على التوالي، كل خلية 0.5 V، الجهد الكلي = 18 V.","36 cells in series at 0.5 V each give a total of 18 V.",1,"36 × 0.5 = 18 V.","36 × 0.5 = 18 V."],
+["72 خلية على التوالي (0.695 V، 5.25 A) موصولة على التوازي مع جزء مماثل: الجهد ≈ 50 V والتيار = 10.5 A.","72 series cells (0.695 V, 5.25 A) in parallel with an identical part: voltage ≈ 50 V and current = 10.5 A.",1,"72 × 0.695 ≈ 50 V، و5.25 × 2 = 10.5 A، والقدرة ≈ 50 × 10.5 = 525 W.","72 × 0.695 ≈ 50 V; 5.25 × 2 = 10.5 A; power ≈ 525 W."],
+["في المثال نفسه (72 خلية على التوازي مع جزء مماثل)، الجهد الكلي ≈ 100 V.","In the same example (72 cells in parallel with an identical part), the total voltage ≈ 100 V.",0,"التوازي ما يضاعف الجهد. الجهد ≈ 50 V، والتيار هو اللي يتضاعف إلى 10.5 A.","Parallel doesn't double voltage. It stays ≈ 50 V; the current doubles to 10.5 A."],
+["لوح 180 W (23.26 V) ولوح 375 W (44.5 V) على التوالي: الجهد الكلي = 67.76 V.","A 180 W (23.26 V) and a 375 W (44.5 V) module in series give a total of 67.76 V.",1,"23.26 + 44.5 = 67.76 V.","23.26 + 44.5 = 67.76 V."],
+["عند توصيل ألواح مختلفة على التوالي، التيار الكلي يساوي أكبر تيار بينها.","When different modules are connected in series, the total current equals the highest current.",0,"يساوي أقل تيار (the lowest current)، لذلك في المثال كان ~9 A.","It equals the lowest current, so ~9 A in the example."],
+["عند توصيل ألواح مختلفة على التوازي: الجهد الكلي = أقل جهد، والتيار الكلي = مجموع التيارات.","For different modules in parallel: total voltage = the lowest voltage, total current = the sum of currents.",1,"Lowest voltage is the total, and the sum of the current is the total.","Stated on the slide."],
+["الألواح الكهروضوئية حساسة جدًا للتظليل، وممكن تخسر حتى 90% من إنتاجها.","PV modules are very sensitive to shading and could lose up to 90% of their output.",1,"Shading slide.","Shading slide."],
+["فضلات الطيور والغبار من أمثلة التظليل الصلب (Hard shading).","Bird droppings and dust are examples of hard shading.",1,"من رسم Subjective Shading: Hard shading = Bird droppings، dust. وSoft shading = ظل عمود.","Subjective shading figure: hard = bird droppings, dust; soft = a pole's shadow."],
+["التوصيل على التوالي أفضل من التوازي في حالة التظليل.","Series wiring is better than parallel wiring under shading.",0,"التوازي أفضل: الخسارة تبقى محصورة في السلسلة المظللة، أما التوالي فيقلل إنتاج المصفوفة كلها.","Parallel is better: losses stay in the shaded string; series reduces the whole array's output."],
+["الخلية المظللة في سلسلة ممكن تصير حِمْلًا على باقي الخلايا وتسخن مكوّنة نقاط ساخنة (Hot spots).","A shaded cell in a series string can become a load for the other cells and heat up, forming hot spots.",1,"Shading Causes Hot Spots.","Shading causes hot spots."],
+["النقاط الساخنة ممكن تكسر الزجاج، وفي أسوأ الحالات تسبب حريقًا.","Hot spots can break the glass cover and, in the worst case, cause fire.",1,"The hot spots sometimes can give rise to breaking of glass cover… or… fire.","Stated on the slide."],
+["الدايود الجانبي (Bypass diode) يُوصل على التوالي مع الخلايا وبنفس قطبيتها.","A bypass diode is connected in series with the cells with the same polarity.",0,"يُوصل على التوازي مع الخلايا وبقطبية معاكسة.","It is connected in parallel with the cells, with opposite polarity."],
+["في الحالة الطبيعية بدون تظليل، يعمل الدايود الجانبي في انحياز عكسي (كدائرة مفتوحة).","In normal (unshaded) conditions, the bypass diode operates in reverse bias, effectively open circuit.",1,"ولما تتظلل خلية، يصير الانحياز أماميًا ويمرر الدايود التيار بدل الخلية المظللة.","When a cell is shaded, it becomes forward-biased and carries the current instead."],
+["عمليًا، يُنصح بدايود جانبي واحد على الأقل لكل 10–15 خلية على التوالي.","In practice, at least one bypass diode is recommended for every 10–15 series cells.",1,"مثاليًا دايود لكل خلية، لكن عمليًا ولأسباب التكلفة: واحد لكل 10–15 خلية.","Ideally one per cell, but for cost: one per 10–15 cells."],
+["في التتبع أحادي المحور، محور الدوران ممكن يكون شمال–جنوب أو شرق–غرب.","In one-axis tracking, the axis of rotation can be north–south or east–west.",1,"One-axis tracking.","One-axis tracking."],
+["النظام الكهروضوئي الكامل يتكون من الألواح فقط.","A complete PV system consists of the PV modules only.",0,"يحتوي مكونات كهربائية وميكانيكية: المصفوفة، هيكل التركيب، منظم الشحن، البطاريات، الإنفرتر، وأجهزة الحماية.","It includes electrical and mechanical parts: array, mounting, charge controller, batteries, inverter, protection."],
+["هيكل التركيب (Mounting structure) يدعم الألواح ويثبّت زاوية الميل.","The mounting structure supports the modules and fixes the tilt angle.",1,"Mounting structure.","Mounting structure."],
+["المصهرات والقواطع والفواصل والتأريض والحماية من التيار المفاجئ من أجهزة الحماية في النظام.","Fuses, breakers, disconnects, grounding and surge protection are the system's protection devices.",1,"Protection devices.","Protection devices."],
+["منظم الشحن (Charge controller) ينظّم تدفق القدرة بين المصفوفة والبطارية والحمل.","A charge controller regulates power flow between the PV array, battery and load.",1,"تعريف Charge controller.","Definition of the charge controller."],
+["منظم الشحن يحوّل الكهرباء من DC إلى AC.","The charge controller converts DC electricity to AC.",0,"هذا عمل الإنفرتر (Inverter). منظم الشحن يحمي البطارية وينظم الشحن.","That's the inverter's job. The controller protects the battery and regulates charging."],
+["من وظائف منظم الشحن منع الشحن الزائد ومنع التفريغ العميق للبطارية.","A charge controller prevents overcharging and deep battery discharge.",1,"Main functions.","Main functions."],
+["منظم الشحن يمنع التيار العكسي في الليل.","A charge controller blocks reverse current at night.",1,"Blocks reverse current at night.","Blocks reverse current at night."],
+["منظم الشحن غير مطلوب في معظم الأنظمة المستقلة اللي فيها بطاريات.","A charge controller is not required in most stand-alone PV systems with battery storage.",0,"العكس: It is required in most stand-alone PV systems with battery storage.","The opposite: it is required in most stand-alone systems with batteries."],
+["بدون تحكم صحيح في الشحن، ممكن تفقد البطاريات سعتها بسرعة أو تتلف مبكرًا.","Without proper charge control, batteries can lose capacity quickly or fail prematurely.",1,"العبارة تحت صورة المنظم.","Stated under the controller image."],
+["PWM تعني Pulse Width Modulation.","PWM stands for Pulse Width Modulation.",1,"PWM = Pulse Width Modulation.","PWM = Pulse Width Modulation."],
+["منظم PWM يستخدم تشغيل/إطفاء سريع للتحكم في متوسط تيار الشحن، ويقلل التيار لما تمتلئ البطارية.","A PWM controller uses rapid ON/OFF switching to control average charging current and reduces it as the battery fills.",1,"How It Works.","How it works."],
+["في منظم PWM، جهد تشغيل الألواح يكون أعلى بكثير من جهد البطارية.","In a PWM controller, the PV operating voltage is much higher than the battery voltage.",0,"The PV operating voltage is pulled close to the battery voltage.","The PV operating voltage is pulled close to the battery voltage."],
+["MPPT يشغّل اللوح قرب نقطة القدرة القصوى، حيث حاصل ضرب الجهد في التيار أكبر ما يمكن.","MPPT operates the module near the maximum power point, where voltage × current is maximum.",1,"MPPT Charge Controller.","MPPT charge controller."],
+["MPPT مفيد خصوصًا لما يتغير الإشعاع الشمسي خلال اليوم.","MPPT is especially useful when solar radiation changes during the day.",1,"MPPT is especially useful when solar radiation changes during the day.","Stated on the slide."],
+["منظم MPPT أرخص من PWM.","An MPPT controller is cheaper than a PWM controller.",0,"MPPT تكلفته أعلى، لكن يعطي طاقة أكثر من نفس المصفوفة.","MPPT costs more but harvests more energy from the same array."],
+["منظم PWM مناسب للأنظمة الصغيرة البسيطة، وMPPT للأنظمة الكبيرة أو الظروف المتغيرة.","PWM suits small, simple systems; MPPT suits larger systems or variable conditions.",1,"جدول PWM vs. MPPT، صف Best use.","PWM vs. MPPT table, Best use row."],
+["منظم MPPT يقدر يستخدم جهد ألواح أعلى من جهد البطارية لأنه يعتمد على تحويل DC-DC.","An MPPT controller can use a higher PV voltage than the battery because it uses DC-DC conversion.",1,"جدول المقارنة: Uses DC-DC conversion؛ Can use higher PV voltage than battery.","Comparison table: DC-DC conversion; can use higher PV voltage than battery."],
+["في الليل أو الجو الغائم، البطارية تغذي الحمل ومنظم الشحن يمنع التفريغ العميق.","At night or in cloudy weather, the battery supplies the load and the controller prevents deep discharge.",1,"How MPPT, Controller and Battery Work Together.","How MPPT, controller and battery work together."],
+["صندوق التجميع (Combiner box) يجمع أسلاك السلاسل في مخرج كهربائي واحد يذهب لمنظم الشحن أو الإنفرتر.","The combiner box combines all string wires into one output fed to the charge controller or inverter.",1,"Combiner Box.","Combiner box."],
+["البطارية تخزن الطاقة الكهربائية على شكل طاقة كيميائية.","A battery stores electrical energy in the form of chemical energy.",1,"وعند الاستخدام تتحول الطاقة الكيميائية إلى كهربائية.","When used, the chemical energy is converted back into electrical energy."],
+["عملية استهلاك الطاقة من البطارية تسمى «الشحن» (Charging).","Consuming electrical energy from a battery is technically called charging.",0,"تسمى «التفريغ» (Discharging).","It is called discharging."],
+["بطاريات السيارات العادية تعطي دفعة كهرباء قصيرة، أما بطاريات الدورة العميقة فتعطي قدرة مستمرة أقل لكنها ثابتة.","Regular car batteries give a short burst; deep cycle batteries give ongoing, lower yet consistent power.",1,"Batteries slide.","Batteries slide."],
+["بطاريات الدورة العميقة صفائحها المعدنية أرق من البطاريات العادية.","Deep cycle batteries have thinner metal plates than regular batteries.",0,"العكس: Thicker metallic elements، وهذا يخليها تطلق الكهرباء بشكل أكثر ثباتًا.","The opposite: thicker plates, which release electricity more consistently."],
+["بطاريات الدورة العميقة مصممة للشحن والتفريغ المتكرر حتى 80% من سعتها (من 100% إلى 20% SOC) بدون ضرر كبير.","Deep cycle batteries can be repeatedly discharged by up to 80% of capacity (100% to 20% SOC) without serious damage.",1,"Deep Cycle Batteries slide.","Deep cycle batteries slide."],
+["عمق التفريغ (DoD) هو نسبة السعة المتبقية في البطارية.","Depth of Discharge (DoD) is the percentage of capacity still available in the battery.",0,"هذا تعريف State of Charge. الـ DoD هو النسبة اللي انفرغت من السعة الكلية.","That's State of Charge. DoD is the percentage that has been discharged."],
+["كلما زاد عمق التفريغ (DoD)، قلّ عدد دورات حياة البطارية.","The higher the depth of discharge, the fewer cycles the battery lasts.",1,"من الرسم: حوالي 7000 دورة عند ~25% DoD، وحوالي 2000 دورة عند 80% DoD.","Graph: ~7000 cycles at ~25% DoD vs. ~2000 at 80%."],
+["بطاريات الرصاص الحمضية (Lead-acid) هي الأكثر استخدامًا في الأنظمة الكهروضوئية السكنية.","Lead-acid batteries are most commonly used for residential PV applications.",1,"Lead-acid batteries are most commonly used for residential scale photovoltaic application.","Stated on the slide."],
+["بطاريات الليثيوم أرخص من الرصاص الحمضية وعمر دوراتها أقصر.","Lithium-ion batteries are cheaper than lead-acid and have a shorter cycle life.",0,"العكس: الليثيوم كفاءته أعلى، وDoD أعمق، وعمر دوراته أطول، لكن تكلفته أعلى.","The opposite: Li-ion has higher efficiency, deeper DoD, longer cycle life, but higher cost."],
+["بطاريات التدفق (Flow battery) مفيدة للتخزين الكبير، وأقل شيوعًا في الأنظمة الكهروضوئية الصغيرة.","Flow batteries are useful for large storage and less common in small PV systems.",1,"جدول أنواع البطاريات.","Battery types table."],
+["جهد الدائرة المفتوحة للبطارية يسمى أيضًا الجهد النظري، وهو أقصى جهد ممكن عند أطرافها.","A battery's open circuit voltage is also called the theoretical voltage, the maximum possible at its terminals.",1,"Batteries Terminologies.","Battery terminologies."],
+["جهد القطع (Cut-off voltage) هو الجهد اللي تحته لازم تنفصل البطارية عن الحمل لمنع التفريغ الزائد.","Cut-off voltage is the voltage below which the battery should be disconnected to prevent over-discharge.",1,"Cut-off voltage.","Cut-off voltage."],
+["سعة البطارية تُقاس بوحدة الواط (W).","Battery capacity is measured in watts (W).",0,"تُقاس بالأمبير × ساعة (Ah).","It is measured in ampere-hours (Ah)."],
+["بطاريتان 12 V و100 Ah على التوالي تعطي 24 V و100 Ah.","Two 12 V, 100 Ah batteries in series give 24 V and 100 Ah.",1,"التوالي يجمع الجهد والسعة تبقى نفسها.","Series adds voltage; capacity stays the same."],
+["بطاريتان 12 V و100 Ah على التوازي تعطي 24 V و200 Ah.","Two 12 V, 100 Ah batteries in parallel give 24 V and 200 Ah.",0,"على التوازي: 12 V و200 Ah. الجهد ما يتغير.","In parallel: 12 V and 200 Ah; the voltage doesn't change."],
+["الخلايا والألواح والمصفوفات الكهروضوئية تنتج تيارًا مستمرًا (DC).","PV cells, modules and arrays produce direct current (DC).",1,"Inverter slide.","Inverter slide."],
+["معظم الأجهزة المنزلية مصممة للعمل على التيار المستمر (DC).","Most home appliances are designed to operate on direct current (DC).",0,"معظمها يعمل على AC، ولهذا نحتاج الإنفرتر.","Most run on AC, which is why an inverter is needed."],
+["النظام المستقل (Stand-alone) يعمل بشكل مستقل عن الشبكة الكهربائية.","A stand-alone PV system operates independently from the utility grid.",1,"Stand-Alone Solar PV System.","Stand-alone solar PV system."],
+["النظام المستقل يُستخدم غالبًا لما تكون الشبكة غير متوفرة أو غير موثوقة أو مكلفة التمديد.","A stand-alone system is mainly used when the grid is unavailable, unreliable or too expensive to extend.",1,"Stand-Alone Solar PV System.","Stand-alone solar PV system."],
+["في النظام المستقل، الشبكة هي اللي تغذي الحمل في الليل.","In a stand-alone system, the grid supplies the load at night.",0,"في المستقل البطارية هي اللي تغذي الحمل في الليل. الشبكة للنظام المتصل.","In stand-alone, the battery supplies the load at night; the grid is for grid-connected."],
+["تصميم النظام المستقل يعتمد على الحمل اليومي وزمن الاحتياط والإشعاع الشمسي المحلي.","Stand-alone sizing depends on daily load demand, backup time and local solar radiation.",1,"System sizing depends on daily load demand, backup time, and local solar radiation.","Stated on the slide."],
+["النظام المقترن مباشرة (Direct-coupled) يوصل المصفوفة بالحمل مباشرة بدون بطاريات، مثل ضخ المياه.","A direct-coupled system connects the array directly to the load without batteries, e.g. water pumping.",1,"Direct-coupled system.","Direct-coupled system."],
+["النظام الهجين المستقل يجمع الطاقة الشمسية مع مصدر آخر، ويمكن أن يقلل حجم البطاريات المطلوب.","A hybrid stand-alone system combines PV with another source and can reduce the required battery size.",1,"مثل مولد ديزل أو توربين رياح، ويحسّن الموثوقية.","E.g. a diesel generator or wind turbine; it improves reliability."],
+["في النظام المتصل بالشبكة، لما يكون إنتاج الألواح أعلى من الحمل، يُصدَّر الفائض للشبكة.","In a grid-connected system, excess energy is exported to the grid when PV generation exceeds the load.",1,"Grid-Connected Solar PV System.","Grid-connected solar PV system."],
+["الأنظمة المتصلة بالشبكة تحتاج دائمًا بطاريات.","Grid-connected systems always require batteries.",0,"In many grid-connected systems, batteries are not required.","In many grid-connected systems, batteries are not required."],
+["توازن القدرة في الليل للنظام المتصل بالشبكة: الشبكة ← الحمل.","Power balance at night in a grid-connected system: grid → load.",1,"High: PV → load + grid؛ Low: PV + grid → load؛ Night: grid → load.","High: PV → load + grid; Low: PV + grid → load; Night: grid → load."],
+["المشكلة التصميمية الرئيسية في النظام المستقل هي التخزين والاستقلالية.","The main design issue for stand-alone systems is storage and autonomy.",1,"وفي المتصل: واجهة الشبكة وحماية الإنفرتر.","For grid-connected: grid interface and inverter protection."],
+["إنارة الشوارع بالطاقة الشمسية من تطبيقات الأنظمة المستقلة الشائعة.","Solar street lighting is a common stand-alone PV application.",1,"Application: Solar Lighting.","Application: solar lighting."],
+["في إنارة الشوارع الشمسية، اللمبة تشتغل في النهار والبطارية تشحن في الليل.","In solar street lighting, the lamp is on during the day and the battery charges at night.",0,"العكس: في النهار يشحن اللوح البطارية والمصباح مطفأ، وفي الليل البطارية تشغّل مصباح LED.","The opposite: by day the module charges the battery with the lamp off; at night the battery runs the LED."],
+["مصابيح LED مفضلة في الإنارة الشمسية لأن استهلاكها منخفض وعمرها طويل.","LED lamps are preferred in solar lighting for their low power consumption and long lifetime.",1,"Application: Solar Lighting.","Application: solar lighting."],
+["في ضخ المياه بالطاقة الشمسية، تخزين الماء في خزان غالبًا أبسط وأرخص من تخزين الكهرباء في بطاريات.","In solar water pumping, storing water in a tank is often simpler and cheaper than storing electricity in batteries.",1,"لذلك PV ← مضخة ← خزان هو غالبًا أبسط تكوين.","So PV → pump → tank is often the simplest configuration."],
+["تحويل الطاقة في ضخ المياه الشمسي: إشعاع ← كهرباء PV ← ضخ ميكانيكي ← تخزين الماء.","Energy conversion in solar pumping: radiation → PV electricity → mechanical pumping → water storage.",1,"Energy conversion box on the slide.","Energy conversion box on the slide."],
+["الخلايا متعددة الوصلات (Multijunction) فيها أكثر من وصلة p-n، وكل وصلة تمتص نطاقًا معينًا من الأطوال الموجية.","Multijunction cells have multiple p-n junctions, each absorbing a particular wavelength range.",1,"Concentrating PV (CPV) System.","Concentrating PV (CPV) system."],
+["الحد النظري لكفاءة الخلية أحادية الوصلة حوالي 34%، والخلية متعددة الوصلات ممكن توصل نظريًا إلى 86.8% تحت إشعاع مركّز.","Single-junction cells have a theoretical max of ~34%, while multijunction cells can ideally reach 86.8% under concentrated sunlight.",1,"CPV slide.","CPV slide."],
+["أنظمة CPV عالية التركيز (100–400) لا تحتاج تبريدًا ولا تتبعًا.","High-concentration CPV (100–400) needs no cooling and no tracking.",0,"عالية التركيز تحتاج تبريدًا نشطًا وتتبعًا ثنائي المحور. اللي ما يحتاج هو منخفض التركيز (2–10).","High concentration needs active cooling and 2-axis tracking; low concentration (2–10) needs neither."],
+["أنظمة CPV تعمل بشكل صحيح فقط تحت الإشعاع المباشر (Beam).","CPV can function properly only under direct beam radiation.",1,"من جدول السلبيات.","From the disadvantages table."]
+];
+
+const SUM_L3_AR = [
+{h:"01 — التأثير الكهروضوئي", items:[
+"PV تحوّل ضوء الشمس مباشرة إلى كهرباء، بظاهرة فيزيائية في أشباه الموصلات.",
+"Band gap = الطاقة اللازمة لنقل الإلكترون من نطاق التكافؤ إلى نطاق التوصيل، وتؤثر مباشرة على جهد الخلية.",
+"قيم مهمة: Si = 1.11، CdTe = 1.5، GaAs = 1.43، Cu₂O = 2.1، SiO₂ = 9 eV.",
+"مثال: فوتون 2 eV على السيليكون يستخدم 1.1 eV، والباقي 0.9 eV حرارة.",
+"فوتون واحد يحرر إلكترون واحد فقط، وهذا سبب محدودية الكفاءة.",
+"الخطوات: امتصاص الفوتونات ← توليد حاملات الشحنة ← فصلها. وصلة P-N تفصل الإلكترونات عن الفجوات."
+]},
+{h:"02 — أنواع المواد", items:[
+"Mono: الأقدم، كفاءة ~15% (حديثًا 22–24%)، مكلفة، لونها أسود أو أزرق، تعيش أكثر من 25 سنة.",
+"Poly: أرخص وأسهل تصنيعًا، كفاءة ~12%، تعيش أكثر من 25 سنة.",
+"Amorphous: حد نظري ~15% وفعليًا 6–10%، مرنة، أقل سخونة.",
+"CdTe: رخيصة لكل kWh، أفضل كفاءة ~16%. CIGS: الأعلى بين الأغشية الرقيقة ~20%.",
+"Organic: خفيفة، كفاءتها ~ثلث السيليكون، وعمرها أقصر."
+]},
+{h:"03 — اللوح وظروف الاختبار", items:[
+"Cell ← Module ← Panel ← Array.",
+"الطبقات: إطار ألمنيوم، زجاج مقسّى 3–4 مم، EVA شفاف، خلايا، Back sheet، Junction box (فيه Bypass diodes).",
+"STC: 1000 W/m²، 25°C، AM1.5."
+]},
+{h:"04 — معاملات الخلية", items:[
+"Voc أقصى جهد، وIsc أقصى تيار، وJsc = Isc/A.",
+"Vm < Voc وIm < Isc.",
+"FF = (Im·Vm)/(Isc·Voc) = Pm/(Isc·Voc).",
+"η = Pm/Pin = (Isc·Voc·FF)/(Pin·A)، وPin = 1000 W/m² في STC."
+]},
+{h:"05 — التوصيل والتظليل", items:[
+"توالي: الجهود تنجمع والتيار ثابت (ويساوي أقل تيار لو الألواح مختلفة).",
+"توازي: الجهد ثابت (أقل جهد) والتيارات تنجمع.",
+"أمثلة: 36 × 0.5 = 18 V. و72 × 0.695 ≈ 50 V مع 2 × 5.25 = 10.5 A. و23.26 + 44.5 = 67.76 V.",
+"التظليل ممكن يخسّر حتى 90%. التوازي أفضل مع التظليل.",
+"الخلية المظللة تصير حِمْلًا وتكوّن Hot spots قد تكسر الزجاج أو تسبب حريقًا.",
+"Bypass diode: على التوازي وبقطبية معاكسة، وعمليًا واحد لكل 10–15 خلية.",
+"التتبع: أحادي المحور (شمال–جنوب أو شرق–غرب)، أو ثنائي المحور."
+]},
+{h:"06 — مكونات النظام", items:[
+"المصفوفة (DC)، هيكل التركيب، منظم الشحن، البطاريات، الإنفرتر (DC ← AC)، أجهزة الحماية.",
+"منظم الشحن: ينظم الشحن، ويمنع الشحن الزائد والتفريغ العميق والتيار العكسي ليلًا.",
+"PWM: تشغيل وإطفاء سريع، جهد الألواح قريب من جهد البطارية، رخيص، للأنظمة الصغيرة.",
+"MPPT: يتتبع نقطة القدرة القصوى بتحويل DC-DC، أغلى، يعطي طاقة أكثر، للأنظمة الكبيرة.",
+"Combiner box: يجمع السلاسل في مخرج واحد."
+]},
+{h:"07 — البطاريات", items:[
+"تخزن الطاقة كيميائيًا. الاستهلاك = Discharging.",
+"Deep cycle: صفائح أسمك، قدرة ثابتة، تفريغ حتى 80% (من 100% إلى 20% SOC).",
+"DoD = النسبة اللي انفرغت، وSOC = النسبة المتبقية. كلما زاد DoD قلّت الدورات.",
+"Lead-acid: الأرخص والأكثر استخدامًا سكنيًا. Li-ion: أكفأ وأطول عمرًا وأغلى. Flow: للتخزين الكبير.",
+"السعة بوحدة Ah. توالي 2 × (12 V, 100 Ah) = 24 V, 100 Ah، وتوازي = 12 V, 200 Ah."
+]},
+{h:"08 — أنواع الأنظمة والتطبيقات وCPV", items:[
+"Stand-alone: مستقل عن الشبكة، البطارية تغذي الليل، والمشكلة الرئيسية التخزين. أشكاله: Direct-coupled، Battery-based، Hybrid.",
+"Grid-connected: الفائض يُصدَّر للشبكة، والشبكة تغطي النقص والليل، وغالبًا بدون بطاريات.",
+"إنارة الشوارع: تشحن نهارًا وتضيء ليلًا بمصابيح LED. ضخ المياه: تخزين الماء أرخص من تخزين الكهرباء.",
+"CPV: خلايا متعددة الوصلات (حتى 86.8% نظريًا، مقابل ~34% لأحادية الوصلة). عالية التركيز تحتاج تبريدًا نشطًا وتتبعًا ثنائي المحور، وتعمل فقط مع الإشعاع المباشر."
+]}
+];
+const SUM_L3_EN = [
+{h:"01 — Photovoltaic effect", items:[
+"PV converts sunlight directly into electricity via a physical phenomenon in semiconductors.",
+"Band gap = energy to lift an electron from the valence to the conduction band; it directly affects cell voltage.",
+"Key values: Si 1.11, CdTe 1.5, GaAs 1.43, Cu₂O 2.1, SiO₂ 9 eV.",
+"Example: a 2 eV photon on Si uses 1.1 eV; the remaining 0.9 eV becomes heat.",
+"One photon frees only one electron, which limits efficiency.",
+"Steps: absorb photons → generate carriers → separate them. The P-N junction separates electrons and holes."
+]},
+{h:"02 — Material types", items:[
+"Mono: oldest, ~15% (now 22–24%), costly, black or blue, lasts 25+ years.",
+"Poly: cheaper and easier to make, ~12%, lasts 25+ years.",
+"Amorphous: ~15% theoretical, 6–10% real, flexible, less overheating.",
+"CdTe: low cost per kWh, best ~16%. CIGS: best thin-film, ~20%.",
+"Organic: lightweight, ~1/3 of Si efficiency, shorter life."
+]},
+{h:"03 — Module & test conditions", items:[
+"Cell → module → panel → array.",
+"Layers: aluminum frame, 3–4 mm tempered glass, transparent EVA, cells, back sheet, junction box (holds bypass diodes).",
+"STC: 1000 W/m², 25 °C, AM1.5."
+]},
+{h:"04 — Cell parameters", items:[
+"Voc is the maximum voltage, Isc the maximum current; Jsc = Isc/A.",
+"Vm < Voc and Im < Isc.",
+"FF = (Im·Vm)/(Isc·Voc) = Pm/(Isc·Voc).",
+"η = Pm/Pin = (Isc·Voc·FF)/(Pin·A), with Pin = 1000 W/m² at STC."
+]},
+{h:"05 — Connections & shading", items:[
+"Series: voltages add, current constant (the lowest current if modules differ).",
+"Parallel: voltage constant (the lowest voltage), currents add.",
+"Examples: 36 × 0.5 = 18 V; 72 × 0.695 ≈ 50 V with 2 × 5.25 = 10.5 A; 23.26 + 44.5 = 67.76 V.",
+"Shading can cost up to 90%. Parallel wiring handles shading better.",
+"A shaded cell becomes a load, forming hot spots that may break the glass or cause fire.",
+"Bypass diode: in parallel, opposite polarity; in practice one per 10–15 cells.",
+"Tracking: one-axis (N–S or E–W) or two-axis."
+]},
+{h:"06 — System components", items:[
+"Array (DC), mounting, charge controller, batteries, inverter (DC → AC), protection devices.",
+"Charge controller: regulates charging; prevents overcharge, deep discharge and reverse current at night.",
+"PWM: rapid ON/OFF switching, PV voltage near battery voltage, cheap, for small systems.",
+"MPPT: tracks MPP via DC-DC conversion, costlier, more energy, for larger systems.",
+"Combiner box: merges strings into one output."
+]},
+{h:"07 — Batteries", items:[
+"Store energy chemically; using it = discharging.",
+"Deep cycle: thicker plates, steady power, down to 80% DoD (100% → 20% SOC).",
+"DoD = share discharged; SOC = share remaining. Higher DoD means fewer cycles.",
+"Lead-acid: cheapest, most common in homes. Li-ion: more efficient, longer life, pricier. Flow: large storage.",
+"Capacity in Ah. Series 2 × (12 V, 100 Ah) = 24 V, 100 Ah; parallel = 12 V, 200 Ah."
+]},
+{h:"08 — System types, applications & CPV", items:[
+"Stand-alone: off-grid, battery covers the night, main issue is storage. Forms: direct-coupled, battery-based, hybrid.",
+"Grid-connected: excess is exported, the grid covers shortfalls and night, usually no batteries.",
+"Street lighting: charges by day, LED by night. Water pumping: store water, not electricity.",
+"CPV: multijunction cells (up to 86.8% ideal vs. ~34% single-junction). High concentration needs active cooling and 2-axis tracking, and works only with beam radiation."
+]}
+];
+
 const LECTURES = [
   { id:"l1", title:{ar:"المحاضرة 1: مقدمة الطاقة المتجددة", en:"Lecture 1: Intro to Renewable Energy"}, short:{ar:"م1: مقدمة", en:"L1: Intro"}, bank:BANK_L1, summary:{ar:SUM_L1_AR, en:SUM_L1_EN} },
-  { id:"l2", title:{ar:"المحاضرة 2: الطاقة الشمسية", en:"Lecture 2: Solar Energy"}, short:{ar:"م2: الشمسية", en:"L2: Solar"}, bank:BANK_L2, summary:{ar:SUM_L2_AR, en:SUM_L2_EN} }
+  { id:"l2", title:{ar:"المحاضرة 2: الطاقة الشمسية", en:"Lecture 2: Solar Energy"}, short:{ar:"م2: الشمسية", en:"L2: Solar"}, bank:BANK_L2, summary:{ar:SUM_L2_AR, en:SUM_L2_EN} },
+  { id:"l3", title:{ar:"المحاضرة 3: أنظمة الكهرباء الشمسية", en:"Lecture 3: Solar Electric Systems"}, short:{ar:"م3: الأنظمة", en:"L3: PV Systems"}, bank:BANK_L3, summary:{ar:SUM_L3_AR, en:SUM_L3_EN} }
 ];
 
 const UI = {
   ar:{
     title:"ME 4245 — الطاقة المتجددة: صح أو خطأ",
-    sub:"أسئلة صح وخطأ من المحاضرة 1 والمحاضرة 2. اختر محاضرة أو الاثنتين، وتنسحب العبارات عشوائيًا كل مرة.",
+    sub:"أسئلة صح وخطأ من المحاضرات 1 و2 و3. اختر محاضرة أو أكثر، وتنسحب العبارات عشوائيًا كل مرة.",
     langH:"لغة الأسئلة", lecH:"اختر المحاضرات", modeH:"النمط", countH:"عدد الأسئلة", allQ:"الكل",
-    selAll:"الاثنتين", avail:n=>"عدد العبارات المتاحة حسب اختيارك: "+n, needLec:"اختر محاضرة واحدة على الأقل لتبدأ.",
+    selAll:"الكل", avail:n=>"عدد العبارات المتاحة حسب اختيارك: "+n, needLec:"اختر محاضرة واحدة على الأقل لتبدأ.",
     m1:"تصحيح فوري", m1d:"بدون مؤقت. بعد كل إجابة تشوف الصح وسببه من الشرائح.",
     m2:"محاكاة اختبار", m2d:"30 ثانية لكل عبارة، والتصحيح بالنهاية فقط.",
     start:"ابدأ الاختبار", quit:"إنهاء", review:"مراجعة الإجابات", onlyWrong:"الأخطاء فقط", again:"اختبار جديد",
@@ -666,13 +903,13 @@ const UI = {
     v:["ممتاز، المحتوى واضح عندك.","جيد جدًا، راجع الأخطاء وبتقفلها.","مقبول، فيه مفاهيم تحتاج مراجعة.","تحتاج ترجع للشرائح قبل الاختبار."],
     none:"ما جاوبت.", yours:"إجابتك: ", correct:"الصحيح: ", perfect:"ولا غلطة. كل الإجابات صحيحة.",
     qn:"العبارة ", yesEnd:"نعم، أنهِ الاختبار", keepGoing:"أكمل", switchTo:"English",
-    summaryBtn:"ملخص المحاضرتين", summaryTitle:"ملخص المحاضرات", back:"رجوع"
+    summaryBtn:"ملخص المحاضرات", summaryTitle:"ملخص المحاضرات", back:"رجوع"
   },
   en:{
     title:"ME 4245 — Renewable Energy: True or False",
-    sub:"True/false statements from Lecture 1 and Lecture 2. Pick one lecture or both, and statements are drawn randomly each time.",
+    sub:"True/false statements from Lectures 1, 2 and 3. Pick one or more lectures, and statements are drawn randomly each time.",
     langH:"Question language", lecH:"Choose lectures", modeH:"Mode", countH:"Number of questions", allQ:"All",
-    selAll:"Both", avail:n=>"Statements available for your selection: "+n, needLec:"Select at least one lecture to start.",
+    selAll:"All", avail:n=>"Statements available for your selection: "+n, needLec:"Select at least one lecture to start.",
     m1:"Instant feedback", m1d:"No timer. After each answer you see the correct one and why, from the slides.",
     m2:"Exam simulation", m2d:"30 seconds per statement, graded only at the end.",
     start:"Start quiz", quit:"End", review:"Review answers", onlyWrong:"Mistakes only", again:"New quiz",
@@ -720,8 +957,15 @@ function renderLecChips(){
   LECTURES.forEach(l=>{
     const b=document.createElement("button"); b.className="chip";
     b.textContent=l.title[lang];
-    b.setAttribute("aria-pressed", selectedLectures.size<LECTURES.length && selectedLectures.has(l.id));
-    b.onclick=()=>{ selectedLectures=new Set([l.id]); renderLecChips(); updateAvail(); };
+    const all = selectedLectures.size===LECTURES.length;
+    b.setAttribute("aria-pressed", !all && selectedLectures.has(l.id));
+    // from "All", a tap picks just that lecture; otherwise taps add/remove lectures
+    b.onclick=()=>{
+      if(all) selectedLectures=new Set([l.id]);
+      else if(selectedLectures.has(l.id)) selectedLectures.delete(l.id);
+      else selectedLectures.add(l.id);
+      renderLecChips(); updateAvail();
+    };
     c.appendChild(b);
   });
 }
@@ -751,7 +995,7 @@ document.querySelectorAll("#langs .chip").forEach(b=>b.onclick=()=>setLang(b.dat
 document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{
   mode=b.dataset.mode; document.querySelectorAll(".mode").forEach(x=>x.setAttribute("aria-pressed", x===b)); updateNote();
 });
-// one lecture: 10–40, both lectures: 10–80
+// one lecture: 10–40, two or more lectures: 10–80
 function countOptions(){ const max = selectedLectures.size>1 ? 80 : 40; const o=[]; for(let n=10;n<=max;n+=10) o.push(n); return o; }
 function renderCounts(){
   const opts=countOptions(), c=$("counts");
