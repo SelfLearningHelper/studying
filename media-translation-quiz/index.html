@@ -215,11 +215,12 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .topicBtn{display:inline-flex; align-items:center; gap:6px; margin-top:12px; background:var(--surface); border:1.5px dashed var(--primary); color:var(--primary);
   border-radius:8px; padding:8px 14px; min-height:44px; font-weight:600; font-size:.92rem}
 @media (hover:hover){ .topicBtn:hover{background:var(--primary-soft)} }
-#topic{border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--ink); padding:22px 20px 18px; width:min(94vw,560px); max-height:85dvh}
-#topic::backdrop{background:rgba(10,10,12,.65)}
-#topic h2{margin:8px 0 12px; font-size:1.12rem; color:var(--primary); line-height:1.5}
-#topic ul, #topic ol{margin:0 0 18px; padding-inline-start:22px; display:flex; flex-direction:column; gap:8px; line-height:1.65}
-#topic .close{width:100%; min-height:46px; border-radius:8px; border:2px solid var(--line); background:var(--bg); font-weight:600}
+.topicPanel{margin-top:12px; padding:14px 16px; border-radius:8px; background:var(--surface); border:1px solid var(--line); color:var(--ink); animation:rise .3s cubic-bezier(.16,1,.3,1)}
+.topicPanel h4{margin:8px 0 10px; font-size:1.02rem; color:var(--primary); line-height:1.5}
+.topicPanel > ul, .topicPanel > ol{margin:0 0 14px; padding-inline-start:22px; display:flex; flex-direction:column; gap:7px; font-size:.95rem; line-height:1.65}
+.topicPanel .searchWrap{border-top:1px solid var(--line); padding-top:12px}
+.topicPanel .searchWrap h5{margin:0 0 8px; font-size:.9rem}
+.topicPanel .sRes{background:var(--bg)}
 
 /* summary search */
 .search{position:relative; margin:4px 0 14px}
@@ -231,9 +232,6 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .sRes h4{margin:6px 0 8px; font-size:1rem; color:var(--primary); line-height:1.5}
 .sRes ul{margin:0; padding-inline-start:20px; display:flex; flex-direction:column; gap:6px; font-size:.95rem; line-height:1.6}
 mark{background:var(--warn-soft); color:var(--warn); border-radius:3px; padding:0 2px}
-#topic .searchWrap{border-top:1px solid var(--line); padding-top:14px; margin-top:4px}
-#topic .searchWrap h3{margin:0 0 8px; font-size:.95rem}
-#topic .sRes{background:var(--bg)}
 
 /* lecture picker */
 .grouphead{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px}
@@ -423,18 +421,6 @@ mark{background:var(--warn-soft); color:var(--warn); border-radius:3px; padding:
     <a href="https://linkedin.com/in/albadaralmaymani" target="_blank" rel="noopener" dir="ltr">LinkedIn</a>
   </div>
   <button class="close" id="aboutClose" data-i="close"></button>
-</dialog>
-
-<dialog id="topic" aria-labelledby="topicTitle">
-  <span class="lecTag" id="topicLec"></span>
-  <h2 id="topicTitle"></h2>
-  <div id="topicBody"></div>
-  <div class="searchWrap">
-    <h3 data-i="searchH"></h3>
-    <div class="search"><input type="search" id="topicSearch" autocomplete="off" enterkeyhint="search"></div>
-    <div id="topicSearchRes"></div>
-  </div>
-  <button class="close" id="topicClose" data-i="close"></button>
 </dialog>
 
 <dialog id="welcome" aria-labelledby="welcomeTitle">
@@ -973,7 +959,7 @@ const UI = {
     aboutBtn:"About me", aboutName:"البدر إبراهيم الميمني", aboutDegree:"خريج علوم البيانات · جامعة أم القرى",
     aboutJob:"مهندس شبكات ·", aboutCo:"تحكم", aboutVia:"(عبر Emircom)", close:"إغلاق",
     toLight:"☀ الوضع الفاتح", toDark:"☾ الوضع الداكن",
-    brand:"البدر", topicBtn:"افتح الموضوع كامل من الملخص",
+    brand:"البدر", topicBtn:"افتح الموضوع كامل من الملخص", topicHide:"إخفاء الموضوع",
     searchH:"دوّر في كل الملخصات", searchPh:"اكتب كلمة، مثلًا: headline", sCount:n=>n? "المواضيع اللي فيها كلماتك: "+n:"ما لقيت موضوع فيه كل الكلمات. جرب كلمات أقل.",
     m3:"بطاقات", m3d:"تشوف السؤال بدون اختيارات، تتذكر الجواب، وتقلب البطاقة تتأكد.", startCards:"ابدأ البطاقات", noteCards:"بدون وقت. الأسئلة اللي ما تنفع بدون اختيارات ما تطلع في البطاقات.", fcTap:"اضغط على البطاقة عشان تقلبها", fcAnsLabel:"الإجابة",
     fcNo:"ما عرفتها", fcYes:"عرفتها", fcPos:(k,n)=>"عرفت <b>"+k+"</b> من "+n,
@@ -1008,7 +994,7 @@ const UI = {
     aboutBtn:"About me", aboutName:"Albadar Ibrahim Almaymani", aboutDegree:"Data Science graduate · Umm Al-Qura University",
     aboutJob:"Network Engineer ·", aboutCo:"Tahakom", aboutVia:"(via Emircom)", close:"Close",
     toLight:"☀ Light mode", toDark:"☾ Dark mode",
-    brand:"Albadar", topicBtn:"Open the full topic from the summary",
+    brand:"Albadar", topicBtn:"Open the full topic from the summary", topicHide:"Hide the topic",
     searchH:"Search all summaries", searchPh:"Type a word, e.g. headline", sCount:n=>n? n+(n===1?" topic matches":" topics match"):"No topic has all these words. Try fewer words.",
     m3:"Flashcards", m3d:"See the question with no options, recall the answer, then flip the card to check.", startCards:"Start flashcards", noteCards:"No timer. Questions that need the options to make sense are left out.", fcTap:"Tap the card to flip it", fcAnsLabel:"Answer",
     fcNo:"Didn't know", fcYes:"Knew it", fcPos:(k,n)=>"Known <b>"+k+"</b> of "+n,
@@ -1081,9 +1067,8 @@ function applyLang(){
   document.querySelectorAll("[data-i]").forEach(el=>{ el.textContent=T()[el.dataset.i]; });
   updateThemeBtn();
   $("langSwitch4").textContent=T().switchTo;
-  $("sumSearch").placeholder=T().searchPh; $("topicSearch").placeholder=T().searchPh;
+  $("sumSearch").placeholder=T().searchPh;
   if($("sumSearch").value) runSumSearch();
-  if($("topic").open && $("topicSearch").value) renderSearch($("topicSearchRes"), $("topicSearch").value);
   if(!$("cards").classList.contains("hidden")) renderCard();
   $("langSwitch").textContent=T().switchTo; $("langSwitch2").textContent=T().switchTo; $("langSwitch3").textContent=T().switchTo;
   document.querySelectorAll("#langs .chip").forEach(x=>x.setAttribute("aria-pressed", x.dataset.lang===lang));
@@ -1282,18 +1267,35 @@ function renderResult(){
   renderReview($("onlyWrong").getAttribute("aria-pressed")==="true");
 }
 function topicButton(q){
-  const b=document.createElement("button"); b.className="topicBtn"; b.type="button";
-  b.textContent="📖 "+T().topicBtn; b.onclick=()=>openTopic(q.lec,q.i); return b;
+  const wrap=document.createElement("div");
+  const b=document.createElement("button"); b.className="topicBtn"; b.type="button"; b.setAttribute("aria-expanded","false");
+  b.textContent="📖 "+T().topicBtn;
+  b.onclick=()=>{
+    const open=b.getAttribute("aria-expanded")==="true";
+    if(open){ wrap.querySelector(".topicPanel").remove(); b.setAttribute("aria-expanded","false"); b.textContent="📖 "+T().topicBtn; return; }
+    const panel=topicPanel(q.lec,q.i); wrap.appendChild(panel);
+    b.setAttribute("aria-expanded","true"); b.textContent="📖 "+T().topicHide;
+    panel.scrollIntoView({behavior: reduceMotion()?"auto":"smooth", block:"nearest"});
+  };
+  wrap.appendChild(b); return wrap;
 }
-function openTopic(lecId,i){
+function topicPanel(lecId,i){
   const lec=LECTURES.find(l=>l.id===lecId), sec=lec.summary[lang][SEC_MAP[lecId][i]];
-  $("topicLec").textContent=lec.title[lang];
-  $("topicTitle").textContent=sec.h;
+  const d=document.createElement("div"); d.className="topicPanel";
+  const tag=document.createElement("span"); tag.className="lecTag"; tag.textContent=lec.title[lang];
+  const h=document.createElement("h4"); h.textContent=sec.h;
   const list=document.createElement(sec.ordered?"ol":"ul");
   sec.items.forEach(t=>{ const li=document.createElement("li"); li.textContent=t; list.appendChild(li); });
-  $("topicBody").replaceChildren(list);
-  $("topicSearch").value=""; $("topicSearchRes").replaceChildren();
-  $("topic").showModal();
+  const sw=document.createElement("div"); sw.className="searchWrap";
+  const sh=document.createElement("h5"); sh.textContent=T().searchH;
+  const box=document.createElement("div"); box.className="search";
+  const inp=document.createElement("input"); inp.type="search"; inp.autocomplete="off"; inp.enterKeyHint="search"; inp.placeholder=T().searchPh;
+  inp.setAttribute("aria-label", T().searchH);
+  const res=document.createElement("div");
+  inp.addEventListener("input", ()=>renderSearch(res, inp.value));
+  box.appendChild(inp); sw.append(sh, box, res);
+  d.append(tag, h, list, sw);
+  return d;
 }
 function renderReview(onlyWrong){
   const r=$("review"); r.innerHTML="";
@@ -1377,7 +1379,7 @@ $("quitBtn").onclick=()=>{
   else { clearInterval(tick); show("setup"); }
 };
 document.addEventListener("keydown",e=>{
-  if($("quiz").classList.contains("hidden") || $("about").open || $("welcome").open || $("topic").open) return;
+  if($("quiz").classList.contains("hidden") || $("about").open || $("welcome").open || e.target.tagName==="INPUT") return;
   const k=e.key;
   if("1234".includes(k) && k.length===1) pick(+k-1);
   else if("١٢٣٤".includes(k) && k.length===1) pick("١٢٣٤".indexOf(k));
@@ -1436,7 +1438,6 @@ function runSumSearch(){
   $("sumBrowse").classList.toggle("hidden", on);
 }
 $("sumSearch").addEventListener("input", runSumSearch);
-$("topicSearch").addEventListener("input", ()=>renderSearch($("topicSearchRes"), $("topicSearch").value));
 
 function renderSumTabs(){
   const c=$("sumTabs"); c.innerHTML="";
@@ -1475,8 +1476,6 @@ $("welcomeGo").onclick=()=>$("welcome").close();
 $("welcome").addEventListener("close", closeWelcome);
 $("aboutBtn").onclick=()=>$("about").showModal();
 $("brandBtn").onclick=()=>$("about").showModal();
-$("topicClose").onclick=()=>$("topic").close();
-$("topic").addEventListener("click",e=>{ if(e.target===$("topic")) $("topic").close(); });
 (function(){
   const card=document.querySelector("#quiz .card");
   if(!window.matchMedia || !matchMedia("(hover:hover) and (pointer:fine)").matches) return;
