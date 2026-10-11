@@ -11,8 +11,8 @@
 <style>
 :root{
   --bg:#E9EEF0; --surface:#F7F9FA; --ink:#1D2A31; --muted:#5E6E76; --line:#CFD8DC;
-  --primary:#2F6F6A; --primary-soft:#D6E7E4; --ok:#2E8657; --ok-soft:#DCEFE3; --bad:#B6483F; --bad-soft:#F5DEDB;
-  --idle:#C3CDD1;
+  --primary:#2F6F6A; --primary-soft:#D6E7E4; --ok:#26784C; --ok-soft:#DCEFE3; --bad:#B6483F; --bad-soft:#F5DEDB;
+  --idle:#788990;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
@@ -21,13 +21,13 @@
   :root:not([data-theme="light"]){
     --bg:#131A1E; --surface:#1B242A; --ink:#E3EAEC; --muted:#93A3AA; --line:#2E3A41;
     --primary:#6FB5AC; --primary-soft:#1F3634; --ok:#5DBB86; --ok-soft:#1C3527; --bad:#E07C73; --bad-soft:#3A2220;
-    --idle:#34424A;
+    --idle:#62737B;
   }
 }
 :root[data-theme="dark"]{
   --bg:#131A1E; --surface:#1B242A; --ink:#E3EAEC; --muted:#93A3AA; --line:#2E3A41;
   --primary:#6FB5AC; --primary-soft:#1F3634; --ok:#5DBB86; --ok-soft:#1C3527; --bad:#E07C73; --bad-soft:#3A2220;
-  --idle:#34424A;
+  --idle:#62737B;
 }
 html{scroll-padding-top:env(safe-area-inset-top,0px); -webkit-text-size-adjust:100%}
 *,*::before,*::after{box-sizing:border-box}
@@ -40,6 +40,7 @@ body{
 button{font:inherit; color:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent}
 button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .hidden{display:none !important}
+.sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0}
 
 /* setup */
 .intro h1{font-size:clamp(1.7rem, 3vw + 1rem, 2.5rem); line-height:1.25; margin:10px 0 6px; font-weight:700; letter-spacing:-.3px}
@@ -78,8 +79,8 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .barside{display:flex; align-items:center; gap:8px}
 .timer{font-variant-numeric:tabular-nums; font-weight:700; padding:4px 12px; border-radius:999px; background:var(--surface); border:1px solid var(--line); direction:ltr}
 .timer.low{color:var(--bad); border-color:var(--bad)}
-.mini{background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:4px 12px; font-size:.85rem; min-height:34px}
-.quit{background:none; border:none; color:var(--muted); font-size:.9rem; text-decoration:underline; padding:6px}
+.mini{background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:4px 12px; font-size:.85rem; min-height:44px}
+.quit{background:none; border:none; color:var(--muted); font-size:.9rem; text-decoration:underline; padding:6px; min-height:44px; min-width:44px}
 .rail{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:22px}
 .dot{width:14px; height:14px; border-radius:50%; background:var(--idle); border:none; padding:0; transition:transform .15s, background .2s}
 .dot.cur{outline:2px solid var(--ink); outline-offset:2px}
@@ -87,7 +88,9 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .dot.ok{background:var(--ok)}
 .dot.bad{background:var(--bad)}
 @media (hover:hover){ .rail.jump .dot:hover{transform:scale(1.25)} }
-@media (pointer:coarse){ .rail.jump .dot{width:18px; height:18px} }
+.rail.jump{gap:0}
+.rail.jump .dot{width:44px; height:44px; padding:15px; background-clip:content-box}
+.rail.jump .dot.cur{outline-offset:-11px}
 .card{background:var(--surface); border-radius:18px; padding:clamp(18px,3vw,32px) clamp(15px,3vw,30px); border:1px solid var(--line)}
 .lecTag{display:inline-block; background:var(--primary-soft); color:var(--primary); font-size:.78rem; font-weight:600; padding:3px 12px; border-radius:999px; margin-bottom:12px}
 .qtext{font-size:1.18rem; font-weight:600; line-height:1.65; margin:0 0 18px}
@@ -127,7 +130,7 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .verdict{font-size:1.15rem; font-weight:600; color:var(--ink) !important; margin-top:14px !important}
 .tools{display:flex; justify-content:space-between; align-items:center; margin:26px 0 12px; gap:10px; flex-wrap:wrap}
 .tools h2{margin:0; font-size:1.1rem}
-.toggle{background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:6px 14px; font-size:.9rem; min-height:38px}
+.toggle{background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:6px 14px; font-size:.9rem; min-height:44px}
 .toggle[aria-pressed="true"]{background:var(--ink); color:var(--surface); border-color:var(--ink)}
 .review{display:grid; grid-template-columns:1fr; gap:10px}
 .rev{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px 18px; border-inline-start:5px solid var(--ok)}
@@ -214,7 +217,8 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
     <div class="bar">
       <div class="pos" id="pos"></div>
       <div class="barside">
-        <div class="timer hidden" id="timer"></div>
+        <div class="timer hidden" id="timer" role="timer"></div>
+        <div class="sr-only" id="timerLive" aria-live="polite"></div>
         <button class="mini" id="langSwitch"></button>
         <button class="quit" id="quitBtn" data-i="quit"></button>
       </div>
@@ -224,7 +228,7 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
       <span class="lecTag" id="lecTag"></span>
       <p class="qtext" id="qtext"></p>
       <div class="opts" id="opts"></div>
-      <div class="why hidden" id="why"></div>
+      <div aria-live="polite"><div class="why hidden" id="why"></div></div>
     </div>
     <div class="nav" id="nav"></div>
     <p class="hint" id="hint"></p>
@@ -776,7 +780,7 @@ const UI = {
     pickHint:"اختر إجابة، أو استخدم الأرقام 1 إلى 4.",
     left:n=>"باقي "+n+" بدون إجابة. تقدر تنتقل لأي سؤال من النقاط فوق.", allDone:"جاوبت على الكل.",
     confirm:n=>"باقي "+n+" سؤال بدون إجابة. تنهي الاختبار؟",
-    pct:(p,t)=>p+"% خلال "+t, timeout:"، انتهى الوقت",
+    pct:(p,t)=>p+"% خلال "+t, timeout:"، انتهى الوقت", timeLow:"باقي دقيقة واحدة على نهاية الاختبار.",
     v:["ممتاز، المحتوى واضح عندك.","جيد جداً، راجع الأخطاء وبتقفلها.","مقبول، فيه مفاهيم تحتاج مراجعة.","تحتاج ترجع للمحاضرات قبل الاختبار."],
     none:"ما جاوبت.", yours:"إجابتك: ", correct:"الصحيح: ", perfect:"ولا غلطة. كل الإجابات صحيحة.",
     qn:"السؤال ", switchTo:"English", letters:["أ","ب","ج","د"],
@@ -797,7 +801,7 @@ const UI = {
     pickHint:"Pick an answer, or press 1 to 4.",
     left:n=>n+" unanswered. Tap any dot above to jump to a question.", allDone:"All questions answered.",
     confirm:n=>n+" questions are unanswered. Finish the quiz?",
-    pct:(p,t)=>p+"% in "+t, timeout:", time ran out",
+    pct:(p,t)=>p+"% in "+t, timeout:", time ran out", timeLow:"One minute left in the quiz.",
     v:["Excellent, you've got this content down.","Very good. Review your mistakes and you're there.","Passable. Some concepts need another look.","Go back to the lectures before the exam."],
     none:"Not answered.", yours:"Your answer: ", correct:"Correct: ", perfect:"No mistakes. Every answer is correct.",
     qn:"Question ", switchTo:"العربية", letters:["A","B","C","D"],
@@ -897,9 +901,10 @@ function start(){
   clearInterval(tick);
   const t=$("timer");
   if(mode==="exam"){
-    timeLeft=count*SEC_PER_Q; t.classList.remove("hidden","low"); t.textContent=fmt(timeLeft);
+    timeLeft=count*SEC_PER_Q; t.classList.remove("hidden","low"); t.textContent=fmt(timeLeft); $("timerLive").textContent="";
     tick=setInterval(()=>{
       timeLeft--; t.textContent=fmt(Math.max(timeLeft,0)); t.classList.toggle("low", timeLeft<=60);
+      if(timeLeft===60) $("timerLive").textContent=T().timeLow;
       if(timeLeft<=0){ timedOut=true; finish(); }
     },1000);
   } else t.classList.add("hidden");
@@ -968,6 +973,8 @@ function pick(i){
   if(finished) return;
   if(mode==="learn" && answers[idx]!==null) return;
   answers[idx]=i; render();
+  const target = mode==="learn" ? document.querySelector("#nav .btn.main") : $("opts").children[i];
+  if(target) target.focus();
 }
 function confirmFinish(){
   const left=answers.filter(x=>x===null).length;
@@ -1006,10 +1013,15 @@ function renderReview(onlyWrong){
 
 $("onlyWrong").onclick=function(){ const on=this.getAttribute("aria-pressed")!=="true"; this.setAttribute("aria-pressed",on); renderReview(on); };
 $("startBtn").onclick=start;
+window.addEventListener("beforeunload",e=>{
+  if(mode==="exam" && !finished && !$("quiz").classList.contains("hidden")){ e.preventDefault(); e.returnValue=""; }
+});
 $("againBtn").onclick=()=>show("setup");
 $("quitBtn").onclick=()=>{
-  if(mode==="exam") confirmFinish();
-  else if(answers.some(x=>x!==null)) finish();
+  if(mode==="exam") return confirmFinish();
+  const left=answers.filter(x=>x===null).length;
+  if(left && !confirm(T().confirm(left))) return;
+  if(answers.some(x=>x!==null)) finish();
   else { clearInterval(tick); show("setup"); }
 };
 document.addEventListener("keydown",e=>{
