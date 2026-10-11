@@ -8,10 +8,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script>try{if(localStorage.getItem("mtq-theme")==="light")document.documentElement.dataset.theme="light"}catch(e){}</script>
+<script>(function(){var t;try{t=localStorage.getItem("mtq-theme")}catch(e){}
+if(t!=="light"&&t!=="dark")t=window.matchMedia&&matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";
+if(t==="light")document.documentElement.dataset.theme="light";})();</script>
 <style>
 :root{
-  /* dark is the default theme; [data-theme="light"] swaps tokens */
+  /* dark tokens; [data-theme="light"] swaps them. The theme follows the device until the user picks one with the toggle */
   --bg:#111114; --surface:#1A1A1F; --ink:#F3F1EC; --muted:#A3A1A8; --line:#2E2D35;
   --primary:#FF7A45; --primary-soft:#3A2218; --on-primary:#16110E;
   --ok:#5BD08A; --ok-soft:#173022; --bad:#FF5A73; --bad-soft:#3B1820;
