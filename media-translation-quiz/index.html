@@ -178,6 +178,17 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 @media (min-width:1024px) and (min-height:700px){
   #quiz .card{min-height:420px}
 }
+/* feedback motion */
+@keyframes pop{0%{transform:scale(1)} 40%{transform:scale(1.035)} 100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)} 40%{transform:translateX(7px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)}}
+.opt.pop{animation:pop .38s cubic-bezier(.16,1,.3,1)}
+.opt.shake{animation:shake .38s ease-in-out}
+.streak{font-weight:700; padding:4px 10px; border-radius:8px; background:var(--primary-soft); color:var(--primary); font-variant-numeric:tabular-nums; direction:ltr}
+.streak.bump{animation:pop .3s cubic-bezier(.16,1,.3,1)}
+.best{color:var(--primary) !important; font-weight:600}
+#quiz .card{transition:transform .25s ease-out}
+.confetti{position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:3}
+
 /* lecture picker */
 .grouphead{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px}
 .grouphead h2{margin:0 !important}
@@ -267,6 +278,7 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
     <div class="bar">
       <div class="pos" id="pos"></div>
       <div class="barside">
+        <div class="streak hidden" id="streak"></div>
         <div class="timer hidden" id="timer" role="timer"></div>
         <div class="sr-only" id="timerLive" aria-live="polite"></div>
         <button class="mini" id="langSwitch"></button>
@@ -289,6 +301,7 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
       <div class="big" id="bigScore"></div>
       <p id="pct"></p>
       <p class="verdict" id="verdict"></p>
+      <p class="best hidden" id="best"></p>
     </div>
     <div class="tools">
       <h2 data-i="review"></h2>
@@ -862,6 +875,7 @@ const UI = {
     aboutJob:"مهندس شبكات ·", aboutCo:"تحكم", aboutVia:"(عبر Emircom)", close:"إغلاق",
     toLight:"☀ الوضع الفاتح", toDark:"☾ الوضع الداكن",
     brand:"البدر",
+    streak:n=>n+" إجابات صح ورا بعض", best:n=>"أطول سلسلة صح: "+n,
     aboutWhy:"سويت هذي الاختبارات لأنها ساعدتني أفهم موادي، وأبيها تساعد غيري.",
     welcomeTitle:"السلايدات تعلّمك. الأسئلة تثبّت.",
     welcomeBody:"هذا الموقع سويته لأنه اللي خلاني أفهم أصعب موادي. الحين صار لك.",
@@ -892,6 +906,7 @@ const UI = {
     aboutJob:"Network Engineer ·", aboutCo:"Tahakom", aboutVia:"(via Emircom)", close:"Close",
     toLight:"☀ Light mode", toDark:"☾ Dark mode",
     brand:"Albadar",
+    streak:n=>n+" correct in a row", best:n=>"Longest streak: "+n,
     aboutWhy:"I built these quizzes because they helped me understand my courses, and I want them to help others.",
     welcomeTitle:"Slides teach. Questions make it stick.",
     welcomeBody:"I built this because it's what got me through my hardest courses. Now it's yours.",
@@ -904,6 +919,7 @@ const $ = id => document.getElementById(id);
 let lang="ar", mode="learn", count=20;
 let selectedLectures = new Set(LECTURES.map(l=>l.id));
 let activeSumLec = "l1";
+let streak=0, bestStreak=0, justPicked=false;
 let qs=[], answers=[], idx=0, timeLeft=0, tick=null, startedAt=0, finished=false, lastSecs=0, timedOut=false;
 const T = () => UI[lang];
 
@@ -993,7 +1009,7 @@ function start(){
     return {lec:p.lec, i:p.i, perm, correct:perm.indexOf(0)};
   });
   count = n;
-  answers=new Array(count).fill(null); idx=0; finished=false; timedOut=false; startedAt=Date.now();
+  answers=new Array(count).fill(null); idx=0; finished=false; streak=0; bestStreak=0; justPicked=false; timedOut=false; startedAt=Date.now();
   clearInterval(tick);
   const t=$("timer");
   if(mode==="exam"){
@@ -1032,7 +1048,11 @@ function render(){
     const l=document.createElement("span"); l.className="l"; l.textContent=L[i];
     const t=document.createElement("span"); t.className="t"; t.textContent=o;
     b.append(l,t);
-    if(locked){ b.disabled=true; if(i===q.correct) b.classList.add("ok"); else if(i===a) b.classList.add("bad"); }
+    if(locked){
+      b.disabled=true;
+      if(i===q.correct){ b.classList.add("ok"); if(justPicked && a===i) b.classList.add("pop"); }
+      else if(i===a){ b.classList.add("bad"); if(justPicked) b.classList.add("shake"); }
+    }
     else if(a===i) b.classList.add("sel");
     b.onclick=()=>pick(i); box.appendChild(b);
   });
@@ -1043,6 +1063,8 @@ function render(){
     why.innerHTML=""; const bb=document.createElement("b"); bb.textContent= right?T().right:T().wrong(L[q.correct]);
     why.append(bb, document.createTextNode(it.e));
   } else why.className="why hidden";
+  renderStreak();
+  justPicked=false;
   renderNav();
 }
 
@@ -1068,7 +1090,13 @@ function renderNav(){
 function pick(i){
   if(finished) return;
   if(mode==="learn" && answers[idx]!==null) return;
-  answers[idx]=i; render();
+  answers[idx]=i;
+  if(mode==="learn"){
+    streak = i===qs[idx].correct ? streak+1 : 0;
+    bestStreak=Math.max(bestStreak,streak);
+    justPicked=true;
+  }
+  render();
   const target = mode==="learn" ? document.querySelector("#nav .btn.main") : $("opts").children[i];
   if(target) target.focus();
 }
@@ -1083,6 +1111,48 @@ function finish(){
   lastSecs=Math.round((Date.now()-startedAt)/1000);
   $("onlyWrong").setAttribute("aria-pressed","false");
   renderResult(); show("result");
+  const correct=qs.filter((q,i)=>answers[i]===q.correct).length;
+  countUp(correct);
+  if(correct/count>=0.9) confetti();
+}
+function renderStreak(){
+  const el=$("streak");
+  if(mode!=="learn" || streak<2){ el.classList.add("hidden"); return; }
+  el.classList.remove("hidden");
+  el.textContent="🔥 "+streak;
+  el.setAttribute("aria-label", T().streak(streak)); el.title=T().streak(streak);
+  if(justPicked){ el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
+}
+const reduceMotion = ()=>window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+function countUp(target){
+  const span=$("bigScore").firstChild;
+  if(reduceMotion() || target===0) return;
+  const t0=performance.now(), dur=Math.min(1200, 300+target*40);
+  const step=now=>{
+    const k=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-k,3);
+    span.textContent=Math.round(target*e)+" ";
+    if(k<1) requestAnimationFrame(step);
+  };
+  span.textContent="0 "; requestAnimationFrame(step);
+}
+function confetti(){
+  if(reduceMotion()) return;
+  const c=document.createElement("canvas"); c.className="confetti"; c.setAttribute("aria-hidden","true");
+  document.body.appendChild(c);
+  const dpr=window.devicePixelRatio||1, W=innerWidth, H=innerHeight;
+  c.width=W*dpr; c.height=H*dpr; const x=c.getContext("2d"); x.scale(dpr,dpr);
+  const cs=getComputedStyle(document.documentElement);
+  const cols=["--primary","--warn","--ok","--ink"].map(v=>cs.getPropertyValue(v).trim());
+  const ps=Array.from({length:140},()=>({x:W/2+(Math.random()-.5)*W*.3, y:H*.35, vx:(Math.random()-.5)*11, vy:-Math.random()*12-4,
+    w:6+Math.random()*6, h:4+Math.random()*4, r:Math.random()*6, vr:(Math.random()-.5)*.3, c:cols[Math.floor(Math.random()*cols.length)]}));
+  const t0=performance.now();
+  const frame=now=>{
+    const t=now-t0; x.clearRect(0,0,W,H);
+    ps.forEach(p=>{ p.vy+=.32; p.vx*=.99; p.x+=p.vx; p.y+=p.vy; p.r+=p.vr;
+      x.save(); x.globalAlpha=Math.max(0,1-t/2600); x.translate(p.x,p.y); x.rotate(p.r); x.fillStyle=p.c; x.fillRect(-p.w/2,-p.h/2,p.w,p.h); x.restore(); });
+    if(t<2600) requestAnimationFrame(frame); else c.remove();
+  };
+  requestAnimationFrame(frame);
 }
 function renderResult(){
   const correct=qs.filter((q,i)=>answers[i]===q.correct).length;
@@ -1090,6 +1160,9 @@ function renderResult(){
   $("bigScore").innerHTML=correct+' <span>/ '+count+'</span>';
   $("pct").textContent=T().pct(pct,fmt(lastSecs))+(timedOut?T().timeout:"");
   $("verdict").textContent=T().v[pct>=90?0:pct>=75?1:pct>=60?2:3];
+  const best=$("best");
+  if(mode==="learn" && bestStreak>=2){ best.classList.remove("hidden"); best.textContent="🔥 "+T().best(bestStreak); }
+  else best.classList.add("hidden");
   renderReview($("onlyWrong").getAttribute("aria-pressed")==="true");
 }
 function renderReview(onlyWrong){
@@ -1168,6 +1241,16 @@ $("welcomeGo").onclick=()=>$("welcome").close();
 $("welcome").addEventListener("close", closeWelcome);
 $("aboutBtn").onclick=()=>$("about").showModal();
 $("brandBtn").onclick=()=>$("about").showModal();
+(function(){
+  const card=document.querySelector("#quiz .card");
+  if(!window.matchMedia || !matchMedia("(hover:hover) and (pointer:fine)").matches) return;
+  card.addEventListener("pointermove",e=>{
+    if(reduceMotion()) return;
+    const r=card.getBoundingClientRect(), px=(e.clientX-r.left)/r.width-.5, py=(e.clientY-r.top)/r.height-.5;
+    card.style.transform="perspective(1000px) rotateX("+(-py*3).toFixed(2)+"deg) rotateY("+(px*3).toFixed(2)+"deg)";
+  });
+  card.addEventListener("pointerleave",()=>{ card.style.transform=""; });
+})();
 $("aboutClose").onclick=()=>$("about").close();
 $("about").addEventListener("click",e=>{ if(e.target===$("about")) $("about").close(); });
 
