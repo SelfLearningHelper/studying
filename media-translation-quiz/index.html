@@ -186,6 +186,13 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 #about p{margin:0 0 4px; color:var(--muted); font-size:.95rem}
 #about .links{display:flex; flex-direction:column; gap:6px; margin:14px 0 18px}
 #about a{color:var(--primary); font-weight:600; overflow-wrap:anywhere}
+#welcome{border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--ink); padding:28px 24px 22px; width:min(92vw,440px)}
+#welcome::backdrop{background:rgba(10,10,12,.7)}
+#welcome h2{margin:0 0 10px; font-size:1.35rem; line-height:1.4}
+#welcome h2::before{content:""; display:block; width:36px; height:4px; background:var(--primary); border-radius:2px; margin-bottom:14px}
+#welcome p{margin:0 0 20px; color:var(--muted)}
+#welcome .go{width:100%; min-height:50px; border:none; border-radius:8px; background:var(--primary); color:var(--on-primary); font-weight:700; font-size:1.05rem}
+#about .aboutWhy{margin:10px 0 0; color:var(--ink); font-size:.93rem}
 #about .close{width:100%; min-height:44px; border-radius:8px; border:2px solid var(--line); background:var(--bg); font-weight:600}
 @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important} button:active:not(:disabled){transform:none} }
 </style>
@@ -297,11 +304,18 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
   <h2 id="aboutName" data-i="aboutName"></h2>
   <p data-i="aboutDegree"></p>
   <p><span data-i="aboutJob"></span> <a href="https://www.tahakom.com/ar" target="_blank" rel="noopener" data-i="aboutCo"></a> <span data-i="aboutVia"></span></p>
+  <p class="aboutWhy" data-i="aboutWhy"></p>
   <div class="links">
     <a href="mailto:badaribrahim743@gmail.com" dir="ltr">badaribrahim743@gmail.com</a>
     <a href="https://linkedin.com/in/albadaralmaymani" target="_blank" rel="noopener" dir="ltr">LinkedIn</a>
   </div>
   <button class="close" id="aboutClose" data-i="close"></button>
+</dialog>
+
+<dialog id="welcome" aria-labelledby="welcomeTitle">
+  <h2 id="welcomeTitle" data-i="welcomeTitle"></h2>
+  <p data-i="welcomeBody"></p>
+  <button class="go" id="welcomeGo" data-i="welcomeGo"></button>
 </dialog>
 
 <script>
@@ -827,7 +841,11 @@ const UI = {
     disclaimer:"الاختبار غير رسمي وقد يحتوي على أخطاء، تأكد من المصادر الأساسية.",
     aboutBtn:"About me", aboutName:"البدر إبراهيم الميمني", aboutDegree:"خريج علوم البيانات · جامعة أم القرى",
     aboutJob:"مهندس شبكات ·", aboutCo:"تحكم", aboutVia:"(عبر Emircom)", close:"إغلاق",
-    toLight:"☀ الوضع الفاتح", toDark:"☾ الوضع الداكن"
+    toLight:"☀ الوضع الفاتح", toDark:"☾ الوضع الداكن",
+    aboutWhy:"سويت هذي الاختبارات لأنها ساعدتني أفهم موادي، وأبيها تساعد غيري.",
+    welcomeTitle:"السلايدات تعلّمك. الأسئلة تثبّت.",
+    welcomeBody:"هذا الموقع سويته لأنه اللي خلاني أفهم أصعب موادي. الحين صار لك.",
+    welcomeGo:"يلا نبدأ"
   },
   en:{
     title:"Media Translation Quiz",
@@ -852,7 +870,11 @@ const UI = {
     disclaimer:"This quiz is unofficial and may contain mistakes. Check the primary sources.",
     aboutBtn:"About me", aboutName:"Albadar Ibrahim Almaymani", aboutDegree:"Data Science graduate · Umm Al-Qura University",
     aboutJob:"Network Engineer ·", aboutCo:"Tahakom", aboutVia:"(via Emircom)", close:"Close",
-    toLight:"☀ Light mode", toDark:"☾ Dark mode"
+    toLight:"☀ Light mode", toDark:"☾ Dark mode",
+    aboutWhy:"I built these quizzes because they helped me understand my courses, and I want them to help others.",
+    welcomeTitle:"Slides teach. Questions make it stick.",
+    welcomeBody:"I built this because it's what got me through my hardest courses. Now it's yours.",
+    welcomeGo:"Let's start"
   }
 };
 const SEC_PER_Q = 60;
@@ -1073,7 +1095,7 @@ $("quitBtn").onclick=()=>{
   else { clearInterval(tick); show("setup"); }
 };
 document.addEventListener("keydown",e=>{
-  if($("quiz").classList.contains("hidden") || $("about").open) return;
+  if($("quiz").classList.contains("hidden") || $("about").open || $("welcome").open) return;
   const k=e.key;
   if("1234".includes(k) && k.length===1) pick(+k-1);
   else if("١٢٣٤".includes(k) && k.length===1) pick("١٢٣٤".indexOf(k));
@@ -1115,12 +1137,17 @@ $("themeBtn").onclick=()=>{
   try{localStorage.setItem("mtq-theme", light?"light":"dark")}catch(e){}
   updateThemeBtn();
 };
+function closeWelcome(){ try{localStorage.setItem("mtq-welcomed","1")}catch(e){} }
+$("welcomeGo").onclick=()=>$("welcome").close();
+$("welcome").addEventListener("close", closeWelcome);
 $("aboutBtn").onclick=()=>$("about").showModal();
 $("aboutClose").onclick=()=>$("about").close();
 $("about").addEventListener("click",e=>{ if(e.target===$("about")) $("about").close(); });
 
 try{ const s=localStorage.getItem("mtq-lang"); if(s==="en"||s==="ar") lang=s; }catch(e){}
 applyLang();
+let welcomed=false; try{ welcomed=localStorage.getItem("mtq-welcomed")==="1"; }catch(e){}
+if(!welcomed) $("welcome").showModal();
 </script>
 </body>
 </html>

@@ -6,6 +6,20 @@ Browser-based practice quizzes I built to study my university courses. Each quiz
 
 ---
 
+## Why I built this
+
+Some of my courses were hard, and rereading didn't help. What changed things was studying through questions: answer, find out right away why it's right or wrong, and check the summary in the same place. I also noticed that studying from something that doesn't look like the usual university slides makes you want to study instead of putting you off it.
+
+It made a big difference for me, so I built it for every student going through the same thing.
+
+## ليش سويتها
+
+كانت عندي مواد صعبة، وكثرة القراءة ما كانت تنفع. اللي غيّر الموضوع إني صرت أذاكر بالأسئلة: أجاوب، وأعرف فورًا ليش صح أو ليش غلط، وأرجع للملخص في نفس المكان. ولاحظت إن المذاكرة من شي شكله مختلف عن السلايدات اللي تعودنا عليها تفتح النفس للمذاكرة بدل ما تسدها.
+
+فرقت معي كثير، فبنيتها لكل طالب يمر بنفس اللي مريت فيه.
+
+---
+
 ## Quizzes / الاختبارات
 
 | Quiz | Link |
@@ -28,6 +42,7 @@ Browser-based practice quizzes I built to study my university courses. Each quiz
 - **Lecture summaries** built into the quiz for quick revision.
 - **Keyboard shortcuts:** `1`–`4` for multiple choice, `1`/`2` or `T`/`F` for true/false.
 - **Accessibility (Media Translation):** screen-reader announcements for feedback and the one-minute warning, 44px tap targets, and a warning before leaving an exam in progress.
+- **Dark / light theme (Media Translation):** follows the device by default, with a toggle that remembers your choice.
 
 ### IDP Competency Certification
 - **Topic selection** from the full IDP review question banks.
@@ -51,6 +66,7 @@ Browser-based practice quizzes I built to study my university courses. Each quiz
 - **ملخصات المحاضرات** داخل الاختبار نفسه.
 - **اختصارات الكيبورد:** `1`–`4` للاختيار من متعدد، و `1`/`2` أو `T`/`F` لصح وخطأ.
 - **إمكانية الوصول (الترجمة الإعلامية):** قارئ الشاشة ينطق التصحيح وتنبيه آخر دقيقة، وأزرار بحجم 44px، وتنبيه لو حاولت تطلع والاختبار شغال.
+- **الوضع الداكن والفاتح (الترجمة الإعلامية):** يتبع إعداد الجهاز، وفيه زر تبديل يتذكر اختيارك.
 
 ### IDP Competency Certification
 - **اختيار المواضيع** من بنوك أسئلة مراجعة IDP كاملة.
@@ -65,6 +81,6 @@ Browser-based practice quizzes I built to study my university courses. Each quiz
 
 ## Tech / التقنية
 
-Plain HTML, CSS and vanilla JavaScript in a single file per quiz. The only external resource is the IBM Plex Sans Arabic font from Google Fonts. The language choice is saved in `localStorage`.
+Plain HTML, CSS and vanilla JavaScript in a single file per quiz. The only external resource is the IBM Plex Sans Arabic font from Google Fonts. The language and theme choices are saved in `localStorage`.
 
-HTML و CSS و JavaScript عادي، وكل اختبار في ملف واحد. الشي الخارجي الوحيد هو خط IBM Plex Sans Arabic من Google Fonts. اختيار اللغة ينحفظ في `localStorage`.
+HTML و CSS و JavaScript عادي، وكل اختبار في ملف واحد. الشي الخارجي الوحيد هو خط IBM Plex Sans Arabic من Google Fonts. اختيار اللغة والثيم ينحفظ في `localStorage`.
