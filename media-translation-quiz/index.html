@@ -221,6 +221,20 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 #topic ul, #topic ol{margin:0 0 18px; padding-inline-start:22px; display:flex; flex-direction:column; gap:8px; line-height:1.65}
 #topic .close{width:100%; min-height:46px; border-radius:8px; border:2px solid var(--line); background:var(--bg); font-weight:600}
 
+/* summary search */
+.search{position:relative; margin:4px 0 14px}
+.search input{width:100%; min-height:48px; padding:10px 14px; border:2px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); font:inherit; font-size:1rem}
+.search input::placeholder{color:var(--muted)}
+.search input:focus{outline:none; border-color:var(--primary)}
+.sCount{color:var(--muted); font-size:.85rem; margin:0 0 10px}
+.sRes{background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:14px 16px; margin-bottom:10px}
+.sRes h4{margin:6px 0 8px; font-size:1rem; color:var(--primary); line-height:1.5}
+.sRes ul{margin:0; padding-inline-start:20px; display:flex; flex-direction:column; gap:6px; font-size:.95rem; line-height:1.6}
+mark{background:var(--warn-soft); color:var(--warn); border-radius:3px; padding:0 2px}
+#topic .searchWrap{border-top:1px solid var(--line); padding-top:14px; margin-top:4px}
+#topic .searchWrap h3{margin:0 0 8px; font-size:.95rem}
+#topic .sRes{background:var(--bg)}
+
 /* lecture picker */
 .grouphead{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px}
 .grouphead h2{margin:0 !important}
@@ -385,8 +399,12 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
         <button class="quit" id="summaryBackBtn" data-i="back"></button>
       </div>
     </div>
-    <div class="chips" id="sumTabs" style="margin-bottom:18px"></div>
-    <div id="summaryContent"></div>
+    <div class="search"><input type="search" id="sumSearch" autocomplete="off" enterkeyhint="search"></div>
+    <div id="sumSearchRes" class="hidden"></div>
+    <div id="sumBrowse">
+      <div class="chips" id="sumTabs" style="margin-bottom:18px"></div>
+      <div id="summaryContent"></div>
+    </div>
   </section>
 
   <footer class="foot">
@@ -411,6 +429,11 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
   <span class="lecTag" id="topicLec"></span>
   <h2 id="topicTitle"></h2>
   <div id="topicBody"></div>
+  <div class="searchWrap">
+    <h3 data-i="searchH"></h3>
+    <div class="search"><input type="search" id="topicSearch" autocomplete="off" enterkeyhint="search"></div>
+    <div id="topicSearchRes"></div>
+  </div>
   <button class="close" id="topicClose" data-i="close"></button>
 </dialog>
 
@@ -951,6 +974,7 @@ const UI = {
     aboutJob:"مهندس شبكات ·", aboutCo:"تحكم", aboutVia:"(عبر Emircom)", close:"إغلاق",
     toLight:"☀ الوضع الفاتح", toDark:"☾ الوضع الداكن",
     brand:"البدر", topicBtn:"افتح الموضوع كامل من الملخص",
+    searchH:"دوّر في كل الملخصات", searchPh:"اكتب كلمة، مثلًا: headline", sCount:n=>n? "المواضيع اللي فيها كلماتك: "+n:"ما لقيت موضوع فيه كل الكلمات. جرب كلمات أقل.",
     m3:"بطاقات", m3d:"تشوف السؤال بدون اختيارات، تتذكر الجواب، وتقلب البطاقة تتأكد.", startCards:"ابدأ البطاقات", noteCards:"بدون وقت. الأسئلة اللي ما تنفع بدون اختيارات ما تطلع في البطاقات.", fcTap:"اضغط على البطاقة عشان تقلبها", fcAnsLabel:"الإجابة",
     fcNo:"ما عرفتها", fcYes:"عرفتها", fcPos:(k,n)=>"عرفت <b>"+k+"</b> من "+n,
     fcDoneT:"خلصت كل البطاقات!", fcDone:(n,r)=>"عرفت "+n+" بطاقة"+(r?"، ورجعت لك "+r+" مرة للمراجعة.":" من أول مرة."), fcAgain:"بطاقات جديدة",
@@ -985,6 +1009,7 @@ const UI = {
     aboutJob:"Network Engineer ·", aboutCo:"Tahakom", aboutVia:"(via Emircom)", close:"Close",
     toLight:"☀ Light mode", toDark:"☾ Dark mode",
     brand:"Albadar", topicBtn:"Open the full topic from the summary",
+    searchH:"Search all summaries", searchPh:"Type a word, e.g. headline", sCount:n=>n? n+(n===1?" topic matches":" topics match"):"No topic has all these words. Try fewer words.",
     m3:"Flashcards", m3d:"See the question with no options, recall the answer, then flip the card to check.", startCards:"Start flashcards", noteCards:"No timer. Questions that need the options to make sense are left out.", fcTap:"Tap the card to flip it", fcAnsLabel:"Answer",
     fcNo:"Didn't know", fcYes:"Knew it", fcPos:(k,n)=>"Known <b>"+k+"</b> of "+n,
     fcDoneT:"All cards done!", fcDone:(n,r)=>"You learned "+n+" cards"+(r?", with "+r+" repeats along the way.":", all on the first try."), fcAgain:"New cards",
@@ -1056,6 +1081,9 @@ function applyLang(){
   document.querySelectorAll("[data-i]").forEach(el=>{ el.textContent=T()[el.dataset.i]; });
   updateThemeBtn();
   $("langSwitch4").textContent=T().switchTo;
+  $("sumSearch").placeholder=T().searchPh; $("topicSearch").placeholder=T().searchPh;
+  if($("sumSearch").value) runSumSearch();
+  if($("topic").open && $("topicSearch").value) renderSearch($("topicSearchRes"), $("topicSearch").value);
   if(!$("cards").classList.contains("hidden")) renderCard();
   $("langSwitch").textContent=T().switchTo; $("langSwitch2").textContent=T().switchTo; $("langSwitch3").textContent=T().switchTo;
   document.querySelectorAll("#langs .chip").forEach(x=>x.setAttribute("aria-pressed", x.dataset.lang===lang));
@@ -1264,6 +1292,7 @@ function openTopic(lecId,i){
   const list=document.createElement(sec.ordered?"ol":"ul");
   sec.items.forEach(t=>{ const li=document.createElement("li"); li.textContent=t; list.appendChild(li); });
   $("topicBody").replaceChildren(list);
+  $("topicSearch").value=""; $("topicSearchRes").replaceChildren();
   $("topic").showModal();
 }
 function renderReview(onlyWrong){
@@ -1357,6 +1386,57 @@ document.addEventListener("keydown",e=>{
     if(m && !m.disabled && document.activeElement.tagName!=="BUTTON") m.click();
   }
 });
+
+/* ---- summary search: every word must appear in the topic title or one of its points (AR + EN text), results in lecture/section order ---- */
+const norm=t=>t.toLowerCase().replace(/[\u064B-\u065F\u0670\u0640]/g,"").replace(/[أإآ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه");
+function searchSummaries(query){
+  const words=norm(query).split(/\s+/).filter(Boolean);
+  if(!words.length) return null;
+  const out=[];
+  LECTURES.forEach(lec=>{
+    lec.summary[lang].forEach((sec,k)=>{
+      const other=lec.summary[lang==="ar"?"en":"ar"][k];
+      const hay=norm([sec.h,...sec.items,other.h,...other.items].join(" \n "));
+      if(!words.every(w=>hay.includes(w))) return;
+      // AR and EN points are parallel by index, so a point matches if either language's version has the word
+      const items=sec.items.filter((t,j)=>words.some(w=>norm(t+" "+(other.items[j]||"")).includes(w)));
+      out.push({lec, sec, items: items.length ? items : sec.items});
+    });
+  });
+  return {words, out};
+}
+function highlight(el, text, words){
+  const n=norm(text); let i=0;
+  const marks=[];
+  words.forEach(w=>{ let k=n.indexOf(w); while(k>-1){ marks.push([k,k+w.length]); k=n.indexOf(w,k+w.length); } });
+  marks.sort((a,b)=>a[0]-b[0]);
+  // norm() keeps string length for Latin text; for Arabic it can drop diacritics, so fall back to plain text when lengths differ
+  if(n.length!==text.length || !marks.length){ el.textContent=text; return; }
+  marks.forEach(([a,b])=>{ if(a<i) return; el.append(text.slice(i,a)); const m=document.createElement("mark"); m.textContent=text.slice(a,b); el.append(m); i=b; });
+  el.append(text.slice(i));
+}
+function renderSearch(box, query){
+  box.replaceChildren();
+  const r=searchSummaries(query);
+  if(!r) return false;
+  const c=document.createElement("p"); c.className="sCount"; c.textContent=T().sCount(r.out.length); box.append(c);
+  r.out.forEach(({lec,sec,items})=>{
+    const d=document.createElement("div"); d.className="sRes";
+    const tag=document.createElement("span"); tag.className="lecTag"; tag.textContent=lec.title[lang];
+    const h=document.createElement("h4"); highlight(h, sec.h, r.words);
+    const ul=document.createElement("ul");
+    items.forEach(t=>{ const li=document.createElement("li"); highlight(li, t, r.words); ul.append(li); });
+    d.append(tag,h,ul); box.append(d);
+  });
+  return true;
+}
+function runSumSearch(){
+  const on=renderSearch($("sumSearchRes"), $("sumSearch").value);
+  $("sumSearchRes").classList.toggle("hidden", !on);
+  $("sumBrowse").classList.toggle("hidden", on);
+}
+$("sumSearch").addEventListener("input", runSumSearch);
+$("topicSearch").addEventListener("input", ()=>renderSearch($("topicSearchRes"), $("topicSearch").value));
 
 function renderSumTabs(){
   const c=$("sumTabs"); c.innerHTML="";
