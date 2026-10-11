@@ -264,6 +264,9 @@ mark{background:var(--warn-soft); color:var(--warn); border-radius:3px; padding:
 #welcome h2{margin:0 0 10px; font-size:1.35rem; line-height:1.4}
 #welcome h2::before{content:""; display:block; width:36px; height:4px; background:var(--primary); border-radius:2px; margin-bottom:14px}
 #welcome p{margin:0 0 20px; color:var(--muted)}
+#welcome .before{background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:12px 14px; margin:0 0 20px}
+#welcome .before b{display:block; margin-bottom:6px; font-size:.95rem}
+#welcome .before ul{margin:0; padding-inline-start:20px; display:flex; flex-direction:column; gap:6px; font-size:.9rem; line-height:1.6; color:var(--ink)}
 #welcome .go{width:100%; min-height:50px; border:none; border-radius:8px; background:var(--primary); color:var(--on-primary); font-weight:700; font-size:1.05rem}
 #about .aboutWhy{margin:10px 0 0; color:var(--ink); font-size:.93rem}
 #about .close{width:100%; min-height:44px; border-radius:8px; border:2px solid var(--line); background:var(--bg); font-weight:600}
@@ -420,6 +423,10 @@ mark{background:var(--warn-soft); color:var(--warn); border-radius:3px; padding:
 <dialog id="welcome" aria-labelledby="welcomeTitle">
   <h2 id="welcomeTitle" data-i="welcomeTitle"></h2>
   <p data-i="welcomeBody"></p>
+  <div class="before">
+    <b data-i="beforeH"></b>
+    <ul><li data-i="before1"></li><li data-i="before2"></li><li data-i="before3"></li></ul>
+  </div>
   <button class="go" id="welcomeGo" data-i="welcomeGo"></button>
 </dialog>
 
@@ -1084,7 +1091,11 @@ const UI = {
     aboutWhy:"سويت هذي الاختبارات لأنها ساعدتني أفهم موادي، وأبيها تساعد غيري.",
     welcomeTitle:"السلايدات تعلّمك. الأسئلة تثبّت.",
     welcomeBody:"هذا الموقع سويته لأنه اللي خلاني أفهم أصعب موادي. الحين صار لك.",
-    welcomeGo:"يلا نبدأ"
+    welcomeGo:"يلا نبدأ",
+    beforeH:"قبل ما تبدأ:",
+    before1:"هذا الاختبار للمراجعة، وما يغني عن المذاكرة من المحاضرات.",
+    before2:"العبارات متوسطة الصعوبة وأسهل، وهدفها تثبيت الأساسيات.",
+    before3:"العبارات ثابتة وما تتغير، بس كل مرة تبدأ تنسحب لك منها مجموعة بترتيب مختلف."
   },
   en:{
     title:"ME 4245 — Renewable Energy: True or False",
@@ -1117,7 +1128,11 @@ const UI = {
     aboutWhy:"I built these quizzes because they helped me understand my courses, and I want them to help others.",
     welcomeTitle:"Slides teach. Questions make it stick.",
     welcomeBody:"I built this because it's what got me through my hardest courses. Now it's yours.",
-    welcomeGo:"Let's start"
+    welcomeGo:"Let's start",
+    beforeH:"Before you start:",
+    before1:"This quiz is for review. It does not replace studying the lectures.",
+    before2:"The statements are of medium difficulty or easier, aimed at locking in the basics.",
+    before3:"The statements are fixed and don't change, but each attempt draws a set from them in a different order."
   }
 };
 const SEC_PER_Q = 30;
