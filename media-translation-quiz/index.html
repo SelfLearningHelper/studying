@@ -233,6 +233,9 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .sRes ul{margin:0; padding-inline-start:20px; display:flex; flex-direction:column; gap:6px; font-size:.95rem; line-height:1.6}
 mark{background:var(--warn-soft); color:var(--warn); border-radius:3px; padding:0 2px}
 
+/* Arabic translation under an English explanation */
+.tr{margin:8px 0 0; padding-inline-start:10px; border-inline-start:2px solid currentColor; opacity:.85; font-size:.95em}
+
 /* lecture picker */
 .grouphead{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px}
 .grouphead h2{margin:0 !important}
@@ -372,7 +375,7 @@ mark{background:var(--warn-soft); color:var(--warn); border-radius:3px; padding:
       <div class="flipWrap">
         <button class="flip" id="flip" aria-live="polite">
           <div class="face front"><span class="lecTag" id="fcLec"></span><p class="fq" id="fcQ"></p><p class="tap" data-i="fcTap"></p></div>
-          <div class="face back"><span class="lecTag" data-i="fcAnsLabel"></span><p class="ans" id="fcA"></p><p class="exp" id="fcE"></p></div>
+          <div class="face back"><span class="lecTag" data-i="fcAnsLabel"></span><p class="ans" id="fcA"></p><p class="exp" id="fcE" dir="auto"></p><p class="exp tr" id="fcT"></p></div>
         </button>
       </div>
       <div class="fcBtns hidden" id="fcBtns">
@@ -933,6 +936,17 @@ const SEC_MAP={
   l2:[0,0,0,1,1,2,2,3,3,4,4,5,6,7,7,7,8,8,8,8,8,8,8,8,8,9,10,10,10,11],
   l3:[0,0,1,1,1,1,2,2,2,2,2,3,3,3,3,3,3,4,4,5,5,5,5,6,6,7,7,8,8,9,9]
 };
+/* Arabic translation of each explanation, shown under the original (slide wording) when the page is in Arabic.
+   Checked against the lecture slides. null = the explanation is already in Arabic. */
+const EXP_AR={
+  l1:["الوسائط (جمع Medium) هي أي صيغة تُستخدم لنقل المعلومات.", "وسائل الإعلام الجماهيري: وسيلة تواصل عام تصل إلى جمهور كبير.", null, "أي جهاز يُستخدم في عملية التواصل الإلكتروني يُعتبر إعلامًا إلكترونيًا.", "الإعلام الرقمي هو وسائط لمعلومات مُرقمنة تُبث لنا عبر شاشة و/أو مكبر صوت.", "Digital = بيانات ممثلة بسلسلة من الأرقام، وMedia = طرق بث هذه البيانات أو نقلها.", "الإعلام المعلوماتي: نشرات الأخبار، والصحف، والمواقع المعلوماتية.", "الإعلام التعليمي: الكتب، والفيديوهات التعليمية، وبرامج البرمجيات التعليمية.", "الإعلام الإقناعي: الإعلانات، والبرامج الدعائية التلفزيونية (Infomercials)، ومقالات الرأي في الصحف، والمواقع التي تحاول الإقناع.", "الإعلام الترفيهي: المجلات الترفيهية، والأفلام، والروايات، والمواقع الترفيهية.", "العنوان الصحفي هو الملخص القصير الذي يقدّم الخبر في بداية النشرة الإخبارية، أو يظهر أعلى المقال.", "الأسلوب الخاص للعناوين يجعلها مختلفة كثيرًا عن الإنجليزية العادية.", "الإلمام بهذه السمات يسهّل ترجمة هذه العناوين بين لغتين مختلفتين.", "العناوين ليست جملًا كاملة، بل ملخصات قصيرة صُممت لجذب الانتباه.", "مثال: Parliament confirms new policy، استُخدم فيه المضارع البسيط لحدث وقع بالفعل.", "يُستخدم المصدر مع to للأحداث المستقبلية، مثل: President to visit France for further talks.", "أفعال الكينونة مثل is وare وwas وwere يجب أن تُحذف.", "لا تُستخدم أدوات التعريف والتنكير a وan وthe، لأنها تهدر المساحة بلا داعٍ.", null, "المقدمة (Lead): تجذب اهتمام القارئ، وتقدّم أهم المعلومات، وتعرّف بالموضوع، وتجيب عن أغلب أسئلة الـ 5W."],
+  l2:["تكمن صعوبة العناوين الإنجليزية في سماتها النحوية والمعجمية والأسلوبية، ويُشار إليها غالبًا بـ Headlinese.", "تتميز العناوين بأسلوب تلغرافي وحذفي.", "أكثر السمات النحوية شيوعًا: حذف فعل الكينونة be، وتبسيط الأزمنة، وعلامات ترقيم خاصة، والاختصارات.", "العناوين الإنجليزية غالبًا ليست جملًا كاملة، وأحيانًا تتكون من أسماء فقط.", null, "تستخدم العناوين عادةً الأزمنة البسيطة، لا المستمرة ولا التامة.", "تُترجم العربية الفعل بصيغة المضارع.", "تستخدم العناوين to + infinitive للتعبير عن الأحداث المستقبلية.", "الترجمة العربية: سوف + الفعل المضارع.", "في هذه العناوين تُحذف أدوات التعريف والتنكير (a, the) وصيغ فعل الكينونة be.", "تترجمها العربية بالمصادر (الأسماء الفعلية).", "العناوين المبنية للمجهول تحذف be.", "يُكتب المضارع المستمر بدون be.", "تستبدل العناوين and بالفاصلة.", "تعيد العربية حرف العطف «و» في الترجمة.", "العناوين لا تنتهي بنقطة، وهذا عُرف أسلوبي ثابت في الصحافة الإنجليزية.", "Blast = انفجار.", "Toll = عدد الوفيات.", "Aid = دعم.", "Blaze = حريق.", "Clash = مشادة/اشتباك.", "Foil = إحباط/منع نجاح شيء ما.", "Back = دعم/تأييد (معنى خاص في العناوين).", "Bar = منع (معنى خاص في العناوين).", "Call for = يطالب بـ.", "Ban = يحظر، مثال: 'US bans Samsung Note 7 phones from flights' أي أمريكا تحظر هواتف سامسونج نوت 7 على الرحلات الجوية.", "الإنجليزية تفضّل الإيجاز والعربية تفضّل الوضوح، والعناوين العربية تستخدم غالبًا جملًا كاملة وأفعالًا.", "الإضافة: إضافة كلمات توضيحية (مثل إضافة Ford لتوضيح Mustang).", "التكييف: تعديل الزمن والأسلوب ليناسب القارئ العربي.", "في الإنجليزية: to + infinitive = حدث مستقبلي، وفي العربية: سوف يغيّر."],
+  l3:["تقييم جودة الترجمة في AVT معقد لأنه يتضمن أنماطًا سيميائية متعددة تتفاعل في الزمان والمكان.", "الترجمة عالية الجودة، سواء كانت ترجمة نصية (subtitle) أو دبلجة، يجب أن تكون صحيحة لغويًا وأن تتزامن مع الصوت والصورة وإيقاع المونتاج.", "جودة الترجمة في AVT تشمل التوقيت، وسهولة القراءة، والوضوح البصري، والتزامن مع الإشارات الصوتية.", "الترجمة النصية التي تُعرض لفترة قصيرة جدًا أو تحجب وجه الممثل سيراها المشاهدون منخفضة الجودة رغم صحتها.", "في الدبلجة، يجب أن تطابق الترجمة حركة الشفاه والنبرة وأسلوب الأداء حتى تُقبل على أنها «طبيعية».", "محترفو AVT غالبًا يعرّفون الجودة من خلال الكفاية الوظيفية، لا التكافؤ اللغوي الصارم.", "نماذج جودة مثل نظرية الهدف (Skopos) والدراسات الوصفية للترجمة تم تكييفها لتناسب AVT.", "الترجمة في الإعلام تُوجَّه بالغرض (إخبار، ترفيه، توطين) وبالقيود (الوقت، المساحة، التزامن).", "في الترجمة النصية، قد تُقاس الجودة بقدرة المترجم على تكثيف الحوار مع الحفاظ على التماسك السردي والفكاهة.", "الترجمات النصية الجيدة توازن بين الأمانة وسهولة القراءة، وهي مقايضة تغفل عنها غالبًا النماذج اللغوية التقليدية.", "النماذج الأكاديمية التقليدية لتقييم جودة الترجمة يجب أن تتطور لتشمل الأمانة متعددة الوسائط وسهولة القراءة المرتكزة على المستخدم.", "أُطر معيارية مثل TAUS DQF وMQM تُطبَّق بشكل متزايد في سير عمل الترجمة النصية والدبلجة.", "TAUS منظمة صناعية عالمية تأسست عام 2004، وتروّج للابتكار والتوحيد القياسي في تقنيات الترجمة.", "DQF مجموعة من الأدوات والمقاييس وأفضل الممارسات أنشأتها TAUS لمساعدة الشركات على قياس جودة الترجمة وإدارتها بشكل متسق.", "طُوِّرت MQM ضمن مشروعي QTLaunchPad وQT21 الممولين من الاتحاد الأوروبي (2012-2018).", "تحدد MQM تصنيفًا هرميًا لأنواع الأخطاء مجمّعة تحت: الدقة، والطلاقة، والمصطلحات، والأسلوب، واصطلاحات اللغة المحلية، والصحة (verity).", "أدلة Netflix للنصوص الموقوتة (Timed Text Style Guides) تحدد الطول المقبول للترجمة النصية، وسرعة القراءة، وعلامات الترقيم، والنبرة.", "أنظمة ضبط الجودة الآلية (مثل Xbench وOOONA QA) تكتشف الأخطاء التقنية: التوقيت، والتداخل، والترجمات النصية المفقودة.", "لا تزال تعتمد على مراجعين بشريين للحكم على الملاءمة الأسلوبية والثقافية، وهذا ما يسمى سير عمل هجين.", "التقييم البشري لجودة الترجمة في AVT يجمع عادةً بين معايير لغوية وتقنية وإدراكية.", "أُشيد بالدبلجة الإنجليزية لفيلم Spirited Away (2001) لأنها حافظت على النبرة العاطفية مع تكييف المراجع الثقافية.", "الترجمات النصية الخاطئة في Squid Game (2021) أثارت انتقادات جماهيرية على وسائل التواصل الاجتماعي.", "هذان المثالان يوضحان أن التقييم البشري يجب أن يراعي جودة النص وتجربة المشاهد معًا.", "المقيّمون المحترفون يستخدمون قوائم تحقق منظمة (مثل اختبار Hermes من Netflix) لقياس الدقة والتوقيت.", "المقاربات المرتكزة على المستخدم ترى أن الجودة الحقيقية تكمن في فهم المشاهد للترجمة واستمتاعه بها.", "مقاييس آلية مثل BLEU وTER محدودة في AVT لأنها لا تستطيع مراعاة التوقيت وتعدد الوسائط والعناصر الأدائية.", "أدوات الترجمة النصية بالذكاء الاصطناعي تستخدم التعرف الآلي على الكلام (ASR) مع الترجمة الآلية العصبية (NMT).", "يستخدم المترجمون التحرير اللاحق لتنقيح الترجمات النصية أو نصوص الدبلجة المُنتجة آليًا.", "يمكن قياس جهد التحرير اللاحق بالوقت، وعدد ضغطات المفاتيح، والحمل المعرفي (دراسات تتبع حركة العين).", "أسئلة أخلاقية: هل يجب الإفصاح عن أن الترجمة النصية أنتجها الذكاء الاصطناعي؟ وكيف نضمن أجرًا عادلًا للمحررين البشريين؟", "مستقبل تقييم جودة الترجمة يكمن في طرق تقييم هجينة تجمع بين المقاييس الآلية والتغذية الراجعة المرتكزة على الإنسان واختبارات قابلية الاستخدام."]
+};
+function expAr(lecId,i){
+  if(lang!=="ar") return null;
+  return EXP_AR[lecId][i];
+}
 
 const UI = {
   ar:{
@@ -1024,7 +1038,7 @@ function item(q){
   const bank = lec.bank[lang];
   const b = bank[q.i];
   const base=[b[1],...b[2]];
-  return {q:b[0], opts:q.perm.map(k=>base[k]), e:b[3], lecName:lec.title[lang]};
+  return {q:b[0], opts:q.perm.map(k=>base[k]), e:b[3], tr:expAr(q.lec,q.i), lecName:lec.title[lang]};
 }
 
 function renderLecChips(){
@@ -1161,7 +1175,9 @@ function render(){
     const right=a===q.correct;
     why.className="why"+(right?"":" bad");
     why.innerHTML=""; const bb=document.createElement("b"); bb.textContent= right?T().right:T().wrong(L[q.correct]);
-    why.append(bb, document.createTextNode(it.e));
+    const ex=document.createElement("span"); ex.dir="auto"; ex.style.display="block"; ex.textContent=it.e;
+    why.append(bb, ex);
+    if(it.tr){ const tr=document.createElement("p"); tr.className="tr"; tr.textContent=it.tr; why.appendChild(tr); }
     if(!right) why.appendChild(topicButton(q));
   } else why.className="why hidden";
   renderStreak();
@@ -1306,7 +1322,8 @@ function renderReview(onlyWrong){
     t("rq",(i+1)+". ["+it.lecName+"] "+it.q);
     if(a===null) t("ra wrong",T().none); else if(!ok) t("ra wrong",T().yours+it.opts[a]);
     t("ra right",T().correct+it.opts[q.correct]);
-    t("re",it.e);
+    t("re",it.e); d.lastChild.dir="auto";
+    if(it.tr) t("re tr",it.tr);
     if(!ok) d.appendChild(topicButton(q));
     r.appendChild(d);
   });
@@ -1343,6 +1360,7 @@ function renderCard(){
   const c=deck[0], lec=LECTURES.find(l=>l.id===c.lec), b=lec.bank[lang][c.i];
   $("fcLec").textContent=lec.title[lang];
   $("fcQ").textContent=b[0]; $("fcA").textContent=b[1]; $("fcE").textContent=b[3];
+  const tr=expAr(c.lec,c.i); $("fcT").textContent=tr||""; $("fcT").classList.toggle("hidden",!tr);
 }
 function flipCard(){ const f=$("flip"); f.classList.toggle("on"); $("fcBtns").classList.toggle("hidden", !f.classList.contains("on")); }
 function nextCard(knew){
