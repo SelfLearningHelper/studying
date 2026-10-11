@@ -35,15 +35,15 @@ It made a big difference for me, so I built it for every student going through t
 
 ### Media Translation · ME 4245 · ME 4441
 - **Two modes:** *Learn* has no timer and explains the correct answer after each question. *Exam* is timed and graded only at the end.
-- **Flashcards mode (Media Translation):** see the question with no options, recall the answer, flip the card to check. Cards you miss come back until you know them.
+- **Flashcards mode (Media Translation, ME 4441):** see the question with no options, recall the answer, flip the card to check. Cards you miss come back until you know them.
 - **Arabic / English:** switch the question language before starting.
 - **Lecture selection:** quiz on one lecture or several (ME 4441 covers a single module).
 - **Adjustable question count.**
 - **Review screen:** go through every answer after the quiz, or filter to mistakes only.
 - **Lecture summaries** built into the quiz for quick revision.
 - **Keyboard shortcuts:** `1`–`4` for multiple choice, `1`/`2` or `T`/`F` for true/false.
-- **Accessibility (Media Translation):** screen-reader announcements for feedback and the one-minute warning, 44px tap targets, and a warning before leaving an exam in progress.
-- **Dark / light theme (Media Translation):** follows the device by default, with a toggle that remembers your choice.
+- **Accessibility (Media Translation, ME 4441):** screen-reader announcements for feedback and the one-minute warning, 44px tap targets, and a warning before leaving an exam in progress.
+- **Dark / light theme (Media Translation, ME 4441):** follows the device by default, with a toggle that remembers your choice.
 
 ### IDP Competency Certification
 - **Topic selection** from the full IDP review question banks.
@@ -62,15 +62,15 @@ It made a big difference for me, so I built it for every student going through t
 
 ### الترجمة الإعلامية · ME 4245 · ME 4441
 - **وضعين:** *التعلم* بدون وقت، ويشرح لك الإجابة الصحيحة بعد كل سؤال. *الاختبار* بوقت محدد، والتصحيح في النهاية.
-- **وضع البطاقات (الترجمة الإعلامية):** تشوف السؤال بدون اختيارات، تتذكر الجواب، وتقلب البطاقة تتأكد. البطاقات اللي ما عرفتها ترجع لك لين تعرفها.
+- **وضع البطاقات (الترجمة الإعلامية، ME 4441):** تشوف السؤال بدون اختيارات، تتذكر الجواب، وتقلب البطاقة تتأكد. البطاقات اللي ما عرفتها ترجع لك لين تعرفها.
 - **عربي / إنجليزي:** تختار لغة الأسئلة قبل ما تبدأ.
 - **اختيار المحاضرات:** محاضرة وحدة أو أكثر (ME 4441 فيه موديول واحد).
 - **عدد أسئلة تختاره أنت.**
 - **مراجعة بعد الاختبار:** تشوف كل الإجابات أو أخطاءك بس.
 - **ملخصات المحاضرات** داخل الاختبار نفسه.
 - **اختصارات الكيبورد:** `1`–`4` للاختيار من متعدد، و `1`/`2` أو `T`/`F` لصح وخطأ.
-- **إمكانية الوصول (الترجمة الإعلامية):** قارئ الشاشة ينطق التصحيح وتنبيه آخر دقيقة، وأزرار بحجم 44px، وتنبيه لو حاولت تطلع والاختبار شغال.
-- **الوضع الداكن والفاتح (الترجمة الإعلامية):** يتبع إعداد الجهاز، وفيه زر تبديل يتذكر اختيارك.
+- **إمكانية الوصول (الترجمة الإعلامية، ME 4441):** قارئ الشاشة ينطق التصحيح وتنبيه آخر دقيقة، وأزرار بحجم 44px، وتنبيه لو حاولت تطلع والاختبار شغال.
+- **الوضع الداكن والفاتح (الترجمة الإعلامية، ME 4441):** يتبع إعداد الجهاز، وفيه زر تبديل يتذكر اختيارك.
 
 ### IDP Competency Certification
 - **اختيار المواضيع** من بنوك أسئلة مراجعة IDP كاملة.
