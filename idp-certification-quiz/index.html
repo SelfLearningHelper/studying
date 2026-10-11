@@ -270,13 +270,8 @@ button:active:not(:disabled){transform:scale(.98)}
 
       <div class="group">
         <h2>Number of questions</h2>
-        <div class="pillGroup" id="countSeg">
-          <button data-n="40" type="button" class="on">40</button>
-          <button data-n="80" type="button">80</button>
-          <button data-n="120" type="button">120</button>
-          <button data-n="160" type="button">160</button>
-          <button data-n="200" type="button">200</button>
-        </div>
+        <div class="pillGroup" id="countSeg"></div>
+        <p class="note hidden" id="countForced"></p>
       </div>
 
       <div class="group">
@@ -1345,7 +1340,7 @@ function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/
 
 let selectedTopics = new Set(TOPICS.map(t=>t.id));
 let mode = "learn";
-let questionCount = 40;
+let countSel = null;
 let examSeconds = 60;
 
 /* ============ SETUP SCREEN ============ */
@@ -1402,26 +1397,45 @@ $("selAll").onclick = ()=>{
   TOPICS.forEach(t=> allOn ? selectedTopics.delete(t.id) : selectedTopics.add(t.id));
   renderTopicGroups(); updateNote();
 };
-function updateNote(){
-  const n = selectedTopics.size;
-  const total = TOPICS.filter(t=>selectedTopics.has(t.id)).reduce((s,t)=>s+t.qs.length,0);
-  if(n===0 || total===0){
-    $("topicNote").textContent = "Select at least one topic to begin.";
-  } else {
-    const willUse = Math.min(questionCount, total);
-    $("topicNote").textContent = willUse < questionCount
-      ? `Only ${total} questions available from ${n} selected topic(s) — the quiz will use all ${total}.`
-      : `${total} questions available from ${n} selected topic(s). This quiz will use ${willUse}.`;
+/* ---- question count: options depend on how many questions the selected topics have ----
+   N < 10: no choice, the quiz uses all N. N <= 30: 10, 20, All. N <= 100: 10, 20, 30, 50, All.
+   N > 100: 20, 40, 80, 120, 200 (All only replaces values that reach N). */
+function availN(){ return TOPICS.filter(t=>selectedTopics.has(t.id)).reduce((s,t)=>s+t.qs.length,0); }
+function countOptions(N){
+  if(N<10) return [];
+  const ladder = N<=30 ? [10,20] : N<=100 ? [10,20,30,50] : [20,40,80,120,200];
+  const opts = ladder.filter(x=>x<N);
+  if(N<=100 || ladder.some(x=>x>=N)) opts.push(N);
+  return opts;
+}
+function planned(){ const N=availN(); return N<10 ? N : Math.min(countSel||0, N); }
+function renderCounts(){
+  const N=availN(), opts=countOptions(N), box=$("countSeg"), forced=$("countForced");
+  box.innerHTML="";
+  box.classList.toggle("hidden", opts.length===0);
+  forced.classList.toggle("hidden", !(N>0 && N<10));
+  if(N>0 && N<10) forced.textContent = N===1 ? "Only 1 question in your selection, so the quiz uses it." : `Only ${N} questions in your selection, so the quiz uses all of them.`;
+  if(!opts.length) return;
+  if(!opts.includes(countSel)){
+    // first render picks the middle option; later, snap to the nearest one that still exists
+    countSel = countSel===null ? opts[Math.floor((opts.length-1)/2)] : opts.reduce((a,b)=>Math.abs(b-countSel)<Math.abs(a-countSel)?b:a);
   }
+  opts.forEach(n=>{
+    const b=document.createElement("button"); b.type="button";
+    b.textContent = n===N ? `All (${N})` : n;
+    b.classList.toggle("on", n===countSel);
+    b.onclick=()=>{ countSel=n; updateNote(); };
+    box.appendChild(b);
+  });
+}
+function updateNote(){
+  renderCounts();
+  const n = selectedTopics.size, total = availN();
+  $("topicNote").textContent = (n===0 || total===0)
+    ? "Select at least one topic to begin."
+    : `${total} question${total===1?"":"s"} available from ${n} selected topic(s). This ${mode==="cards"?"deck":"quiz"} will use ${planned()}.`;
   $("startBtn").disabled = n===0 || total===0;
 }
-$("countSeg").querySelectorAll("button").forEach(b=>{
-  b.onclick = ()=>{
-    questionCount = parseInt(b.dataset.n);
-    $("countSeg").querySelectorAll("button").forEach(x=>x.classList.toggle("on", x===b));
-    updateNote();
-  };
-});
 function updateModeInfo(){
   const info = $("modeInfo");
   $("startBtn").textContent = mode==="cards" ? "Start Flashcards" : "Start Quiz";
@@ -1436,7 +1450,7 @@ function updateModeInfo(){
     $("examTimeRow").classList.remove("hidden");
   }
 }
-function setMode(m){ mode=m; ["Learn","Exam","Cards"].forEach(k=>$("mode"+k).classList.toggle("on", m===k.toLowerCase())); updateModeInfo(); }
+function setMode(m){ mode=m; ["Learn","Exam","Cards"].forEach(k=>$("mode"+k).classList.toggle("on", m===k.toLowerCase())); updateModeInfo(); updateNote(); }
 $("modeLearn").onclick = ()=>setMode("learn");
 $("modeExam").onclick = ()=>setMode("exam");
 $("modeCards").onclick = ()=>setMode("cards");
@@ -1459,7 +1473,7 @@ function buildPool(){
 }
 function start(){
   const pool = shuffle(buildPool());
-  count = Math.max(1, Math.min(questionCount, pool.length));
+  count = Math.max(1, Math.min(planned(), pool.length));
   qs = pool.slice(0,count).map(p=>{
     const perm = shuffle([0,1,2,3]);
     return {t:p.t, i:p.i, perm, correct: perm.indexOf(0)};
@@ -1607,7 +1621,7 @@ let deck=[], fcKnown=0, fcTotal=0, fcRepeats=0;
 // "Which of the following X" reads fine as "What X" once the options are gone
 const cardQ = q => q.replace(/\bwhich (one )?(of )?the following\b/ig, "what").replace(/^what/, "What");
 function startCards(){
-  deck = shuffle(buildPool()).slice(0, questionCount); fcTotal=deck.length; fcKnown=0; fcRepeats=0;
+  deck = shuffle(buildPool()).slice(0, planned()); fcTotal=deck.length; fcKnown=0; fcRepeats=0;
   $("fcStage").classList.remove("hidden"); $("fcDone").classList.add("hidden");
   show("cards"); renderCard();
 }
