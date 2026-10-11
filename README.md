@@ -35,6 +35,7 @@ It made a big difference for me, so I built it for every student going through t
 
 ### Media Translation · ME 4245 · ME 4441
 - **Two modes:** *Learn* has no timer and explains the correct answer after each question. *Exam* is timed and graded only at the end.
+- **Flashcards mode (Media Translation):** see the question with no options, recall the answer, flip the card to check. Cards you miss come back until you know them.
 - **Arabic / English:** switch the question language before starting.
 - **Lecture selection:** quiz on one lecture or several (ME 4441 covers a single module).
 - **Adjustable question count.**
@@ -59,6 +60,7 @@ It made a big difference for me, so I built it for every student going through t
 
 ### الترجمة الإعلامية · ME 4245 · ME 4441
 - **وضعين:** *التعلم* بدون وقت، ويشرح لك الإجابة الصحيحة بعد كل سؤال. *الاختبار* بوقت محدد، والتصحيح في النهاية.
+- **وضع البطاقات (الترجمة الإعلامية):** تشوف السؤال بدون اختيارات، تتذكر الجواب، وتقلب البطاقة تتأكد. البطاقات اللي ما عرفتها ترجع لك لين تعرفها.
 - **عربي / إنجليزي:** تختار لغة الأسئلة قبل ما تبدأ.
 - **اختيار المحاضرات:** محاضرة وحدة أو أكثر (ME 4441 فيه موديول واحد).
 - **عدد أسئلة تختاره أنت.**

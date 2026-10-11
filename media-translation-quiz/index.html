@@ -61,7 +61,7 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .intro p{margin:0; color:var(--muted); max-width:60ch}
 .group{margin-top:30px}
 .group h2{font-size:1rem; font-weight:600; margin:0 0 12px}
-.modes{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.modes{display:grid; grid-template-columns:1fr; gap:10px}
 .mode{
   text-align:start; background:var(--surface); border:2px solid var(--line); border-radius:8px;
   padding:16px 16px 14px; transition:border-color .15s, background .15s;
@@ -189,6 +189,28 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 #quiz .card{transition:transform .25s ease-out}
 .confetti{position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:3}
 
+/* flashcards */
+.fcTop{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap}
+.fcProg{height:6px; background:var(--line); border-radius:3px; overflow:hidden; margin-bottom:20px}
+.fcProg i{display:block; height:100%; width:0; background:var(--primary); transition:width .35s cubic-bezier(.16,1,.3,1)}
+.flipWrap{perspective:1400px}
+.flip{display:grid; width:100%; padding:0; border:none; background:none; text-align:start; transition:transform .55s cubic-bezier(.16,1,.3,1); transform-style:preserve-3d}
+.flip.on{transform:rotateY(180deg)}
+.face{grid-area:1/1; backface-visibility:hidden; -webkit-backface-visibility:hidden; background:var(--surface); border:1px solid var(--line); border-radius:8px;
+  padding:clamp(20px,4vw,34px); min-height:300px; display:flex; flex-direction:column}
+.face.back{transform:rotateY(180deg); border-color:var(--primary)}
+.face .fq{font-size:1.2rem; font-weight:600; line-height:1.65; margin:6px 0 0}
+.face .tap{margin-top:auto; padding-top:18px; color:var(--muted); font-size:.85rem; text-align:center}
+.face .ans{font-size:1.15rem; font-weight:700; color:var(--primary); margin:6px 0 14px; line-height:1.6}
+.face .exp{color:var(--muted); font-size:.95rem; line-height:1.65}
+.fcBtns{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px}
+.fcBtns .btn.no{border-color:var(--bad); color:var(--bad)}
+.fcBtns .btn.yes{border-color:var(--ok); color:var(--ok)}
+.fcDone{text-align:center; padding:40px 0 10px}
+.fcDone .big{font-size:3rem; line-height:1}
+.fcDone h2{margin:14px 0 6px}
+.fcDone p{color:var(--muted); margin:0}
+
 /* lecture picker */
 .grouphead{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px}
 .grouphead h2{margin:0 !important}
@@ -255,6 +277,7 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
           <div class="modes">
             <button class="mode" data-mode="learn" aria-pressed="true"><strong data-i="m1"></strong><span data-i="m1d"></span></button>
             <button class="mode" data-mode="exam" aria-pressed="false"><strong data-i="m2"></strong><span data-i="m2d"></span></button>
+            <button class="mode" data-mode="cards" aria-pressed="false"><strong data-i="m3"></strong><span data-i="m3d"></span></button>
           </div>
         </div>
         <div class="group">
@@ -312,6 +335,36 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
     </div>
     <div class="review" id="review"></div>
     <button class="start again" id="againBtn" data-i="again"></button>
+  </section>
+
+  <section id="cards" class="hidden">
+    <div class="fcTop">
+      <div class="pos" id="fcPos"></div>
+      <div class="barside">
+        <button class="mini" id="langSwitch4"></button>
+        <button class="quit" id="fcQuit" data-i="back"></button>
+      </div>
+    </div>
+    <div class="fcProg"><i id="fcBar"></i></div>
+    <div id="fcStage">
+      <div class="flipWrap">
+        <button class="flip" id="flip" aria-live="polite">
+          <div class="face front"><span class="lecTag" id="fcLec"></span><p class="fq" id="fcQ"></p><p class="tap" data-i="fcTap"></p></div>
+          <div class="face back"><span class="lecTag" data-i="fcAnsLabel"></span><p class="ans" id="fcA"></p><p class="exp" id="fcE"></p></div>
+        </button>
+      </div>
+      <div class="fcBtns hidden" id="fcBtns">
+        <button class="btn no" id="fcNo" data-i="fcNo"></button>
+        <button class="btn yes" id="fcYes" data-i="fcYes"></button>
+      </div>
+    </div>
+    <div class="fcDone hidden" id="fcDone">
+      <div class="big">🎉</div>
+      <h2 data-i="fcDoneT"></h2>
+      <p id="fcDoneP"></p>
+      <button class="start" id="fcAgain" data-i="fcAgain"></button>
+      <button class="start secondary" id="fcHome" data-i="back"></button>
+    </div>
   </section>
 
   <section id="summary" class="hidden">
@@ -875,6 +928,9 @@ const UI = {
     aboutJob:"مهندس شبكات ·", aboutCo:"تحكم", aboutVia:"(عبر Emircom)", close:"إغلاق",
     toLight:"☀ الوضع الفاتح", toDark:"☾ الوضع الداكن",
     brand:"البدر",
+    m3:"بطاقات", m3d:"تشوف السؤال بدون اختيارات، تتذكر الجواب، وتقلب البطاقة تتأكد.", startCards:"ابدأ البطاقات", noteCards:"بدون وقت. الأسئلة اللي ما تنفع بدون اختيارات ما تطلع في البطاقات.", fcTap:"اضغط على البطاقة عشان تقلبها", fcAnsLabel:"الإجابة",
+    fcNo:"ما عرفتها", fcYes:"عرفتها", fcPos:(k,n)=>"عرفت <b>"+k+"</b> من "+n,
+    fcDoneT:"خلصت كل البطاقات!", fcDone:(n,r)=>"عرفت "+n+" بطاقة"+(r?"، ورجعت لك "+r+" مرة للمراجعة.":" من أول مرة."), fcAgain:"بطاقات جديدة",
     streak:n=>n+" إجابات صح ورا بعض", best:n=>"أطول سلسلة صح: "+n,
     aboutWhy:"سويت هذي الاختبارات لأنها ساعدتني أفهم موادي، وأبيها تساعد غيري.",
     welcomeTitle:"السلايدات تعلّمك. الأسئلة تثبّت.",
@@ -906,6 +962,9 @@ const UI = {
     aboutJob:"Network Engineer ·", aboutCo:"Tahakom", aboutVia:"(via Emircom)", close:"Close",
     toLight:"☀ Light mode", toDark:"☾ Dark mode",
     brand:"Albadar",
+    m3:"Flashcards", m3d:"See the question with no options, recall the answer, then flip the card to check.", startCards:"Start flashcards", noteCards:"No timer. Questions that need the options to make sense are left out.", fcTap:"Tap the card to flip it", fcAnsLabel:"Answer",
+    fcNo:"Didn't know", fcYes:"Knew it", fcPos:(k,n)=>"Known <b>"+k+"</b> of "+n,
+    fcDoneT:"All cards done!", fcDone:(n,r)=>"You learned "+n+" cards"+(r?", with "+r+" repeats along the way.":", all on the first try."), fcAgain:"New cards",
     streak:n=>n+" correct in a row", best:n=>"Longest streak: "+n,
     aboutWhy:"I built these quizzes because they helped me understand my courses, and I want them to help others.",
     welcomeTitle:"Slides teach. Questions make it stick.",
@@ -925,7 +984,7 @@ const T = () => UI[lang];
 
 function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
 function fmt(s){ const m=Math.floor(s/60), r=s%60; return m+":"+String(r).padStart(2,"0"); }
-function show(id){ ["setup","quiz","result","summary"].forEach(s=>$(s).classList.toggle("hidden", s!==id)); window.scrollTo(0,0); }
+function show(id){ ["setup","quiz","result","summary","cards"].forEach(s=>$(s).classList.toggle("hidden", s!==id)); window.scrollTo(0,0); }
 function item(q){
   const lec = LECTURES.find(l=>l.id===q.lec);
   const bank = lec.bank[lang];
@@ -961,7 +1020,7 @@ function updateAvail(){
   const n = selectedLectures.size;
   if(n===0){ $("availNote").textContent = T().needLec; }
   else {
-    const total = LECTURES.filter(l=>selectedLectures.has(l.id)).reduce((s,l)=>s+l.bank.ar.length,0);
+    const total = mode==="cards" ? cardPool().length : LECTURES.filter(l=>selectedLectures.has(l.id)).reduce((s,l)=>s+l.bank.ar.length,0);
     $("availNote").textContent = T().avail(total);
   }
   $("startBtn").disabled = n===0;
@@ -973,6 +1032,8 @@ function applyLang(){
   document.title = T().title;
   document.querySelectorAll("[data-i]").forEach(el=>{ el.textContent=T()[el.dataset.i]; });
   updateThemeBtn();
+  $("langSwitch4").textContent=T().switchTo;
+  if(!$("cards").classList.contains("hidden")) renderCard();
   $("langSwitch").textContent=T().switchTo; $("langSwitch2").textContent=T().switchTo; $("langSwitch3").textContent=T().switchTo;
   document.querySelectorAll("#langs .chip").forEach(x=>x.setAttribute("aria-pressed", x.dataset.lang===lang));
   renderLecChips(); updateAvail();
@@ -981,12 +1042,15 @@ function applyLang(){
   if(!$("result").classList.contains("hidden")) renderResult();
   if(!$("summary").classList.contains("hidden")){ renderSumTabs(); renderSummary(); }
 }
-function updateNote(){ $("timeNote").textContent = mode==="exam" ? T().noteExam(count*SEC_PER_Q/60) : T().noteLearn; }
+function updateNote(){
+  $("timeNote").textContent = mode==="exam" ? T().noteExam(count*SEC_PER_Q/60) : mode==="cards" ? T().noteCards : T().noteLearn;
+  $("startBtn").textContent = mode==="cards" ? T().startCards : T().start;
+}
 function setLang(l){ lang=l; try{localStorage.setItem("mtq-lang",l)}catch(e){} applyLang(); }
 
 document.querySelectorAll("#langs .chip").forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
 document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{
-  mode=b.dataset.mode; document.querySelectorAll(".mode").forEach(x=>x.setAttribute("aria-pressed", x===b)); updateNote();
+  mode=b.dataset.mode; document.querySelectorAll(".mode").forEach(x=>x.setAttribute("aria-pressed", x===b)); updateNote(); updateAvail();
 });
 document.querySelectorAll("#counts .chip").forEach(b=>b.onclick=()=>{
   count=+b.dataset.n; document.querySelectorAll("#counts .chip").forEach(x=>x.setAttribute("aria-pressed", x===b)); updateNote();
@@ -1181,7 +1245,59 @@ function renderReview(onlyWrong){
 }
 
 $("onlyWrong").onclick=function(){ const on=this.getAttribute("aria-pressed")!=="true"; this.setAttribute("aria-pressed",on); renderReview(on); };
-$("startBtn").onclick=start;
+$("startBtn").onclick=()=> mode==="cards" ? startCards() : start();
+
+/* ---- flashcards: front = question without options, back = correct answer + explanation ---- */
+var MCQ_ONLY=/أي مما يلي|أي من التالي|أي مما سبق|أيّ مما يلي|which of the following|which one of the following/i;
+let deck=[], fcKnown=0, fcTotal=0, fcRepeats=0;
+function cardPool(){
+  return buildPool().filter(p=>{
+    const lec=LECTURES.find(l=>l.id===p.lec);
+    return !MCQ_ONLY.test(lec.bank.ar[p.i][0]) && !MCQ_ONLY.test(lec.bank.en[p.i][0]);
+  });
+}
+function startCards(){
+  const pool=shuffle(cardPool());
+  deck=pool.slice(0,count); fcTotal=deck.length; fcKnown=0; fcRepeats=0;
+  $("fcStage").classList.remove("hidden"); $("fcDone").classList.add("hidden");
+  show("cards"); renderCard();
+}
+function renderCard(){
+  $("fcPos").innerHTML=T().fcPos(fcKnown,fcTotal);
+  $("fcBar").style.width=(fcTotal? fcKnown/fcTotal*100 : 0)+"%";
+  if(!deck.length){
+    $("fcStage").classList.add("hidden"); $("fcDone").classList.remove("hidden");
+    $("fcDoneP").textContent=T().fcDone(fcKnown,fcRepeats);
+    if(fcTotal && !fcRepeats) confetti();
+    return;
+  }
+  const c=deck[0], lec=LECTURES.find(l=>l.id===c.lec), b=lec.bank[lang][c.i];
+  $("fcLec").textContent=lec.title[lang];
+  $("fcQ").textContent=b[0]; $("fcA").textContent=b[1]; $("fcE").textContent=b[3];
+}
+function flipCard(){ const f=$("flip"); f.classList.toggle("on"); $("fcBtns").classList.toggle("hidden", !f.classList.contains("on")); }
+function nextCard(knew){
+  const c=deck.shift();
+  if(knew) fcKnown++; else { deck.push(c); fcRepeats++; }
+  $("flip").classList.remove("on"); $("fcBtns").classList.add("hidden");
+  setTimeout(renderCard, reduceMotion()?0:200);
+  if(knew) $("fcPos").innerHTML=T().fcPos(fcKnown,fcTotal);
+  $("fcBar").style.width=(fcKnown/fcTotal*100)+"%";
+}
+$("flip").onclick=flipCard;
+$("fcYes").onclick=()=>nextCard(true);
+$("fcNo").onclick=()=>nextCard(false);
+$("fcQuit").onclick=()=>show("setup");
+$("fcHome").onclick=()=>show("setup");
+$("fcAgain").onclick=startCards;
+$("langSwitch4").onclick=()=>setLang(lang==="ar"?"en":"ar");
+document.addEventListener("keydown",e=>{
+  if($("cards").classList.contains("hidden") || $("about").open || $("welcome").open || !deck.length) return;
+  if(e.key===" " && document.activeElement!==$("flip")){ e.preventDefault(); flipCard(); }
+  else if($("flip").classList.contains("on") && (e.key==="1"||e.key==="ArrowLeft"||e.key==="ArrowRight"||e.key==="2")){
+    nextCard(e.key==="2" || (lang==="ar" ? e.key==="ArrowLeft" : e.key==="ArrowRight"));
+  }
+});
 window.addEventListener("beforeunload",e=>{
   if(mode==="exam" && !finished && !$("quiz").classList.contains("hidden")){ e.preventDefault(); e.returnValue=""; }
 });
