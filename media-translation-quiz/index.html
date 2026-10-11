@@ -162,7 +162,6 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
   .modes{grid-template-columns:1fr}
   .qtext{font-size:1.08rem}
   #langs .chip, #counts .chip{flex:1 1 0; min-width:0; padding:8px 0}
-  #lectures .chip{flex:1 1 auto}
 }
 /* tablets landscape & laptops */
 @media (min-width:1024px){
@@ -175,6 +174,18 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 @media (min-width:1024px) and (min-height:700px){
   #quiz .card{min-height:420px}
 }
+/* lecture picker */
+.grouphead{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px}
+.grouphead h2{margin:0 !important}
+.linkBtn{background:none; border:none; color:var(--primary); font-weight:600; font-size:.9rem; padding:8px 4px; min-height:44px; text-decoration:underline; text-underline-offset:4px}
+.lecList{display:grid; grid-template-columns:1fr; gap:8px}
+.lec{display:flex; align-items:center; gap:12px; width:100%; text-align:start; min-height:52px; padding:10px 14px;
+  border:2px solid var(--line); border-radius:8px; background:var(--surface); font-weight:600; transition:border-color .15s, background .15s}
+.lec .box{flex:none; width:22px; height:22px; border:2px solid var(--line); border-radius:5px; display:grid; place-items:center; font-size:.8rem; line-height:1; color:transparent}
+.lec[aria-pressed="true"]{border-color:var(--primary); background:var(--primary-soft)}
+.lec[aria-pressed="true"] .box{background:var(--primary); border-color:var(--primary); color:var(--on-primary)}
+@media (hover:hover){ .lec:hover{border-color:var(--primary)} }
+
 /* footer + about */
 .disclaimer{margin-top:16px !important; font-size:.88rem; font-weight:600; color:var(--warn) !important; background:var(--warn-soft); border-inline-start:3px solid var(--warn); border-radius:6px; padding:8px 12px}
 .foot{margin-top:48px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap}
@@ -216,8 +227,11 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
           </div>
         </div>
         <div class="group">
-          <h2 data-i="lecH"></h2>
-          <div class="chips" id="lectures"></div>
+          <div class="grouphead">
+            <h2 data-i="lecH"></h2>
+            <button class="linkBtn" id="allLec"></button>
+          </div>
+          <div class="lecList" id="lectures"></div>
           <p class="note" id="availNote"></p>
         </div>
         <div class="group">
@@ -822,7 +836,7 @@ const UI = {
     title:"كويز مقرر ترجمة الإعلام",
     sub:"اختر محاضرة واحدة أو أكثر من محاضرات المقرر، وابدأ اختبارك. تنسحب الأسئلة عشوائيًا من المحاضرات المختارة، وترتيب الخيارات يتغير كل مرة.",
     langH:"لغة الأسئلة", lecH:"اختر المحاضرات", modeH:"النمط", countH:"عدد الأسئلة",
-    selAll:"تحديد الكل", avail:n=>"عدد الأسئلة المتاحة حسب اختيارك: "+n, needLec:"اختر محاضرة واحدة على الأقل لتبدأ.",
+    selAll:"تحديد الكل", deselAll:"إلغاء تحديد الكل", avail:n=>"عدد الأسئلة المتاحة حسب اختيارك: "+n, needLec:"اختر محاضرة واحدة على الأقل لتبدأ.",
     m1:"تصحيح فوري", m1d:"بدون مؤقت. بعد كل إجابة تشوف الصح وسببه.",
     m2:"محاكاة اختبار", m2d:"مؤقت دقيقة لكل سؤال، والتصحيح بالنهاية فقط.",
     start:"ابدأ الاختبار", quit:"إنهاء", review:"مراجعة الإجابات", onlyWrong:"الأخطاء فقط", again:"اختبار جديد",
@@ -851,7 +865,7 @@ const UI = {
     title:"Media Translation Quiz",
     sub:"Pick one or more lectures from the course, then start your quiz. Questions are drawn randomly from the selected lectures each time, with shuffled answer order.",
     langH:"Question language", lecH:"Choose Lectures", modeH:"Mode", countH:"Number of questions",
-    selAll:"Select All", avail:n=>"Available questions for your selection: "+n, needLec:"Select at least one lecture to start.",
+    selAll:"Select all", deselAll:"Deselect all", avail:n=>"Available questions for your selection: "+n, needLec:"Select at least one lecture to start.",
     m1:"Instant feedback", m1d:"No timer. After each answer you see the correct one and why.",
     m2:"Exam simulation", m2d:"One minute per question, graded only at the end.",
     start:"Start quiz", quit:"End", review:"Review answers", onlyWrong:"Mistakes only", again:"New quiz",
@@ -899,14 +913,19 @@ function item(q){
 
 function renderLecChips(){
   const c=$("lectures"); c.innerHTML="";
-  const allBtn=document.createElement("button"); allBtn.className="chip";
-  allBtn.textContent=T().selAll;
-  allBtn.setAttribute("aria-pressed", selectedLectures.size===LECTURES.length);
-  allBtn.onclick=()=>{ LECTURES.forEach(l=>selectedLectures.add(l.id)); renderLecChips(); updateAvail(); };
-  c.appendChild(allBtn);
+  const all = selectedLectures.size===LECTURES.length;
+  const allBtn=$("allLec");
+  allBtn.textContent = all ? T().deselAll : T().selAll;
+  allBtn.onclick=()=>{
+    if(selectedLectures.size===LECTURES.length) selectedLectures.clear();
+    else LECTURES.forEach(l=>selectedLectures.add(l.id));
+    renderLecChips(); updateAvail();
+  };
   LECTURES.forEach(l=>{
-    const b=document.createElement("button"); b.className="chip";
-    b.textContent=l.title[lang];
+    const b=document.createElement("button"); b.className="lec";
+    const box=document.createElement("span"); box.className="box"; box.setAttribute("aria-hidden","true"); box.textContent="✓";
+    const t=document.createElement("span"); t.textContent=l.title[lang];
+    b.append(box,t);
     b.setAttribute("aria-pressed", selectedLectures.has(l.id));
     b.onclick=()=>{
       if(selectedLectures.has(l.id)) selectedLectures.delete(l.id); else selectedLectures.add(l.id);
