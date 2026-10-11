@@ -268,6 +268,7 @@ mark{background:var(--warn-soft); color:var(--warn); border-radius:3px; padding:
 #welcome .before b{display:block; margin-bottom:6px; font-size:.95rem}
 #welcome .before ul{margin:0; padding-inline-start:20px; display:flex; flex-direction:column; gap:6px; font-size:.9rem; line-height:1.6; color:var(--ink)}
 #welcome .go{width:100%; min-height:50px; border:none; border-radius:8px; background:var(--primary); color:var(--on-primary); font-weight:700; font-size:1.05rem}
+#about .aboutOrder{margin:14px 0 0; color:var(--ink); font-weight:600}
 #about .aboutWhy{margin:10px 0 0; color:var(--ink); font-size:.93rem}
 #about .close{width:100%; min-height:44px; border-radius:8px; border:2px solid var(--line); background:var(--bg); font-weight:600}
 @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important} button:active:not(:disabled){transform:none} }
@@ -415,9 +416,10 @@ mark{background:var(--warn-soft); color:var(--warn); border-radius:3px; padding:
 <dialog id="about" aria-labelledby="aboutName">
   <h2 id="aboutName" data-i="aboutName"></h2>
   <p data-i="aboutDegree"></p>
-  <p><span data-i="aboutJob"></span> <a href="https://www.tahakom.com/ar" target="_blank" rel="noopener" data-i="aboutCo"></a> <span data-i="aboutVia"></span></p>
   <p class="aboutWhy" data-i="aboutWhy"></p>
+  <p class="aboutOrder" data-i="aboutOrder"></p>
   <div class="links">
+    <a href="https://t.me/AlbadarQuiz" target="_blank" rel="noopener" dir="ltr">Telegram · t.me/AlbadarQuiz</a>
     <a href="mailto:badaribrahim743@gmail.com" dir="ltr">badaribrahim743@gmail.com</a>
     <a href="https://linkedin.com/in/albadaralmaymani" target="_blank" rel="noopener" dir="ltr">LinkedIn</a>
   </div>
@@ -973,7 +975,7 @@ const UI = {
     summaryBtn:"ملخص ومراجعة المحاضرات", summaryTitle:"ملخص المحاضرات", back:"رجوع",
     disclaimer:"الاختبار غير رسمي وقد يحتوي على أخطاء، تأكد من المصادر الأساسية.",
     aboutBtn:"About me", aboutName:"البدر إبراهيم الميمني", aboutDegree:"خريج علوم البيانات · جامعة أم القرى",
-    aboutJob:"مهندس شبكات ·", aboutCo:"تحكم", aboutVia:"(عبر Emircom)", close:"إغلاق",
+    aboutOrder:"تبي اختبار مثل هذا لمادتك؟ اطلبه من تلقرام:", close:"إغلاق",
     toLight:"☀ الوضع الفاتح", toDark:"☾ الوضع الداكن",
     brand:"البدر", topicBtn:"افتح الموضوع كامل من الملخص", topicHide:"إخفاء الموضوع",
     searchH:"دوّر في كل الملخصات", searchPh:"اكتب كلمة، مثلًا: headline", sCount:n=>n? "المواضيع اللي فيها كلماتك: "+n:"ما لقيت موضوع فيه كل الكلمات. جرب كلمات أقل.",
@@ -1013,7 +1015,7 @@ const UI = {
     summaryBtn:"Lecture Summaries & Review", summaryTitle:"Lecture Summaries", back:"Back",
     disclaimer:"This quiz is unofficial and may contain mistakes. Check the primary sources.",
     aboutBtn:"About me", aboutName:"Albadar Ibrahim Almaymani", aboutDegree:"Data Science graduate · Umm Al-Qura University",
-    aboutJob:"Network Engineer ·", aboutCo:"Tahakom", aboutVia:"(via Emircom)", close:"Close",
+    aboutOrder:"Want a quiz like this for your course? Order on Telegram:", close:"Close",
     toLight:"☀ Light mode", toDark:"☾ Dark mode",
     brand:"Albadar", topicBtn:"Open the full topic from the summary", topicHide:"Hide the topic",
     searchH:"Search all summaries", searchPh:"Type a word, e.g. headline", sCount:n=>n? n+(n===1?" topic matches":" topics match"):"No topic has all these words. Try fewer words.",
