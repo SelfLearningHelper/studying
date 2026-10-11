@@ -11,29 +11,26 @@ Practice quizzes that run in the browser, on phone or desktop. Each one is a sin
 | Media Translation | 81 | [Open](https://selflearninghelper.github.io/studying/media-translation-quiz/) |
 | ME 4441: Engineering Management | 70 | [Open](https://selflearninghelper.github.io/studying/me4441-quiz/) |
 | ME 4245: Renewable Energy, True or False | 290 | [Open](https://selflearninghelper.github.io/studying/me4245-TrueOrFalse/) |
-| IDP Competency Certification | 822 | [Open](https://selflearninghelper.github.io/studying/idp-certification-quiz/) |
 
-**Every question is checked against its source.** All 1,263 answers were matched to the original lecture slides or question-bank files, including slides that are images only.
+**Every question is checked against its source.** All 441 answers were matched to the original lecture slides, including slides that are images only.
 
 ## Features
 
-| Feature | Media Translation | ME 4441 | ME 4245 | IDP |
-|---|:-:|:-:|:-:|:-:|
-| Learn mode with instant feedback, and timed Exam mode | ✓ | ✓ | ✓ | ✓ |
-| Flashcards: recall the answer, then flip to check | ✓ | ✓ | | ✓ |
-| Arabic / English questions | ✓ | ✓ | ✓ | |
-| Arabic translation under English slide quotes | ✓ | ✓ | ✓ | |
-| Pick lectures or topics | ✓ | | ✓ | ✓ |
-| Question count fits the selection (under 10 = all of them) | ✓ | ✓ | ✓ | ✓ |
-| Open the full topic behind a question (summary, or IDP's reference library) | ✓ | ✓ | ✓ | ✓ |
-| Search the summaries or reference library | ✓ | ✓ | ✓ | ✓ |
-| Review screen with a mistakes-only filter | ✓ | ✓ | ✓ | ✓ |
-| Correct-answer streak and score celebration | ✓ | ✓ | ✓ | ✓ |
-| Keyboard shortcuts | ✓ | ✓ | ✓ | ✓ |
-| Dark / light theme that follows the device | ✓ | ✓ | ✓ | ✓ |
-| One-minute warning and leave warning in exams | ✓ | ✓ | | |
-
-The IDP question bank is by Hussain Shehab and used with his permission.
+| Feature | Media Translation | ME 4441 | ME 4245 |
+|---|:-:|:-:|:-:|
+| Learn mode with instant feedback, and timed Exam mode | ✓ | ✓ | ✓ |
+| Flashcards: recall the answer, then flip to check | ✓ | ✓ | |
+| Arabic / English questions | ✓ | ✓ | ✓ |
+| Arabic translation under English slide quotes | ✓ | ✓ | ✓ |
+| Pick lectures | ✓ | | ✓ |
+| Question count fits the selection (under 10 = all of them) | ✓ | ✓ | ✓ |
+| Open the full topic behind a question | ✓ | ✓ | ✓ |
+| Search the summaries | ✓ | ✓ | ✓ |
+| Review screen with a mistakes-only filter | ✓ | ✓ | ✓ |
+| Correct-answer streak and score celebration | ✓ | ✓ | ✓ |
+| Keyboard shortcuts | ✓ | ✓ | ✓ |
+| Dark / light theme that follows the device | ✓ | ✓ | ✓ |
+| One-minute warning and leave warning in exams | ✓ | ✓ | |
 
 ## Why I built this
 
@@ -60,29 +57,26 @@ Plain HTML, CSS and JavaScript, one file per quiz. The only external resource is
 | الترجمة الإعلامية | 81 | [افتح](https://selflearninghelper.github.io/studying/media-translation-quiz/) |
 | الإدارة الهندسية (ME 4441) | 70 | [افتح](https://selflearninghelper.github.io/studying/me4441-quiz/) |
 | الطاقة المتجددة: صح وخطأ (ME 4245) | 290 | [افتح](https://selflearninghelper.github.io/studying/me4245-TrueOrFalse/) |
-| شهادة كفاءة IDP | 822 | [افتح](https://selflearninghelper.github.io/studying/idp-certification-quiz/) |
 
-**كل سؤال متطابق مع مصدره.** الـ 1,263 إجابة كلها تمت مطابقتها مع السلايدات أو ملفات بنك الأسئلة الأصلية، حتى السلايدات اللي نصها صور.
+**كل سؤال متطابق مع مصدره.** الـ 441 إجابة كلها تمت مطابقتها مع السلايدات الأصلية، حتى السلايدات اللي نصها صور.
 
 ### المميزات
 
-| الميزة | الترجمة الإعلامية | ME 4441 | ME 4245 | IDP |
-|---|:-:|:-:|:-:|:-:|
-| وضع تعلم بتصحيح فوري، ووضع اختبار بوقت | ✓ | ✓ | ✓ | ✓ |
-| بطاقات: تتذكر الجواب وتقلب البطاقة تتأكد | ✓ | ✓ | | ✓ |
-| الأسئلة بالعربي أو الإنجليزي | ✓ | ✓ | ✓ | |
-| ترجمة عربية تحت الشروحات المنقولة من السلايدات | ✓ | ✓ | ✓ | |
-| اختيار المحاضرات أو المواضيع | ✓ | | ✓ | ✓ |
-| عدد الأسئلة يناسب اختيارك، وأقل من 10 يكون الاختبار عليها كلها | ✓ | ✓ | ✓ | ✓ |
-| تفتح الموضوع كامل اللي جاي منه السؤال، من الملخص أو من المكتبة المرجعية في IDP | ✓ | ✓ | ✓ | ✓ |
-| البحث في الملخصات أو المكتبة المرجعية | ✓ | ✓ | ✓ | ✓ |
-| مراجعة بعد الاختبار، مع عرض الأخطاء فقط | ✓ | ✓ | ✓ | ✓ |
-| سلسلة الإجابات الصح واحتفال بالنتيجة | ✓ | ✓ | ✓ | ✓ |
-| اختصارات الكيبورد | ✓ | ✓ | ✓ | ✓ |
-| وضع داكن وفاتح يتبع الجهاز | ✓ | ✓ | ✓ | ✓ |
-| تنبيه آخر دقيقة وتنبيه قبل الخروج من الاختبار | ✓ | ✓ | | |
-
-بنك أسئلة IDP من إعداد حسين شهاب، ومستخدم بإذنه.
+| الميزة | الترجمة الإعلامية | ME 4441 | ME 4245 |
+|---|:-:|:-:|:-:|
+| وضع تعلم بتصحيح فوري، ووضع اختبار بوقت | ✓ | ✓ | ✓ |
+| بطاقات: تتذكر الجواب وتقلب البطاقة تتأكد | ✓ | ✓ | |
+| الأسئلة بالعربي أو الإنجليزي | ✓ | ✓ | ✓ |
+| ترجمة عربية تحت الشروحات المنقولة من السلايدات | ✓ | ✓ | ✓ |
+| اختيار المحاضرات | ✓ | | ✓ |
+| عدد الأسئلة يناسب اختيارك، وأقل من 10 يكون الاختبار عليها كلها | ✓ | ✓ | ✓ |
+| تفتح الموضوع كامل اللي جاي منه السؤال | ✓ | ✓ | ✓ |
+| البحث في الملخصات | ✓ | ✓ | ✓ |
+| مراجعة بعد الاختبار، مع عرض الأخطاء فقط | ✓ | ✓ | ✓ |
+| سلسلة الإجابات الصح واحتفال بالنتيجة | ✓ | ✓ | ✓ |
+| اختصارات الكيبورد | ✓ | ✓ | ✓ |
+| وضع داكن وفاتح يتبع الجهاز | ✓ | ✓ | ✓ |
+| تنبيه آخر دقيقة وتنبيه قبل الخروج من الاختبار | ✓ | ✓ | |
 
 ### ليش سويتها
 
