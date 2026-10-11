@@ -48,11 +48,13 @@ It made a big difference for me, so I built it for every student going through t
 ### IDP Competency Certification
 - **Topic selection** from the full IDP review question banks.
 - **40 to 200 questions** per quiz.
-- **Learn or Exam mode**, with 30 or 60 seconds per question in Exam mode.
+- **Learn, Exam or Flashcards mode**, with 30 or 60 seconds per question in Exam mode.
+- **Streak counter** in Learn mode, and keyboard shortcuts (1-4 / A-D, Enter).
+- **Dark / light theme** that follows the device, with a toggle.
 - **Reference Library** to browse the material without taking a test.
 - **Results:** retry the same setup, start a new quiz, or show only wrong answers.
 - **Jump to question** navigation.
-- Question bank compiled by Hussain Shehab. For personal study only.
+- Question bank by Hussain Shehab, used with his permission. All 822 answers checked against his source PDFs.
 
 ---
 
@@ -73,11 +75,13 @@ It made a big difference for me, so I built it for every student going through t
 ### IDP Competency Certification
 - **اختيار المواضيع** من بنوك أسئلة مراجعة IDP كاملة.
 - **من 40 إلى 200 سؤال** في الاختبار الواحد.
-- **وضع تعلم أو اختبار**، والاختبار فيه 30 أو 60 ثانية لكل سؤال.
+- **وضع تعلم أو اختبار أو بطاقات**، والاختبار فيه 30 أو 60 ثانية لكل سؤال.
+- **عداد السلسلة** في وضع التعلم، واختصارات كيبورد (1-4 / A-D، و Enter).
+- **الوضع الداكن والفاتح** يتبع الجهاز، وفيه زر تبديل.
 - **مكتبة مرجعية** تتصفح فيها المادة بدون اختبار.
 - **النتائج:** تعيد نفس الإعدادات، أو تبدأ اختبار جديد، أو تعرض أخطاءك بس.
 - **انتقال مباشر** لأي سؤال.
-- بنك الأسئلة من إعداد Hussain Shehab، وللمذاكرة الشخصية فقط.
+- بنك الأسئلة من إعداد Hussain Shehab وبإذنه. والـ 822 إجابة كلها مطابقة لملفاته الأصلية.
 
 ---
 
