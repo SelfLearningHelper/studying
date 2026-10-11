@@ -190,6 +190,8 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .confetti{position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:3}
 
 /* flashcards */
+.cardsBtn{display:flex; flex-direction:column; align-items:center; gap:2px; padding:12px 16px}
+.cardsBtn span{font-weight:400; font-size:.86rem; color:var(--muted); line-height:1.5}
 .fcTop{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap}
 .fcProg{height:6px; background:var(--line); border-radius:3px; overflow:hidden; margin-bottom:20px}
 .fcProg i{display:block; height:100%; width:0; background:var(--primary); transition:width .35s cubic-bezier(.16,1,.3,1)}
@@ -291,7 +293,7 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
           <p class="note" id="timeNote"></p>
         </div>
         <button class="start" id="startBtn" data-i="start"></button>
-        <button class="start secondary" id="cardsBtn" data-i="cardsBtn"></button>
+        <button class="start secondary cardsBtn" id="cardsBtn"><strong data-i="cardsBtn"></strong><span data-i="cardsBtnD"></span></button>
         <button class="start secondary" id="summaryBtn" data-i="summaryBtn"></button>
       </div>
     </div>
@@ -928,7 +930,7 @@ const UI = {
     aboutJob:"مهندس شبكات ·", aboutCo:"تحكم", aboutVia:"(عبر Emircom)", close:"إغلاق",
     toLight:"☀ الوضع الفاتح", toDark:"☾ الوضع الداكن",
     brand:"البدر",
-    cardsBtn:"ذاكر بالبطاقات", fcTap:"اضغط على البطاقة عشان تقلبها", fcAnsLabel:"الإجابة",
+    cardsBtn:"ذاكر بالبطاقات", cardsBtnD:"تشوف السؤال بدون اختيارات، تتذكر الجواب، وتقلب البطاقة تتأكد.", fcTap:"اضغط على البطاقة عشان تقلبها", fcAnsLabel:"الإجابة",
     fcNo:"ما عرفتها", fcYes:"عرفتها", fcPos:(k,n)=>"عرفت <b>"+k+"</b> من "+n,
     fcDoneT:"خلصت كل البطاقات!", fcDone:(n,r)=>"عرفت "+n+" بطاقة"+(r?"، ورجعت لك "+r+" مرة للمراجعة.":" من أول مرة."), fcAgain:"بطاقات جديدة",
     streak:n=>n+" إجابات صح ورا بعض", best:n=>"أطول سلسلة صح: "+n,
@@ -962,7 +964,7 @@ const UI = {
     aboutJob:"Network Engineer ·", aboutCo:"Tahakom", aboutVia:"(via Emircom)", close:"Close",
     toLight:"☀ Light mode", toDark:"☾ Dark mode",
     brand:"Albadar",
-    cardsBtn:"Study with flashcards", fcTap:"Tap the card to flip it", fcAnsLabel:"Answer",
+    cardsBtn:"Study with flashcards", cardsBtnD:"See the question with no options, recall the answer, then flip the card to check.", fcTap:"Tap the card to flip it", fcAnsLabel:"Answer",
     fcNo:"Didn't know", fcYes:"Knew it", fcPos:(k,n)=>"Known <b>"+k+"</b> of "+n,
     fcDoneT:"All cards done!", fcDone:(n,r)=>"You learned "+n+" cards"+(r?", with "+r+" repeats along the way.":", all on the first try."), fcAgain:"New cards",
     streak:n=>n+" correct in a row", best:n=>"Longest streak: "+n,
