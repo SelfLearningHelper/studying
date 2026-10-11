@@ -38,7 +38,7 @@ It made a big difference for me, so I built it for every student going through t
 - **Flashcards mode (Media Translation, ME 4441):** see the question with no options, recall the answer, flip the card to check. Cards you miss come back until you know them.
 - **Arabic / English:** switch the question language before starting.
 - **Lecture selection:** quiz on one lecture or several (ME 4441 covers a single module).
-- **Adjustable question count.**
+- **Question count that fits your selection:** fewer than 10 questions means the quiz uses them all; otherwise the choices adapt to how many questions you picked (ME 4245 keeps its own slider).
 - **Review screen:** go through every answer after the quiz, or filter to mistakes only.
 - **Lecture summaries** built into the quiz for quick revision.
 - **Keyboard shortcuts:** `1`–`4` for multiple choice, `1`/`2` or `T`/`F` for true/false.
@@ -47,7 +47,7 @@ It made a big difference for me, so I built it for every student going through t
 
 ### IDP Competency Certification
 - **Topic selection** from the full IDP review question banks.
-- **40 to 200 questions** per quiz.
+- **Question count that fits your selection:** fewer than 10 questions means the quiz uses them all; up to 100 you get 10/20/30/50/All; above that 20 to 200.
 - **Learn, Exam or Flashcards mode**, with 30 or 60 seconds per question in Exam mode.
 - **Streak counter** in Learn mode, and keyboard shortcuts (1-4 / A-D, Enter).
 - **Dark / light theme** that follows the device, with a toggle.
@@ -65,7 +65,7 @@ It made a big difference for me, so I built it for every student going through t
 - **وضع البطاقات (الترجمة الإعلامية، ME 4441):** تشوف السؤال بدون اختيارات، تتذكر الجواب، وتقلب البطاقة تتأكد. البطاقات اللي ما عرفتها ترجع لك لين تعرفها.
 - **عربي / إنجليزي:** تختار لغة الأسئلة قبل ما تبدأ.
 - **اختيار المحاضرات:** محاضرة وحدة أو أكثر (ME 4441 فيه موديول واحد).
-- **عدد أسئلة تختاره أنت.**
+- **عدد أسئلة يناسب اختيارك:** لو أقل من 10 أسئلة يكون الاختبار عليها كلها، وغير كذا الخيارات تتغير حسب عدد الأسئلة اللي اخترتها (ME 4245 له شريطه الخاص).
 - **مراجعة بعد الاختبار:** تشوف كل الإجابات أو أخطاءك بس.
 - **ملخصات المحاضرات** داخل الاختبار نفسه.
 - **اختصارات الكيبورد:** `1`–`4` للاختيار من متعدد، و `1`/`2` أو `T`/`F` لصح وخطأ.
@@ -74,7 +74,7 @@ It made a big difference for me, so I built it for every student going through t
 
 ### IDP Competency Certification
 - **اختيار المواضيع** من بنوك أسئلة مراجعة IDP كاملة.
-- **من 40 إلى 200 سؤال** في الاختبار الواحد.
+- **عدد أسئلة يناسب اختيارك:** لو أقل من 10 أسئلة يكون الاختبار عليها كلها، ولين 100 تطلع لك 10/20/30/50/الكل، وفوقها من 20 إلى 200.
 - **وضع تعلم أو اختبار أو بطاقات**، والاختبار فيه 30 أو 60 ثانية لكل سؤال.
 - **عداد السلسلة** في وضع التعلم، واختصارات كيبورد (1-4 / A-D، و Enter).
 - **الوضع الداكن والفاتح** يتبع الجهاز، وفيه زر تبديل.

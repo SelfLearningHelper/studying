@@ -307,13 +307,8 @@ mark{background:var(--warn-soft); color:var(--warn); border-radius:3px; padding:
         </div>
         <div class="group">
           <h2 data-i="countH"></h2>
-          <div class="chips" id="counts">
-            <button class="chip" data-n="10" aria-pressed="false">10</button>
-            <button class="chip" data-n="20" aria-pressed="true">20</button>
-            <button class="chip" data-n="30" aria-pressed="false">30</button>
-            <button class="chip" data-n="40" aria-pressed="false">40</button>
-            <button class="chip" data-n="50" aria-pressed="false">50</button>
-          </div>
+          <div class="chips" id="counts"></div>
+          <p class="note hidden" id="countForced"></p>
           <p class="note" id="timeNote"></p>
         </div>
         <button class="start" id="startBtn" data-i="start"></button>
@@ -982,7 +977,8 @@ const UI = {
     aboutWhy:"سويت هذي الاختبارات لأنها ساعدتني أفهم موادي، وأبيها تساعد غيري.",
     welcomeTitle:"السلايدات تعلّمك. الأسئلة تثبّت.",
     welcomeBody:"هذا الموقع سويته لأنه اللي خلاني أفهم أصعب موادي. الحين صار لك.",
-    welcomeGo:"يلا نبدأ"
+    welcomeGo:"يلا نبدأ",
+    allN:n=>"الكل ("+n+")", forced:n=>n===1?"اخترت سؤال واحد فقط، والاختبار بيكون عليه.":"اخترت "+(n===2?"سؤالين":n+" أسئلة")+" فقط، والاختبار بيكون عليها كلها."
   },
   en:{
     title:"Media Translation Quiz",
@@ -1017,7 +1013,8 @@ const UI = {
     aboutWhy:"I built these quizzes because they helped me understand my courses, and I want them to help others.",
     welcomeTitle:"Slides teach. Questions make it stick.",
     welcomeBody:"I built this because it's what got me through my hardest courses. Now it's yours.",
-    welcomeGo:"Let's start"
+    welcomeGo:"Let's start",
+    allN:n=>"All ("+n+")", forced:n=>n===1?"Only 1 question in your selection, so the quiz uses it.":"Only "+n+" questions in your selection, so the quiz uses all of them."
   }
 };
 const SEC_PER_Q = 60;
@@ -1064,6 +1061,40 @@ function renderLecChips(){
     c.appendChild(b);
   });
 }
+/* ---- question count: options depend on how many questions the selection has ----
+   N < 10: no choice, the quiz uses all N. N <= 30: 10, 20, All. N <= 100: 10, 20, 30, 50, All.
+   N > 100: 20, 40, 80, 120, 200 (All only replaces values that reach N). */
+let countSel=null;
+function availN(){ return mode==="cards" ? cardPool().length : buildPool().length; }
+function countOptions(N){
+  if(N<10) return [];
+  const ladder = N<=30 ? [10,20] : N<=100 ? [10,20,30,50] : [20,40,80,120,200];
+  const opts = ladder.filter(x=>x<N);
+  if(N<=100 || ladder.some(x=>x>=N)) opts.push(N);
+  return opts;
+}
+function planned(){ const N=availN(); return N<10 ? N : Math.min(countSel||0, N); }
+function renderCounts(){
+  const N=availN(), opts=countOptions(N), box=$("counts"), forced=$("countForced");
+  box.innerHTML="";
+  box.classList.toggle("hidden", opts.length===0);
+  forced.classList.toggle("hidden", !(N>0 && N<10));
+  if(N>0 && N<10) forced.textContent=T().forced(N);
+  if(opts.length){
+    if(!opts.includes(countSel)){
+      // first render picks the middle option; later, snap to the nearest one that still exists
+      countSel = countSel===null ? opts[Math.floor((opts.length-1)/2)] : opts.reduce((a,b)=>Math.abs(b-countSel)<Math.abs(a-countSel)?b:a);
+    }
+    opts.forEach(n=>{
+      const b=document.createElement("button"); b.className="chip"; b.type="button";
+      b.textContent = n===N ? T().allN(N) : n;
+      b.setAttribute("aria-pressed", n===countSel);
+      b.onclick=()=>{ countSel=n; renderCounts(); };
+      box.appendChild(b);
+    });
+  }
+  updateNote();
+}
 function updateAvail(){
   const n = selectedLectures.size;
   if(n===0){ $("availNote").textContent = T().needLec; }
@@ -1072,6 +1103,7 @@ function updateAvail(){
     $("availNote").textContent = T().avail(total);
   }
   $("startBtn").disabled = n===0;
+  renderCounts();
 }
 
 function applyLang(){
@@ -1093,7 +1125,7 @@ function applyLang(){
   if(!$("summary").classList.contains("hidden")){ renderSumTabs(); renderSummary(); }
 }
 function updateNote(){
-  $("timeNote").textContent = mode==="exam" ? T().noteExam(count*SEC_PER_Q/60) : mode==="cards" ? T().noteCards : T().noteLearn;
+  $("timeNote").textContent = mode==="exam" ? T().noteExam(planned()*SEC_PER_Q/60) : mode==="cards" ? T().noteCards : T().noteLearn;
   $("startBtn").textContent = mode==="cards" ? T().startCards : T().start;
 }
 function setLang(l){ lang=l; try{localStorage.setItem("mtq-lang",l)}catch(e){} applyLang(); }
@@ -1101,9 +1133,6 @@ function setLang(l){ lang=l; try{localStorage.setItem("mtq-lang",l)}catch(e){} a
 document.querySelectorAll("#langs .chip").forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
 document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{
   mode=b.dataset.mode; document.querySelectorAll(".mode").forEach(x=>x.setAttribute("aria-pressed", x===b)); updateNote(); updateAvail();
-});
-document.querySelectorAll("#counts .chip").forEach(b=>b.onclick=()=>{
-  count=+b.dataset.n; document.querySelectorAll("#counts .chip").forEach(x=>x.setAttribute("aria-pressed", x===b)); updateNote();
 });
 $("langSwitch").onclick=$("langSwitch2").onclick=$("langSwitch3").onclick=()=>setLang(lang==="ar"?"en":"ar");
 $("summaryBtn").onclick=()=>{ renderSumTabs(); renderSummary(); show("summary"); };
@@ -1117,7 +1146,7 @@ function buildPool(){
 
 function start(){
   const pool = shuffle(buildPool());
-  const n = Math.min(count, pool.length);
+  const n = Math.min(planned(), pool.length);
   qs = pool.slice(0,n).map(p=>{
     const perm=shuffle([0,1,2,3]);
     return {lec:p.lec, i:p.i, perm, correct:perm.indexOf(0)};
@@ -1344,7 +1373,7 @@ function cardPool(){
 }
 function startCards(){
   const pool=shuffle(cardPool());
-  deck=pool.slice(0,count); fcTotal=deck.length; fcKnown=0; fcRepeats=0;
+  deck=pool.slice(0,planned()); fcTotal=deck.length; fcKnown=0; fcRepeats=0;
   $("fcStage").classList.remove("hidden"); $("fcDone").classList.add("hidden");
   show("cards"); renderCard();
 }
