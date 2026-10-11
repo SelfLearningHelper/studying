@@ -1,92 +1,58 @@
-# Studying — Interactive Practice Quizzes
+# Studying: Interactive Practice Quizzes
 
-Browser-based practice quizzes I built to study my university courses. Each quiz is one self-contained HTML file: no framework, no build step, no backend. It runs on GitHub Pages and works on phone and desktop.
+Practice quizzes that run in the browser, on phone or desktop. Each one is a single HTML file with no framework and no backend, hosted on GitHub Pages.
 
-اختبارات تدريبية تفاعلية بنيتها عشان أذاكر مواد الجامعة. كل اختبار ملف HTML واحد مستقل، بدون framework ولا build ولا backend. تشتغل على GitHub Pages، من الجوال أو الكمبيوتر.
-
----
-
-## Why I built this
-
-Some of my courses were hard, and rereading didn't help. What changed things was studying through questions: answer, find out right away why it's right or wrong, and check the summary in the same place. I also noticed that studying from something that doesn't look like the usual university slides makes you want to study instead of putting you off it.
-
-It made a big difference for me, so I built it for every student going through the same thing.
-
-## ليش سويتها
-
-كانت عندي مواد صعبة، وكثرة القراءة ما كانت تنفع. اللي غيّر الموضوع إني صرت أذاكر بالأسئلة: أجاوب، وأعرف فورًا ليش صح أو ليش غلط، وأرجع للملخص في نفس المكان. ولاحظت إن المذاكرة من شي شكله مختلف عن السلايدات اللي تعودنا عليها تفتح النفس للمذاكرة بدل ما تسدها.
-
-فرقت معي كثير، فبنيتها لكل طالب يمر بنفس اللي مريت فيه.
-
----
+اختبارات تدريبية تفاعلية تشتغل من المتصفح، على الجوال أو الكمبيوتر. كل اختبار ملف HTML واحد، بدون framework ولا backend، ومستضافة على GitHub Pages.
 
 ## Quizzes / الاختبارات
 
-| Quiz | Link |
-|---|---|
-| Media Translation | [Open](https://selflearninghelper.github.io/studying/media-translation-quiz/) |
-| ME 4245 — Renewable Energy: True or False (Lectures 1–3) | [Open](https://selflearninghelper.github.io/studying/me4245-TrueOrFalse/) |
-| ME 4441 — Engineering Management | [Open](https://selflearninghelper.github.io/studying/me4441-quiz/) |
-| IDP Competency Certification | [Open](https://selflearninghelper.github.io/studying/idp-certification-quiz/) |
+| Quiz / الاختبار | Questions / الأسئلة | Link / الرابط |
+|---|---|---|
+| Media Translation / الترجمة الإعلامية | 81 | [Open](https://selflearninghelper.github.io/studying/media-translation-quiz/) |
+| ME 4441 Engineering Management / الإدارة الهندسية | 70 | [Open](https://selflearninghelper.github.io/studying/me4441-quiz/) |
+| ME 4245 Renewable Energy, True or False / الطاقة المتجددة، صح وخطأ | 290 | [Open](https://selflearninghelper.github.io/studying/me4245-TrueOrFalse/) |
+| IDP Competency Certification | 822 | [Open](https://selflearninghelper.github.io/studying/idp-certification-quiz/) |
 
----
+**Every question is checked against its source.** All 1,263 answers were matched to the original lecture slides or question-bank files, including slides that are images only.
 
-## Features (English)
+**كل سؤال متطابق مع مصدره.** الـ 1,263 إجابة كلها تمت مطابقتها مع السلايدات أو ملفات بنك الأسئلة الأصلية، حتى السلايدات اللي نصها صور.
 
-### Media Translation · ME 4245 · ME 4441
-- **Two modes:** *Learn* has no timer and explains the correct answer after each question. *Exam* is timed and graded only at the end.
-- **Flashcards mode (Media Translation, ME 4441):** see the question with no options, recall the answer, flip the card to check. Cards you miss come back until you know them.
-- **Arabic / English:** switch the question language before starting.
-- **Lecture selection:** quiz on one lecture or several (ME 4441 covers a single module).
-- **Question count that fits your selection:** fewer than 10 questions means the quiz uses them all; otherwise the choices adapt to how many questions you picked (ME 4245 keeps its own slider).
-- **Review screen:** go through every answer after the quiz, or filter to mistakes only.
-- **Lecture summaries** built into the quiz for quick revision.
-- **Keyboard shortcuts:** `1`–`4` for multiple choice, `1`/`2` or `T`/`F` for true/false.
-- **Accessibility (Media Translation, ME 4441, ME 4245):** screen-reader announcements for feedback and the one-minute warning, 44px tap targets, and a warning before leaving an exam in progress.
-- **Dark / light theme (all quizzes):** follows the device by default, with a toggle that remembers your choice.
+## Features / المميزات
 
-### IDP Competency Certification
-- **Topic selection** from the full IDP review question banks.
-- **Question count that fits your selection:** fewer than 10 questions means the quiz uses them all; up to 100 you get 10/20/30/50/All; above that 20 to 200.
-- **Learn, Exam or Flashcards mode**, with 30 or 60 seconds per question in Exam mode.
-- **Streak counter** in Learn mode, and keyboard shortcuts (1-4 / A-D, Enter).
-- **Dark / light theme** that follows the device, with a toggle.
-- **Reference Library** to browse the material without taking a test.
-- **Results:** retry the same setup, start a new quiz, or show only wrong answers.
-- **Jump to question** navigation.
-- Question bank by Hussain Shehab, used with his permission. All 822 answers checked against his source PDFs.
+| Feature / الميزة | Media Translation | ME 4441 | ME 4245 | IDP |
+|---|:-:|:-:|:-:|:-:|
+| Learn mode with instant feedback, and timed Exam mode<br>وضع تعلم بتصحيح فوري، ووضع اختبار بوقت | ✓ | ✓ | ✓ | ✓ |
+| Flashcards: recall the answer, then flip to check<br>بطاقات: تتذكر الجواب وتقلب البطاقة تتأكد | ✓ | ✓ | | ✓ |
+| Arabic / English questions<br>الأسئلة بالعربي أو الإنجليزي | ✓ | ✓ | ✓ | |
+| Arabic translation under English slide quotes<br>ترجمة عربية تحت الشروحات المنقولة من السلايدات | ✓ | ✓ | ✓ | |
+| Pick lectures or topics<br>اختيار المحاضرات أو المواضيع | ✓ | | ✓ | ✓ |
+| Question count fits the selection (under 10 = all of them)<br>عدد الأسئلة يناسب اختيارك (أقل من 10 = كلها) | ✓ | ✓ | ✓ | ✓ |
+| Open the full topic behind a question (summary, or IDP's reference library)<br>تفتح الموضوع كامل اللي جاي منه السؤال (من الملخص، أو المكتبة المرجعية في IDP) | ✓ | ✓ | ✓ | ✓ |
+| Search the summaries or reference library<br>البحث في الملخصات أو المكتبة المرجعية | ✓ | ✓ | ✓ | ✓ |
+| Review screen with mistakes-only filter<br>مراجعة بعد الاختبار، مع عرض الأخطاء فقط | ✓ | ✓ | ✓ | ✓ |
+| Correct-answer streak and score celebration<br>سلسلة الإجابات الصح واحتفال بالنتيجة | ✓ | ✓ | ✓ | ✓ |
+| Keyboard shortcuts<br>اختصارات الكيبورد | ✓ | ✓ | ✓ | ✓ |
+| Dark / light theme that follows the device<br>وضع داكن وفاتح يتبع الجهاز | ✓ | ✓ | ✓ | ✓ |
+| One-minute warning and leave warning in exams<br>تنبيه آخر دقيقة وتنبيه قبل الخروج من الاختبار | ✓ | ✓ | | |
 
----
+The IDP question bank is by Hussain Shehab and used with his permission.
 
-## المميزات (عربي)
+بنك أسئلة IDP من إعداد Hussain Shehab، ومستخدم بإذنه.
 
-### الترجمة الإعلامية · ME 4245 · ME 4441
-- **وضعين:** *التعلم* بدون وقت، ويشرح لك الإجابة الصحيحة بعد كل سؤال. *الاختبار* بوقت محدد، والتصحيح في النهاية.
-- **وضع البطاقات (الترجمة الإعلامية، ME 4441):** تشوف السؤال بدون اختيارات، تتذكر الجواب، وتقلب البطاقة تتأكد. البطاقات اللي ما عرفتها ترجع لك لين تعرفها.
-- **عربي / إنجليزي:** تختار لغة الأسئلة قبل ما تبدأ.
-- **اختيار المحاضرات:** محاضرة وحدة أو أكثر (ME 4441 فيه موديول واحد).
-- **عدد أسئلة يناسب اختيارك:** لو أقل من 10 أسئلة يكون الاختبار عليها كلها، وغير كذا الخيارات تتغير حسب عدد الأسئلة اللي اخترتها (ME 4245 له شريطه الخاص).
-- **مراجعة بعد الاختبار:** تشوف كل الإجابات أو أخطاءك بس.
-- **ملخصات المحاضرات** داخل الاختبار نفسه.
-- **اختصارات الكيبورد:** `1`–`4` للاختيار من متعدد، و `1`/`2` أو `T`/`F` لصح وخطأ.
-- **إمكانية الوصول (الترجمة الإعلامية، ME 4441، ME 4245):** قارئ الشاشة ينطق التصحيح وتنبيه آخر دقيقة، وأزرار بحجم 44px، وتنبيه لو حاولت تطلع والاختبار شغال.
-- **الوضع الداكن والفاتح (كل الاختبارات):** يتبع إعداد الجهاز، وفيه زر تبديل يتذكر اختيارك.
+## Why I built this
 
-### IDP Competency Certification
-- **اختيار المواضيع** من بنوك أسئلة مراجعة IDP كاملة.
-- **عدد أسئلة يناسب اختيارك:** لو أقل من 10 أسئلة يكون الاختبار عليها كلها، ولين 100 تطلع لك 10/20/30/50/الكل، وفوقها من 20 إلى 200.
-- **وضع تعلم أو اختبار أو بطاقات**، والاختبار فيه 30 أو 60 ثانية لكل سؤال.
-- **عداد السلسلة** في وضع التعلم، واختصارات كيبورد (1-4 / A-D، و Enter).
-- **الوضع الداكن والفاتح** يتبع الجهاز، وفيه زر تبديل.
-- **مكتبة مرجعية** تتصفح فيها المادة بدون اختبار.
-- **النتائج:** تعيد نفس الإعدادات، أو تبدأ اختبار جديد، أو تعرض أخطاءك بس.
-- **انتقال مباشر** لأي سؤال.
-- بنك الأسئلة من إعداد Hussain Shehab وبإذنه. والـ 822 إجابة كلها مطابقة لملفاته الأصلية.
+I started with this for myself. Some of my courses were hard and rereading didn't help. What worked was studying through questions: answer, see right away why it's right or wrong, and check the summary in the same place. Studying from something that doesn't look like the usual slides also made studying feel lighter.
 
----
+It made a big difference for me, so now I build it for other students too.
+
+## ليش سويتها
+
+بديت بهذي الطريقة لنفسي. كانت عندي مواد صعبة، وكثرة القراءة ما كانت تنفع. اللي نفع إني أذاكر بالأسئلة: أجاوب، وأعرف فورًا ليش صح أو ليش غلط، وأرجع للملخص في نفس المكان. ولاحظت إن المذاكرة من شي شكله مختلف عن السلايدات اللي تعودنا عليها تخلي المذاكرة أخف على النفس.
+
+فرقت معي كثير، فصرت أسويها لغيري.
 
 ## Tech / التقنية
 
-Plain HTML, CSS and vanilla JavaScript in a single file per quiz. The only external resource is the IBM Plex Sans Arabic font from Google Fonts. The language and theme choices are saved in `localStorage`.
+Plain HTML, CSS and JavaScript, one file per quiz. The only external resource is the IBM Plex Sans Arabic font from Google Fonts. Language and theme choices are saved in `localStorage`.
 
 HTML و CSS و JavaScript عادي، وكل اختبار في ملف واحد. الشي الخارجي الوحيد هو خط IBM Plex Sans Arabic من Google Fonts. اختيار اللغة والثيم ينحفظ في `localStorage`.
