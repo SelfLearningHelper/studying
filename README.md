@@ -12,7 +12,6 @@ Browser-based practice quizzes I built to study my university courses. Each quiz
 |---|---|
 | Media Translation | [Open](https://selflearninghelper.github.io/studying/media-translation-quiz/) |
 | ME 4245 — Renewable Energy: True or False (Lectures 1–3) | [Open](https://selflearninghelper.github.io/studying/me4245-TrueOrFalse/) |
-| ME 4245 — Renewable Energy: True or False (Lectures 1–2) | [Open](https://selflearninghelper.github.io/studying/me4245-quiz/) |
 | ME 4441 — Engineering Management | [Open](https://selflearninghelper.github.io/studying/me4441-quiz/) |
 | IDP Competency Certification | [Open](https://selflearninghelper.github.io/studying/idp-certification-quiz/) |
 
