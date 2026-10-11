@@ -8,26 +8,29 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>(function(){var t;try{t=localStorage.getItem("me4245-theme")}catch(e){}
+if(t!=="light"&&t!=="dark")t=window.matchMedia&&matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";
+if(t==="light")document.documentElement.dataset.theme="light";})();</script>
 <style>
 :root{
-  --bg:#E9EEF0; --surface:#F7F9FA; --ink:#1D2A31; --muted:#5E6E76; --line:#CFD8DC;
-  --primary:#2F6F6A; --primary-soft:#D6E7E4; --ok:#2E8657; --ok-soft:#DCEFE3; --bad:#B6483F; --bad-soft:#F5DEDB;
-  --idle:#C3CDD1;
+  /* dark tokens; [data-theme="light"] swaps them. The theme follows the device until the user picks one with the toggle */
+  --bg:#111114; --surface:#1A1A1F; --ink:#F3F1EC; --muted:#A3A1A8; --line:#2E2D35;
+  --primary:#FF7A45; --primary-soft:#3A2218; --on-primary:#16110E;
+  --ok:#5BD08A; --ok-soft:#173022; --bad:#FF5A73; --bad-soft:#3B1820;
+  --warn:#FFC24B; --warn-soft:#2D2412;
+  --idle:#4A4952; --glow:rgba(255,122,69,.13);
+  color-scheme:dark;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#131A1E; --surface:#1B242A; --ink:#E3EAEC; --muted:#93A3AA; --line:#2E3A41;
-    --primary:#6FB5AC; --primary-soft:#1F3634; --ok:#5DBB86; --ok-soft:#1C3527; --bad:#E07C73; --bad-soft:#3A2220;
-    --idle:#34424A; color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{ color-scheme:dark;
-  --bg:#131A1E; --surface:#1B242A; --ink:#E3EAEC; --muted:#93A3AA; --line:#2E3A41;
-  --primary:#6FB5AC; --primary-soft:#1F3634; --ok:#5DBB86; --ok-soft:#1C3527; --bad:#E07C73; --bad-soft:#3A2220;
-  --idle:#34424A;
+:root[data-theme="light"]{
+  --bg:#F3F2EF; --surface:#FDFCFA; --ink:#17161A; --muted:#5C5A62; --line:#DEDBD5;
+  --primary:#C2410C; --primary-soft:#FDE6D9; --on-primary:#FFF8F3;
+  --ok:#1E7A45; --ok-soft:#DDF2E4; --bad:#C0263F; --bad-soft:#FBE0E4;
+  --warn:#7A4F00; --warn-soft:#FFF0CC;
+  --idle:#BDBAB4; --glow:rgba(194,65,12,.08);
+  color-scheme:light;
 }
 html{scroll-padding-top:env(safe-area-inset-top,0px); -webkit-text-size-adjust:100%}
 *,*::before,*::after{box-sizing:border-box}
@@ -35,20 +38,32 @@ body{
   margin:0; background:var(--bg); color:var(--ink);
   font-family:'IBM Plex Sans Arabic', 'Noto Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
   font-size:clamp(16px, 0.45vw + 14.5px, 19px); line-height:1.7;
+  transition:background-color .25s, color .25s;
 }
+body::before{content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:radial-gradient(900px 480px at 90% -8%, var(--glow), transparent 65%), radial-gradient(700px 420px at -5% 105%, var(--glow), transparent 60%)}
+section:not(.hidden){animation:rise .4s cubic-bezier(.16,1,.3,1)}
+@keyframes rise{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
+button:active:not(:disabled){transform:scale(.98)}
 .wrap{width:100%; max-width:760px; margin:0 auto; padding:clamp(20px,4vw,48px) clamp(14px,4vw,32px) 64px}
 button{font:inherit; color:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent}
 button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .hidden{display:none !important}
+.sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0}
 
 /* setup */
+/* brand */
+.brandbar{display:flex; margin:-6px 0 18px}
+.brand{background:none; border:none; padding:6px 0; min-height:44px; font-weight:700; font-size:1.05rem; letter-spacing:-.2px; color:var(--ink)}
+.brandDot{color:var(--primary)}
+@media (hover:hover){ .brand:hover{color:var(--primary)} }
 .intro h1{font-size:clamp(1.7rem, 3vw + 1rem, 2.5rem); line-height:1.25; margin:10px 0 6px; font-weight:700; letter-spacing:-.3px}
 .intro p{margin:0; color:var(--muted); max-width:60ch}
 .group{margin-top:30px}
 .group h2{font-size:1rem; font-weight:600; margin:0 0 12px}
-.modes{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.modes{display:grid; grid-template-columns:1fr; gap:10px}
 .mode{
-  text-align:start; background:var(--surface); border:2px solid var(--line); border-radius:14px;
+  text-align:start; background:var(--surface); border:2px solid var(--line); border-radius:8px;
   padding:16px 16px 14px; transition:border-color .15s, background .15s;
 }
 .mode{display:flex; flex-direction:column; justify-content:flex-start}
@@ -57,15 +72,15 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .mode[aria-pressed="true"]{border-color:var(--primary); background:var(--primary-soft)}
 .chips{display:flex; gap:8px; flex-wrap:wrap}
 .chip{
-  min-width:64px; min-height:46px; padding:8px 16px; border-radius:999px; border:2px solid var(--line);
+  min-width:64px; min-height:46px; padding:8px 16px; border-radius:8px; border:2px solid var(--line);
   background:var(--surface); font-weight:600; font-variant-numeric:tabular-nums;
 }
-.chip[aria-pressed="true"]{border-color:var(--primary); background:var(--primary); color:var(--surface)}
+.chip[aria-pressed="true"]{border-color:var(--primary); background:var(--primary-soft); color:var(--primary)}
 .chip.en{font-family:'Segoe UI', system-ui, sans-serif}
 .note{color:var(--muted); font-size:.88rem; margin-top:10px}
 .start{
-  margin-top:34px; width:100%; min-height:54px; padding:14px; border:none; border-radius:14px;
-  background:var(--primary); color:var(--surface); font-weight:700; font-size:1.08rem;
+  margin-top:34px; width:100%; min-height:54px; padding:14px; border:none; border-radius:8px;
+  background:var(--primary); color:var(--on-primary); font-weight:700; font-size:1.08rem;
 }
 @media (hover:hover){ .start:hover{filter:brightness(1.07)} }
 .start:disabled{opacity:.45; cursor:default}
@@ -76,10 +91,10 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .pos{font-weight:600; font-variant-numeric:tabular-nums}
 .pos small{color:var(--muted); font-weight:400}
 .barside{display:flex; align-items:center; gap:8px}
-.timer{font-variant-numeric:tabular-nums; font-weight:700; padding:4px 12px; border-radius:999px; background:var(--surface); border:1px solid var(--line); direction:ltr}
+.timer{font-variant-numeric:tabular-nums; font-weight:700; padding:4px 12px; border-radius:8px; background:var(--surface); border:1px solid var(--line); direction:ltr}
 .timer.low{color:var(--bad); border-color:var(--bad)}
-.mini{background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:4px 12px; font-size:.85rem; min-height:34px}
-.quit{background:none; border:none; color:var(--muted); font-size:.9rem; text-decoration:underline; padding:6px}
+.mini{background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:4px 12px; font-size:.85rem; min-height:44px}
+.quit{background:none; border:none; color:var(--muted); font-size:.9rem; text-decoration:underline; padding:6px; min-height:44px; min-width:44px}
 .rail{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:22px}
 .dot{width:14px; height:14px; border-radius:50%; background:var(--idle); border:none; padding:0; transition:transform .15s, background .2s}
 .dot.cur{outline:2px solid var(--ink); outline-offset:2px}
@@ -87,35 +102,37 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .dot.ok{background:var(--ok)}
 .dot.bad{background:var(--bad)}
 @media (hover:hover){ .rail.jump .dot:hover{transform:scale(1.25)} }
-@media (pointer:coarse){ .rail.jump .dot{width:18px; height:18px} }
-.card{background:var(--surface); border-radius:18px; padding:clamp(18px,3vw,32px) clamp(15px,3vw,30px); border:1px solid var(--line)}
-.lecTag{display:inline-block; background:var(--primary-soft); color:var(--primary); font-size:.78rem; font-weight:600; padding:3px 12px; border-radius:999px; margin-bottom:12px}
+.rail.jump{gap:0}
+.rail.jump .dot{width:44px; height:44px; padding:15px; background-clip:content-box}
+.rail.jump .dot.cur{outline-offset:-11px}
+.card{background:var(--surface); border-radius:8px; padding:clamp(18px,3vw,32px) clamp(15px,3vw,30px); border:1px solid var(--line)}
+.lecTag{display:inline-block; background:var(--primary-soft); color:var(--primary); font-size:.78rem; font-weight:600; padding:3px 12px; border-radius:8px; margin-bottom:12px}
 .qtext{font-size:1.18rem; font-weight:600; line-height:1.65; margin:0 0 18px}
 .opts{display:flex; flex-direction:column; gap:10px}
 .opt{
   display:flex; align-items:flex-start; gap:12px; text-align:start; width:100%; min-height:52px;
-  background:var(--bg); border:2px solid transparent; border-radius:12px; padding:12px 14px;
+  background:var(--bg); border:2px solid transparent; border-radius:8px; padding:12px 14px;
   transition:border-color .12s, background .12s;
 }
 @media (hover:hover){ .opt:hover:not(:disabled){border-color:var(--line)} }
 .opt .l{
-  flex:none; width:28px; height:28px; border-radius:50%; display:grid; place-items:center;
+  flex:none; width:28px; height:28px; border-radius:6px; display:grid; place-items:center;
   background:var(--surface); border:1.5px solid var(--line); font-weight:700; font-size:.9rem; margin-top:1px;
 }
 .opt .t{flex:1; min-width:0; overflow-wrap:anywhere}
 .opt.sel{border-color:var(--primary); background:var(--primary-soft)}
-.opt.sel .l{background:var(--primary); color:var(--surface); border-color:var(--primary)}
+.opt.sel .l{background:var(--primary); color:var(--on-primary); border-color:var(--primary)}
 .opt.ok{border-color:var(--ok); background:var(--ok-soft)}
-.opt.ok .l{background:var(--ok); color:var(--surface); border-color:var(--ok)}
+.opt.ok .l{background:var(--ok); color:var(--on-primary); border-color:var(--ok)}
 .opt.bad{border-color:var(--bad); background:var(--bad-soft)}
-.opt.bad .l{background:var(--bad); color:var(--surface); border-color:var(--bad)}
+.opt.bad .l{background:var(--bad); color:var(--on-primary); border-color:var(--bad)}
 .opt:disabled{cursor:default; color:inherit}
-.why{margin-top:16px; padding:14px 16px; border-radius:12px; border-inline-start:4px solid var(--ok); background:var(--ok-soft); font-size:.97rem}
+.why{margin-top:16px; padding:14px 16px; border-radius:8px; border-inline-start:4px solid var(--ok); background:var(--ok-soft); font-size:.97rem}
 .why.bad{border-inline-start-color:var(--bad); background:var(--bad-soft)}
 .why b{display:block; margin-bottom:2px}
 .nav{display:flex; gap:10px; margin-top:18px}
-.btn{flex:1; min-height:52px; padding:12px; border-radius:12px; border:2px solid var(--line); background:var(--surface); font-weight:600}
-.btn.main{background:var(--primary); border-color:var(--primary); color:var(--surface)}
+.btn{flex:1; min-height:52px; padding:12px; border-radius:8px; border:2px solid var(--line); background:var(--surface); font-weight:600}
+.btn.main{background:var(--primary); border-color:var(--primary); color:var(--on-primary)}
 .btn:disabled{opacity:.45; cursor:default}
 .hint{color:var(--muted); font-size:.85rem; margin-top:10px; text-align:center}
 
@@ -127,10 +144,10 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .verdict{font-size:1.15rem; font-weight:600; color:var(--ink) !important; margin-top:14px !important}
 .tools{display:flex; justify-content:space-between; align-items:center; margin:26px 0 12px; gap:10px; flex-wrap:wrap}
 .tools h2{margin:0; font-size:1.1rem}
-.toggle{background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:6px 14px; font-size:.9rem; min-height:38px}
+.toggle{background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:6px 14px; font-size:.9rem; min-height:44px}
 .toggle[aria-pressed="true"]{background:var(--ink); color:var(--surface); border-color:var(--ink)}
 .review{display:grid; grid-template-columns:1fr; gap:10px}
-.rev{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px 18px; border-inline-start:5px solid var(--ok)}
+.rev{background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:16px 18px; border-inline-start:5px solid var(--ok)}
 .rev.bad{border-inline-start-color:var(--bad)}
 .rev .rq{font-weight:600; margin:0 0 8px}
 .rev .ra{font-size:.93rem; margin:2px 0}
@@ -140,34 +157,15 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .again{margin-top:22px}
 
 /* summary */
-.sec{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin-bottom:12px}
+.sec{background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:16px 18px; margin-bottom:12px}
 .sec h3{margin:0 0 10px; font-size:1.05rem; color:var(--primary)}
 .sec ul, .sec ol{margin:0; padding-inline-start:22px; display:flex; flex-direction:column; gap:6px; font-size:.97rem; line-height:1.6}
-
-/* true / false */
-.opts.tf{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-.opts.tf .opt{justify-content:center; align-items:center; min-height:64px; font-weight:700; font-size:1.05rem}
-.opts.tf .opt .t{flex:none}
-.countBox{display:flex; flex-direction:column; gap:12px; max-width:420px}
-.countRow{display:flex; align-items:center; gap:10px}
-.stepBtn{flex:none; width:48px; height:48px; border-radius:12px; border:2px solid var(--line); background:var(--surface); font-size:1.4rem; font-weight:700; line-height:1}
-.countInput{flex:1; min-width:0; height:48px; border-radius:12px; border:2px solid var(--primary); background:var(--surface); color:var(--ink); text-align:center; font:inherit; font-size:1.25rem; font-weight:700; font-variant-numeric:tabular-nums}
-.countInput:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
-.countRange{width:100%; accent-color:var(--primary); margin:0; height:28px}
-.rangeEnds{display:flex; justify-content:space-between; color:var(--muted); font-size:.82rem; font-variant-numeric:tabular-nums; margin-top:-8px}
-#countQuick{flex-wrap:wrap}
-#countQuick .chip{flex:1 1 auto; min-width:56px; min-height:44px; padding:6px 14px; white-space:nowrap; border-radius:999px}
-.confirmBox{margin-top:18px; padding:14px 16px; border-radius:12px; background:var(--bad-soft); border:1px solid var(--bad)}
-.confirmBox p{margin:0 0 4px; font-weight:600}
-.confirmBox .nav{margin-top:10px}
-#lectures, #sumTabs{display:grid; grid-template-columns:1fr; gap:8px}
-#lectures .chip, #sumTabs .chip{width:100%; border-radius:12px; padding:10px 16px; text-align:start; flex:none}
 
 /* phones */
 @media (max-width:560px){
   .modes{grid-template-columns:1fr}
   .qtext{font-size:1.08rem}
-  .chip{flex:1 1 0; min-width:0; padding:8px 0}
+  #langs .chip, #counts .chip{flex:1 1 0; min-width:0; padding:8px 0}
 }
 /* tablets landscape & laptops */
 @media (min-width:1024px){
@@ -178,19 +176,129 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
   .review{grid-template-columns:1fr 1fr; align-items:start}
 }
 @media (min-width:1024px) and (min-height:700px){
-  #quiz .card{min-height:0}
+  #quiz .card{min-height:420px}
 }
-@media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+/* feedback motion */
+@keyframes pop{0%{transform:scale(1)} 40%{transform:scale(1.035)} 100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)} 40%{transform:translateX(7px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)}}
+.opt.pop{animation:pop .38s cubic-bezier(.16,1,.3,1)}
+.opt.shake{animation:shake .38s ease-in-out}
+.streak{font-weight:700; padding:4px 10px; border-radius:8px; background:var(--primary-soft); color:var(--primary); font-variant-numeric:tabular-nums; direction:ltr}
+.streak.bump{animation:pop .3s cubic-bezier(.16,1,.3,1)}
+.best{color:var(--primary) !important; font-weight:600}
+#quiz .card{transition:transform .25s ease-out}
+.confetti{position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:3}
+
+/* flashcards */
+.fcTop{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap}
+.fcProg{height:6px; background:var(--line); border-radius:3px; overflow:hidden; margin-bottom:20px}
+.fcProg i{display:block; height:100%; width:0; background:var(--primary); transition:width .35s cubic-bezier(.16,1,.3,1)}
+.flipWrap{perspective:1400px}
+.flip{display:grid; width:100%; padding:0; border:none; background:none; text-align:start; transition:transform .55s cubic-bezier(.16,1,.3,1); transform-style:preserve-3d}
+.flip.on{transform:rotateY(180deg)}
+.face{grid-area:1/1; backface-visibility:hidden; -webkit-backface-visibility:hidden; background:var(--surface); border:1px solid var(--line); border-radius:8px;
+  padding:clamp(20px,4vw,34px); min-height:300px; display:flex; flex-direction:column}
+.face.back{transform:rotateY(180deg); border-color:var(--primary)}
+.face .fq{font-size:1.2rem; font-weight:600; line-height:1.65; margin:6px 0 0}
+.face .tap{margin-top:auto; padding-top:18px; color:var(--muted); font-size:.85rem; text-align:center}
+.face .ans{font-size:1.15rem; font-weight:700; color:var(--primary); margin:6px 0 14px; line-height:1.6}
+.face .exp{color:var(--muted); font-size:.95rem; line-height:1.65}
+.fcBtns{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px}
+.fcBtns .btn.no{border-color:var(--bad); color:var(--bad)}
+.fcBtns .btn.yes{border-color:var(--ok); color:var(--ok)}
+.fcDone{text-align:center; padding:40px 0 10px}
+.fcDone .big{font-size:3rem; line-height:1}
+.fcDone h2{margin:14px 0 6px}
+.fcDone p{color:var(--muted); margin:0}
+
+/* topic from summary */
+.topicBtn{display:inline-flex; align-items:center; gap:6px; margin-top:12px; background:var(--surface); border:1.5px dashed var(--primary); color:var(--primary);
+  border-radius:8px; padding:8px 14px; min-height:44px; font-weight:600; font-size:.92rem}
+@media (hover:hover){ .topicBtn:hover{background:var(--primary-soft)} }
+.topicPanel{margin-top:12px; padding:14px 16px; border-radius:8px; background:var(--surface); border:1px solid var(--line); color:var(--ink); animation:rise .3s cubic-bezier(.16,1,.3,1)}
+.topicPanel h4{margin:8px 0 10px; font-size:1.02rem; color:var(--primary); line-height:1.5}
+.topicPanel > ul, .topicPanel > ol{margin:0 0 14px; padding-inline-start:22px; display:flex; flex-direction:column; gap:7px; font-size:.95rem; line-height:1.65}
+.topicPanel .searchWrap{border-top:1px solid var(--line); padding-top:12px}
+.topicPanel .searchWrap h5{margin:0 0 8px; font-size:.9rem}
+.topicPanel .sRes{background:var(--bg)}
+
+/* summary search */
+.search{position:relative; margin:4px 0 14px}
+.search input{width:100%; min-height:48px; padding:10px 14px; border:2px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); font:inherit; font-size:1rem}
+.search input::placeholder{color:var(--muted)}
+.search input:focus{outline:none; border-color:var(--primary)}
+.sCount{color:var(--muted); font-size:.85rem; margin:0 0 10px}
+.sRes{background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:14px 16px; margin-bottom:10px}
+.sRes h4{margin:6px 0 8px; font-size:1rem; color:var(--primary); line-height:1.5}
+.sRes ul{margin:0; padding-inline-start:20px; display:flex; flex-direction:column; gap:6px; font-size:.95rem; line-height:1.6}
+mark{background:var(--warn-soft); color:var(--warn); border-radius:3px; padding:0 2px}
+
+/* Arabic translation under an English explanation */
+.tr{margin:8px 0 0; padding-inline-start:10px; border-inline-start:2px solid currentColor; opacity:.85; font-size:.95em}
+
+/* lecture picker */
+.grouphead{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px}
+.grouphead h2{margin:0 !important}
+.linkBtn{background:none; border:none; color:var(--primary); font-weight:600; font-size:.9rem; padding:8px 4px; min-height:44px; text-decoration:underline; text-underline-offset:4px}
+.lecList{display:grid; grid-template-columns:1fr; gap:8px}
+.lec{display:flex; align-items:center; gap:12px; width:100%; text-align:start; min-height:52px; padding:10px 14px;
+  border:2px solid var(--line); border-radius:8px; background:var(--surface); font-weight:600; transition:border-color .15s, background .15s}
+.lec .box{flex:none; width:22px; height:22px; border:2px solid var(--line); border-radius:5px; display:grid; place-items:center; font-size:.8rem; line-height:1; color:transparent}
+.lec[aria-pressed="true"]{border-color:var(--primary); background:var(--primary-soft)}
+.lec[aria-pressed="true"] .box{background:var(--primary); border-color:var(--primary); color:var(--on-primary)}
+@media (hover:hover){ .lec:hover{border-color:var(--primary)} }
+
+/* footer + about */
+.disclaimer{margin-top:16px !important; font-size:.88rem; font-weight:600; color:var(--warn) !important; background:var(--warn-soft); border-inline-start:3px solid var(--warn); border-radius:6px; padding:8px 12px}
+.foot{margin-top:48px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap}
+.aboutBtn{background:none; border:1px solid var(--line); border-radius:8px; padding:6px 18px; min-height:44px; color:var(--muted); font-size:.9rem}
+@media (hover:hover){ .aboutBtn:hover{color:var(--ink); border-color:var(--ink)} }
+#about{border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--ink); padding:24px 22px 18px; width:min(92vw,420px)}
+#about::backdrop{background:rgba(10,10,12,.6)}
+#about h2{margin:0 0 2px; font-size:1.2rem}
+#about p{margin:0 0 4px; color:var(--muted); font-size:.95rem}
+#about .links{display:flex; flex-direction:column; gap:6px; margin:14px 0 18px}
+#about a{color:var(--primary); font-weight:600; overflow-wrap:anywhere}
+#welcome{border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--ink); padding:28px 24px 22px; width:min(92vw,440px)}
+#welcome::backdrop{background:rgba(10,10,12,.7)}
+#welcome h2{margin:0 0 10px; font-size:1.35rem; line-height:1.4}
+#welcome h2::before{content:""; display:block; width:36px; height:4px; background:var(--primary); border-radius:2px; margin-bottom:14px}
+#welcome p{margin:0 0 20px; color:var(--muted)}
+#welcome .go{width:100%; min-height:50px; border:none; border-radius:8px; background:var(--primary); color:var(--on-primary); font-weight:700; font-size:1.05rem}
+#about .aboutWhy{margin:10px 0 0; color:var(--ink); font-size:.93rem}
+#about .close{width:100%; min-height:44px; border-radius:8px; border:2px solid var(--line); background:var(--bg); font-weight:600}
+@media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important} button:active:not(:disabled){transform:none} }
+
+/* true / false */
+.opts.tf{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.opts.tf .opt{justify-content:center; align-items:center; min-height:64px; font-weight:700; font-size:1.05rem}
+.opts.tf .opt .t{flex:none}
+.countBox{display:flex; flex-direction:column; gap:12px; max-width:420px}
+.countRow{display:flex; align-items:center; gap:10px}
+.stepBtn{flex:none; width:48px; height:48px; border-radius:8px; border:2px solid var(--line); background:var(--surface); font-size:1.4rem; font-weight:700; line-height:1}
+.countInput{flex:1; min-width:0; height:48px; border-radius:8px; border:2px solid var(--primary); background:var(--surface); color:var(--ink); text-align:center; font:inherit; font-size:1.25rem; font-weight:700; font-variant-numeric:tabular-nums}
+.countInput:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
+.countRange{width:100%; accent-color:var(--primary); margin:0; height:28px}
+.rangeEnds{display:flex; justify-content:space-between; color:var(--muted); font-size:.82rem; font-variant-numeric:tabular-nums; margin-top:-8px}
+#countQuick{flex-wrap:wrap}
+#countQuick .chip{flex:1 1 auto; min-width:56px; min-height:44px; padding:6px 14px; white-space:nowrap}
+.confirmBox{margin-top:18px; padding:14px 16px; border-radius:8px; background:var(--bad-soft); border:1px solid var(--bad)}
+.confirmBox p{margin:0 0 4px; font-weight:600}
+.confirmBox .nav{margin-top:10px}
+#sumTabs{display:grid; grid-template-columns:1fr; gap:8px}
+#sumTabs .chip{width:100%; padding:10px 16px; text-align:start; flex:none}
 </style>
 </head>
 <body>
 <div class="wrap">
+  <header class="brandbar"><button class="brand" id="brandBtn" aria-haspopup="dialog"><span data-i="brand"></span><span class="brandDot">.</span></button></header>
 
   <section id="setup">
     <div class="setup-grid">
       <div class="intro">
         <h1 data-i="title"></h1>
         <p data-i="sub"></p>
+        <p class="disclaimer" data-i="disclaimer"></p>
       </div>
       <div>
         <div class="group">
@@ -201,8 +309,11 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
           </div>
         </div>
         <div class="group">
-          <h2 data-i="lecH"></h2>
-          <div class="chips" id="lectures"></div>
+          <div class="grouphead">
+            <h2 data-i="lecH"></h2>
+            <button class="linkBtn" id="allLec"></button>
+          </div>
+          <div class="lecList" id="lectures"></div>
           <p class="note" id="availNote"></p>
         </div>
         <div class="group">
@@ -236,6 +347,7 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
     <div class="bar">
       <div class="pos" id="pos"></div>
       <div class="barside">
+        <div class="streak hidden" id="streak"></div>
         <div class="timer hidden" id="timer"></div>
         <button class="mini" id="langSwitch"></button>
         <button class="quit" id="quitBtn" data-i="quit"></button>
@@ -246,7 +358,7 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
       <span class="lecTag" id="lecTag"></span>
       <p class="qtext" id="qtext"></p>
       <div class="opts tf" id="opts"></div>
-      <div class="why hidden" id="why"></div>
+      <div aria-live="polite"><div class="why hidden" id="why"></div></div>
     </div>
     <div class="confirmBox hidden" id="confirmBox"><p id="confirmMsg"></p><div class="nav"><button class="btn" id="confirmNo"></button><button class="btn main" id="confirmYes"></button></div></div>
     <div class="nav" id="nav"></div>
@@ -258,6 +370,7 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
       <div class="big" id="bigScore"></div>
       <p id="pct"></p>
       <p class="verdict" id="verdict"></p>
+      <p class="best hidden" id="best"></p>
     </div>
     <div class="tools">
       <h2 data-i="review"></h2>
@@ -278,11 +391,39 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
         <button class="quit" id="summaryBackBtn" data-i="back"></button>
       </div>
     </div>
-    <div class="chips" id="sumTabs" style="margin-bottom:18px"></div>
-    <div id="summaryContent"></div>
+    <div class="search"><input type="search" id="sumSearch" autocomplete="off" enterkeyhint="search"></div>
+    <div id="sumSearchRes" class="hidden"></div>
+    <div id="sumBrowse">
+      <div class="chips" id="sumTabs" style="margin-bottom:18px"></div>
+      <div id="summaryContent"></div>
+    </div>
   </section>
 
+  <footer class="foot">
+    <button class="aboutBtn" id="themeBtn"></button>
+    <button class="aboutBtn" id="aboutBtn" data-i="aboutBtn" aria-haspopup="dialog"></button>
+  </footer>
 </div>
+
+<dialog id="about" aria-labelledby="aboutName">
+  <h2 id="aboutName" data-i="aboutName"></h2>
+  <p data-i="aboutDegree"></p>
+  <p><span data-i="aboutJob"></span> <a href="https://www.tahakom.com/ar" target="_blank" rel="noopener" data-i="aboutCo"></a> <span data-i="aboutVia"></span></p>
+  <p class="aboutWhy" data-i="aboutWhy"></p>
+  <div class="links">
+    <a href="mailto:badaribrahim743@gmail.com" dir="ltr">badaribrahim743@gmail.com</a>
+    <a href="https://linkedin.com/in/albadaralmaymani" target="_blank" rel="noopener" dir="ltr">LinkedIn</a>
+  </div>
+  <button class="close" id="aboutClose" data-i="close"></button>
+</dialog>
+
+<dialog id="welcome" aria-labelledby="welcomeTitle">
+  <h2 id="welcomeTitle" data-i="welcomeTitle"></h2>
+  <p data-i="welcomeBody"></p>
+  <button class="go" id="welcomeGo" data-i="welcomeGo"></button>
+</dialog>
+
+
 
 <script>
 /* Each item: [statement AR, statement EN, 1=True / 0=False, explanation AR, explanation EN] */
@@ -899,6 +1040,18 @@ const LECTURES = [
   { id:"l3", title:{ar:"المحاضرة 3: أنظمة الكهرباء الشمسية", en:"Lecture 3: Solar Electric Systems"}, short:{ar:"م3: الأنظمة", en:"L3: PV Systems"}, bank:BANK_L3, summary:{ar:SUM_L3_AR, en:SUM_L3_EN} }
 ];
 
+/* summary section (index into summary[lang]) that each statement comes from, per lecture */
+const SEC_MAP={"l1": [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 0, 6], "l2": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7], "l3": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5, 5, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7]};
+
+/* Arabic translation of explanations that quote the slides in English, shown under the original when the page is in Arabic.
+   Checked against the lecture slides. null = the explanation is already in Arabic. */
+const EXP_AR={
+  l1:["مصادر الطاقة تُصنَّف عادةً إلى تقليدية وغير تقليدية.", null, null, null, null, null, null, null, null, null, "الفحم يُستخدم أساسًا لتوليد الكهرباء والصناعات الثقيلة.", null, "البترول: الوقود الرئيسي للنقل.", "كثافة طاقة عالية، وسهل النقل والتخزين.", "الغاز الطبيعي: انبعاثات ثاني أكسيد الكربون أقل من الفحم لكل وحدة طاقة.", "لا يزال وقودًا أحفوريًا ومصدرًا لانبعاثات غازات الاحتباس الحراري.", "يحتاج خطوط أنابيب أو بنية تحتية للغاز المسال (LNG).", "العكس: من مميزاتها أنها مناسبة للإنتاج المستمر للطاقة.", "العكس: سهلة التخزين مقارنةً بكثير من المصادر المتجددة.", "لكن توفرها غير متساوٍ جغرافيًا.", "العكس: احتياطيات الفحم وفيرة لكن جودتها تختلف كثيرًا.", "العكس: موارد اليورانيوم محدودة لكن كثافة طاقتها عالية جدًا.", "موارد النفط متركزة في مناطق معينة.", null, "كلاهما مذكور ضمن سلبيات مصادر الطاقة التقليدية.", "تعريف الشريحة: طُوِّرت كبدائل لأنظمة الطاقة التقليدية المعتمدة على الوقود الأحفوري.", "الطاقة الشمسية مصدرها الإشعاع الصادر من الشمس.", null, "الطاقة الشمسية الكهروضوئية (PV): تحوّل ضوء الشمس إلى كهرباء مباشرةً.", null, null, null, "العكس: كمية الطاقة المولدة تعتمد بقوة على سرعة الرياح.", null, null, "الأنواع الثلاثة في الشريحة: الخزانات (Reservoir)، وجريان النهر (Run-of-river)، والطاقة الكهرومائية الصغيرة.", "الطاقة الكهرومائية من أكثر تقنيات الكهرباء المتجددة رسوخًا.", null, "عنوان الشريحة: طاقة المد والجزر (أحد أنواع طاقة المحيطات).", null, null, null, "تعريف تحويل الطاقة الحرارية للمحيطات (OTEC) في الشريحة: يستخدم فرق الحرارة بين ماء السطح الدافئ وماء الأعماق البارد.", null, "أنواع OTEC: الدورة المغلقة، والدورة المفتوحة، والدورة الهجينة.", "الكتلة الحيوية طاقة نحصل عليها من المواد العضوية.", "طرق التحويل في الرسم: الحرق، والتغويز، والتحلل الحراري، والهضم اللاهوائي، والتخمير.", "من المميزات: مناسبة لتوليد الطاقة الموزّع.", "العكس: تقلل التعرض لتقلبات أسعار الوقود الأحفوري.", "العكس: تقدر توفر الطاقة للمناطق النائية وغير المتصلة بالشبكة.", "من السلبيات: كثافة طاقة أقل مقارنةً بالوقود التقليدي.", "أول بند في السلبيات الرئيسية للطاقة المتجددة.", "الشريحة: التأثيرات البيئية والإيكولوجية لا تزال ممكنة.", "بعض الأنظمة تحتاج مساحات أرض كبيرة.", "من السلبيات المذكورة: تحديات الدمج مع الشبكة.", null, "العكس: التخزين أقل أهمية للتقليدية، ومهم للطاقة الشمسية والرياح.", "جدول المقارنة: التقليدية = أقل ملاءمة، والمتجددة = ملائمة جدًا.", "جدول المقارنة: التقليدية = محدودة، والمتجددة = عالية.", null, null, "«محدودة في الغالب» وصف للتقليدية. المتجددة تتجدد طبيعيًا."],
+  l2:[null, null, "القدرة = سرعة إنتاج الطاقة أو استهلاكها في لحظة معينة، ووحدتها الواط (W).", null, "تعريف الواط في شريحة إنتاج القدرة والطاقة: 1 واط = 1 جول في الثانية.", null, null, null, "العبارة في أسفل شريحة إنتاج القدرة والطاقة: القدرة الناتجة تعتمد على الكفاءة والموقع وتوفر المصدر المتجدد ووقت الاستخدام.", "الأجهزة الكهربائية تُحدَّد حسب أقصى قدرة تستهلكها، واستهلاك الطاقة يعتمد على مدة التشغيل.", "ضرب وليس قسمة: الطاقة (kWh) = القدرة (kW) × الزمن (ساعات).", null, null, null, null, "حرارة الشمس = 5777 كلفن (9,939 °F). انتبه للوحدة: كلفن.", null, "قطر الشمس = 1.39×10⁹ م (≈ 1,392,000 كم).", null, "الأشعة تحت الحمراء ≈ 52%، والضوء المرئي ≈ 43%، والأشعة فوق البنفسجية ≈ 5%.", null, "أشعة الضوء المرئي: حوالي 43%، وهي اللي تشوفها العين.", "الأشعة فوق البنفسجية: حوالي 5%، وطول موجتها قصير.", "كل ما قصر الطول الموجي زادت شدة الطاقة (شريحة الطيف).", null, "من رسم الطيف: عند مستوى سطح البحر الإشعاع الشمسي تقريبًا 1000 W/m².", "من رسم الطيف: جزء من الطاقة يمتصه بخار الماء وغازات الغلاف الجوي عند نطاقات الامتصاص.", "الإشعاع المباشر: الإشعاع اللي يوصل لسطح الأرض بدون ما يتشتت.", null, null, "الإشعاع المنتشر: جزء من ضوء الشمس يمتصه أو يشتته أو يعكسه الهواء وبخار الماء والسحب والغبار وغيرها.", null, "الإشعاع الكلي = المباشر + المنتشر + المنعكس.", "يُقاس غالبًا على سطح أفقي، ويُسمى عادةً الإشعاع الكلي (global radiation).", "الإشعاع الشمسي (W/m²): معدل القدرة الإشعاعية الساقطة على سطح لكل وحدة مساحة.", null, "التشمس (kWh/m²): مجموع ضوء الشمس خلال فترة (يوم أو شهر أو سنة) لكل وحدة مساحة.", "تقريبًا 1367 W/m² في الفضاء.", null, "التعريف: سطح مستوٍ عمودي على أشعة الشمس خارج الغلاف الجوي، عند متوسط المسافة بين الأرض والشمس.", "الكتلة الهوائية: مقياس لكمية الغلاف الجوي اللي تمر فيها أشعة الشمس قبل ما توصل لسطح الأرض.", null, null, null, null, "الاعتدال يحدث مرتين في السنة (مارس وسبتمبر).", "تعريف الاعتدال: تكون الشمس عموديةً فوق نقطة على خط الاستواء.", null, "الانقلاب الصيفي 21–22 يونيو: الطاقة الشمسية الواصلة في أعلاها في نصف الكرة الشمالي.", null, null, "مسار الشمس: المسار اليومي والموسمي على شكل قوس اللي تظهر الشمس تمشي عليه في السماء.", null, "ساعات الذروة الشمسية: عدد الساعات المكافئ في اليوم اللي يكون فيها متوسط الإشعاع 1000 W/m².", null, null, "أغلب بيانات الإشعاع الشمسي تُعرض بساعات الذروة الشمسية.", null, null, null, null, "خط العرض: قياس زاوي من 0° عند خط الاستواء إلى 90° عند القطبين.", null, "خط الطول: قياس زاوي من 0° عند خط غرينتش إلى +180° شرقًا و−180° غربًا.", null, "التوقيت الشمسي: مبني على حركة الشمس الظاهرية في السماء، والظهر الشمسي لما تعبر الشمس خط الزوال للمراقب.", "التوقيت الشمسي لا يطابق توقيت الساعة، ممكن يكون قبله أو بعده.", "التوقيت الشمسي − التوقيت القياسي = 4(Lst − Lloc) + E، والرقم 4 يعني 4 دقائق لكل درجة.", "E هي معادلة الوقت (بالدقائق)، من الرسم أو من المعادلة.", null, null, null, "تتراوح تقريبًا بين −23.45° و +23.45°.", "تتغير على مدار السنة.", null, null, "الظهر الشمسي: ω = 0°.", null, null, null, null, "زاوية الارتفاع وزاوية السمت الرأسي متكاملتان (مجموعهما 90°).", null, null, null, null, null, "التوجيه الجيد يقلل زاوية السقوط ويزيد الإشعاع المباشر الواصل.", null, null, null, null, "العكس: كل ما صغرت θ زاد الإشعاع المباشر على السطح غالبًا.", null, null, null, "rr = ρ(1 − cosβ)/2، و ρ = انعكاسية الأرض.", null, null, "يوضع جهاز البيرانوميتر أفقيًا عشان يستبعد الإشعاع المنعكس من الأرض.", null, "هذا وصف البيرهيليوميتر. البيرانوميتر مجال رؤيته 180°.", "حلقة التظليل: قوس معدني يحجب أشعة الشمس المباشرة عن الحساس طول اليوم، فيقيس الجهاز الإشعاع المنتشر فقط.", null, "مسجّل سطوع الشمس: جهاز يقيس مدة سطوع الشمس في موقع خلال فترة زمنية.", null, "البيرهيليوميتر: يقيس الإشعاع المباشر العمودي (DNI) بوحدة W/m².", null, "اللوح الكهروضوئي يحوّل الطاقة الشمسية إلى كهرباء مستمرة (DC).", null, "طاقة شمسية أقل ← كهرباء أقل، وطاقة شمسية أكثر ← كهرباء أكثر."],
+  l3:["ما هو PV: يحوّل ضوء الشمس إلى طاقة كهربائية مباشرةً.", "الشريحة: هذا التحويل يحدث بسبب التأثير الكهروضوئي، وهو ظاهرة فيزيائية في أشباه الموصلات.", "هذه الطاقة اللازمة لإثارة الإلكترون تُعرَّف بفجوة الطاقة (band gap).", "العكس: فجوة الطاقة لها تأثير مباشر على جهد الخلية الكهروضوئية.", null, null, "تيلورايد الكادميوم (CdTe) = 1.5 eV.", null, null, null, "وهذا سبب محدودية كفاءة الخلايا الكهروضوئية.", null, null, "أشباه الموصلات الشائعة الاستخدام فجوة طاقتها قريبة من قمة هذا المنحنى.", null, "وصلة P-N: تفصل الإلكترونات عن الفجوات في الخلية الشمسية لتوليد جهد وشغل مفيد.", null, "الكفاءة: حوالي 15% عادةً، والتطورات الحديثة رفعتها إلى 22–24%.", "تصنيعها معقد ← تكلفتها عالية.", "اللون: أسود عادةً أو أزرق قزحي.", null, null, "يمكن تصنيعها مرنة… وأقل عرضة لارتفاع الحرارة.", null, "CdTe: منتشرة لأن تكلفتها لكل كيلوواط ساعة أقل، وأفضل كفاءة لها حوالي 16%.", "الأعلى كفاءةً بين تقنيات الأغشية الرقيقة، حوالي 20%، ومقاومتها للحرارة جيدة.", null, "الخلية الشمسية: أصغر وحدة كهروضوئية تحوّل ضوء الشمس إلى كهرباء مستمرة (DC).", null, "العبارة تحت رسم الخلية والوحدة واللوح والمصفوفة.", "البند 1: الإطار الألمنيوم.", null, null, "البند 5: الغطاء الخلفي (Back sheet).", null, null, "ظروف الاختبار القياسية (STC) = 25°م.", null, null, null, null, "جهد نقطة القدرة القصوى (Vm) دائمًا أقل من جهد الدائرة المفتوحة (Voc).", null, null, null, "الخلايا أو الوحدات الموصولة على التوالي.", null, null, null, null, null, null, "أقل جهد هو الجهد الكلي، ومجموع التيارات هو التيار الكلي.", "شريحة التظليل.", "من رسم التظليل: التظليل الصلب = فضلات الطيور والغبار، والتظليل الناعم = ظل عمود.", null, "التظليل يسبب نقاطًا ساخنة (Hot spots).", "النقاط الساخنة أحيانًا تكسر الغطاء الزجاجي… وفي أسوأ الحالات تسبب حريقًا.", null, null, null, "التتبع أحادي المحور.", null, "الهيكل الحامل (Mounting structure).", "أجهزة الحماية.", "منظم الشحن: ينظم تدفق الطاقة بين المصفوفة الكهروضوئية والبطارية والحمل.", null, "الوظائف الرئيسية.", "يمنع التيار العكسي في الليل.", "العكس: منظم الشحن مطلوب في أغلب الأنظمة المستقلة اللي فيها بطاريات.", null, "PWM = تعديل عرض النبضة (Pulse Width Modulation).", "طريقة عمله.", "جهد تشغيل الألواح يُسحب قريبًا من جهد البطارية.", "منظم الشحن بتتبع نقطة القدرة القصوى (MPPT).", "MPPT مفيد خصوصًا لما يتغير الإشعاع الشمسي خلال اليوم.", null, "جدول المقارنة بين PWM و MPPT، صف «أفضل استخدام».", "جدول المقارنة: يستخدم تحويل DC-DC، ويقدر يشتغل بجهد ألواح أعلى من جهد البطارية.", "كيف يعمل MPPT ومنظم الشحن والبطارية مع بعض.", "صندوق التجميع (Combiner Box).", null, null, "شريحة البطاريات.", null, "شريحة بطاريات الدورة العميقة.", null, null, "بطاريات الرصاص الحمضية هي الأكثر استخدامًا في الأنظمة الكهروضوئية السكنية.", null, null, "مصطلحات البطاريات.", "جهد القطع (Cut-off voltage).", null, null, null, "شريحة العاكس (Inverter).", null, "النظام الكهروضوئي المستقل.", "النظام الكهروضوئي المستقل.", null, "تصميم حجم النظام يعتمد على الحمل اليومي، ومدة الاحتياط، والإشعاع الشمسي المحلي.", "النظام المتصل مباشرةً (Direct-coupled).", null, "النظام الكهروضوئي المتصل بالشبكة.", "في كثير من الأنظمة المتصلة بالشبكة، البطاريات غير مطلوبة.", "إشعاع عالٍ: الألواح ← الحمل + الشبكة، إشعاع منخفض: الألواح + الشبكة ← الحمل، الليل: الشبكة ← الحمل.", null, "تطبيق: الإنارة الشمسية.", null, "تطبيق: الإنارة الشمسية.", null, "مربع تحويل الطاقة في الشريحة.", "النظام الكهروضوئي المركّز (CPV).", "شريحة CPV.", null, null]
+};
+function expAr(lecId,i){ return lang==="ar" ? EXP_AR[lecId][i] : null; }
+
 const UI = {
   ar:{
     title:"ME 4245 — الطاقة المتجددة: صح أو خطأ",
@@ -919,7 +1072,19 @@ const UI = {
     v:["ممتاز، المحتوى واضح عندك.","جيد جدًا، راجع الأخطاء وبتقفلها.","مقبول، فيه مفاهيم تحتاج مراجعة.","تحتاج ترجع للشرائح قبل الاختبار."],
     none:"ما جاوبت.", yours:"إجابتك: ", correct:"الصحيح: ", perfect:"ولا غلطة. كل الإجابات صحيحة.",
     qn:"العبارة ", yesEnd:"نعم، أنهِ الاختبار", keepGoing:"أكمل", switchTo:"English",
-    summaryBtn:"ملخص المحاضرات", summaryTitle:"ملخص المحاضرات", back:"رجوع"
+    summaryBtn:"ملخص المحاضرات", summaryTitle:"ملخص المحاضرات", back:"رجوع",
+    selAll2:"تحديد الكل", deselAll:"إلغاء تحديد الكل",
+    disclaimer:"الاختبار غير رسمي وقد يحتوي على أخطاء، تأكد من المصادر الأساسية.",
+    aboutBtn:"About me", aboutName:"البدر إبراهيم الميمني", aboutDegree:"خريج علوم البيانات · جامعة أم القرى",
+    aboutJob:"مهندس شبكات ·", aboutCo:"تحكم", aboutVia:"(عبر Emircom)", close:"إغلاق",
+    toLight:"☀ الوضع الفاتح", toDark:"☾ الوضع الداكن",
+    brand:"البدر", topicBtn:"افتح الموضوع كامل من الملخص", topicHide:"إخفاء الموضوع",
+    searchH:"دوّر في كل الملخصات", searchPh:"اكتب كلمة، مثلًا: solar", sCount:n=>n? "المواضيع اللي فيها كلماتك: "+n:"ما لقيت موضوع فيه كل الكلمات. جرب كلمات أقل.",
+    streak:n=>n+" إجابات صح ورا بعض", best:n=>"أطول سلسلة صح: "+n,
+    aboutWhy:"سويت هذي الاختبارات لأنها ساعدتني أفهم موادي، وأبيها تساعد غيري.",
+    welcomeTitle:"السلايدات تعلّمك. الأسئلة تثبّت.",
+    welcomeBody:"هذا الموقع سويته لأنه اللي خلاني أفهم أصعب موادي. الحين صار لك.",
+    welcomeGo:"يلا نبدأ"
   },
   en:{
     title:"ME 4245 — Renewable Energy: True or False",
@@ -940,7 +1105,19 @@ const UI = {
     v:["Excellent, you've got this content down.","Very good. Review your mistakes and you're there.","Passable. Some concepts need another look.","Go back to the slides before the exam."],
     none:"Not answered.", yours:"Your answer: ", correct:"Correct: ", perfect:"No mistakes. Every answer is correct.",
     qn:"Statement ", yesEnd:"Yes, finish", keepGoing:"Keep going", switchTo:"العربية",
-    summaryBtn:"Lecture summaries", summaryTitle:"Lecture Summaries", back:"Back"
+    summaryBtn:"Lecture summaries", summaryTitle:"Lecture Summaries", back:"Back",
+    selAll2:"Select all", deselAll:"Deselect all",
+    disclaimer:"This quiz is unofficial and may contain mistakes. Check the primary sources.",
+    aboutBtn:"About me", aboutName:"Albadar Ibrahim Almaymani", aboutDegree:"Data Science graduate · Umm Al-Qura University",
+    aboutJob:"Network Engineer ·", aboutCo:"Tahakom", aboutVia:"(via Emircom)", close:"Close",
+    toLight:"☀ Light mode", toDark:"☾ Dark mode",
+    brand:"Albadar", topicBtn:"Open the full topic from the summary", topicHide:"Hide the topic",
+    searchH:"Search all summaries", searchPh:"Type a word, e.g. solar", sCount:n=>n? n+(n===1?" topic matches":" topics match"):"No topic has all these words. Try fewer words.",
+    streak:n=>n+" correct in a row", best:n=>"Longest streak: "+n,
+    aboutWhy:"I built these quizzes because they helped me understand my courses, and I want them to help others.",
+    welcomeTitle:"Slides teach. Questions make it stick.",
+    welcomeBody:"I built this because it's what got me through my hardest courses. Now it's yours.",
+    welcomeGo:"Let's start"
   }
 };
 const SEC_PER_Q = 30;
@@ -949,6 +1126,7 @@ const $ = id => document.getElementById(id);
 let lang="ar", mode="learn", countSel=20;
 let selectedLectures = new Set(LECTURES.map(l=>l.id));
 let activeSumLec = "l1";
+let streak=0, bestStreak=0, justPicked=false;
 let qs=[], answers=[], idx=0, total=0, timeLeft=0, tick=null, startedAt=0, finished=false, lastSecs=0, timedOut=false;
 const T = () => UI[lang];
 
@@ -958,28 +1136,29 @@ function show(id){ ["setup","quiz","result","summary"].forEach(s=>$(s).classList
 function item(q){
   const lec = LECTURES.find(l=>l.id===q.lec);
   const b = lec.bank[q.i], ar = lang==="ar";
-  return {q: ar?b[0]:b[1], e: ar?b[3]:b[4], lecName: lec.short[lang]};
+  return {q: ar?b[0]:b[1], e: ar?b[3]:b[4], tr: expAr(q.lec,q.i), lecName: lec.short[lang]};
 }
 function availCount(){ return LECTURES.filter(l=>selectedLectures.has(l.id)).reduce((s,l)=>s+l.bank.length,0); }
 function planned(){ return clampCount(countSel); }
 
 function renderLecChips(){
   const c=$("lectures"); c.innerHTML="";
-  const allBtn=document.createElement("button"); allBtn.className="chip";
-  allBtn.textContent=T().selAll;
-  allBtn.setAttribute("aria-pressed", selectedLectures.size===LECTURES.length);
-  allBtn.onclick=()=>{ LECTURES.forEach(l=>selectedLectures.add(l.id)); renderLecChips(); updateAvail(); };
-  c.appendChild(allBtn);
+  const all = selectedLectures.size===LECTURES.length;
+  const allBtn=$("allLec");
+  allBtn.textContent = all ? T().deselAll : T().selAll2;
+  allBtn.onclick=()=>{
+    if(selectedLectures.size===LECTURES.length) selectedLectures.clear();
+    else LECTURES.forEach(l=>selectedLectures.add(l.id));
+    renderLecChips(); updateAvail();
+  };
   LECTURES.forEach(l=>{
-    const b=document.createElement("button"); b.className="chip";
-    b.textContent=l.title[lang];
-    const all = selectedLectures.size===LECTURES.length;
-    b.setAttribute("aria-pressed", !all && selectedLectures.has(l.id));
-    // from "All", a tap picks just that lecture; otherwise taps add/remove lectures
+    const b=document.createElement("button"); b.className="lec";
+    const box=document.createElement("span"); box.className="box"; box.setAttribute("aria-hidden","true"); box.textContent="✓";
+    const t=document.createElement("span"); t.textContent=l.title[lang];
+    b.append(box,t);
+    b.setAttribute("aria-pressed", selectedLectures.has(l.id));
     b.onclick=()=>{
-      if(all) selectedLectures=new Set([l.id]);
-      else if(selectedLectures.has(l.id)) selectedLectures.delete(l.id);
-      else selectedLectures.add(l.id);
+      if(selectedLectures.has(l.id)) selectedLectures.delete(l.id); else selectedLectures.add(l.id);
       renderLecChips(); updateAvail();
     };
     c.appendChild(b);
@@ -997,6 +1176,9 @@ function applyLang(){
   html.lang=lang; html.dir = lang==="ar" ? "rtl" : "ltr";
   document.title = T().title;
   document.querySelectorAll("[data-i]").forEach(el=>{ el.textContent=T()[el.dataset.i]; });
+  updateThemeBtn();
+  $("sumSearch").placeholder=T().searchPh;
+  if($("sumSearch").value) runSumSearch();
   $("langSwitch").textContent=T().switchTo; $("langSwitch2").textContent=T().switchTo; $("langSwitch3").textContent=T().switchTo;
   document.querySelectorAll("#langs .chip").forEach(x=>x.setAttribute("aria-pressed", x.dataset.lang===lang));
   renderLecChips(); updateAvail();
@@ -1067,7 +1249,7 @@ function start(){
     const b = LECTURES.find(l=>l.id===p.lec).bank[p.i];
     return {lec:p.lec, i:p.i, correct: b[2] ? 0 : 1};
   });
-  answers=new Array(total).fill(null); idx=0; finished=false; timedOut=false; startedAt=Date.now();
+  answers=new Array(total).fill(null); idx=0; finished=false; streak=0; bestStreak=0; justPicked=false; timedOut=false; startedAt=Date.now();
   clearInterval(tick);
   const t=$("timer");
   if(mode==="exam"){
@@ -1106,7 +1288,11 @@ function render(){
     const l=document.createElement("span"); l.className="l"; l.textContent=i===0?"✓":"✗";
     const t=document.createElement("span"); t.className="t"; t.textContent=o;
     b.append(l,t);
-    if(locked){ b.disabled=true; if(i===q.correct) b.classList.add("ok"); else if(i===a) b.classList.add("bad"); }
+    if(locked){
+      b.disabled=true;
+      if(i===q.correct){ b.classList.add("ok"); if(justPicked && a===i) b.classList.add("pop"); }
+      else if(i===a){ b.classList.add("bad"); if(justPicked) b.classList.add("shake"); }
+    }
     else if(a===i) b.classList.add("sel");
     b.onclick=()=>pick(i); box.appendChild(b);
   });
@@ -1115,8 +1301,13 @@ function render(){
     const right=a===q.correct;
     why.className="why"+(right?"":" bad");
     why.innerHTML=""; const bb=document.createElement("b"); bb.textContent= right?T().right:T().wrong(q.correct);
-    why.append(bb, document.createTextNode(it.e));
+    const ex=document.createElement("span"); ex.dir="auto"; ex.style.display="block"; ex.textContent=it.e;
+    why.append(bb, ex);
+    if(it.tr){ const tr=document.createElement("p"); tr.className="tr"; tr.textContent=it.tr; why.appendChild(tr); }
+    if(!right) why.appendChild(topicButton(q));
   } else why.className="why hidden";
+  renderStreak();
+  justPicked=false;
   renderNav();
 }
 
@@ -1142,7 +1333,13 @@ function renderNav(){
 function pick(i){
   if(finished) return;
   if(mode==="learn" && answers[idx]!==null) return;
-  answers[idx]=i; render();
+  answers[idx]=i;
+  if(mode==="learn"){
+    streak = i===qs[idx].correct ? streak+1 : 0;
+    bestStreak=Math.max(bestStreak,streak);
+    justPicked=true;
+  }
+  render();
 }
 function confirmFinish(){
   const left=answers.filter(x=>x===null).length;
@@ -1157,6 +1354,9 @@ function finish(){
   lastSecs=Math.round((Date.now()-startedAt)/1000);
   $("onlyWrong").setAttribute("aria-pressed","false");
   renderResult(); show("result");
+  const correct=qs.filter((q,i)=>answers[i]===q.correct).length;
+  countUp(correct);
+  if(correct/total>=0.9) confetti();
 }
 function renderResult(){
   const correct=qs.filter((q,i)=>answers[i]===q.correct).length;
@@ -1164,6 +1364,9 @@ function renderResult(){
   $("bigScore").innerHTML=correct+' <span>/ '+total+'</span>';
   $("pct").textContent=T().pct(pct,fmt(lastSecs))+(timedOut?T().timeout:"");
   $("verdict").textContent=T().v[pct>=90?0:pct>=75?1:pct>=60?2:3];
+  const best=$("best");
+  if(mode==="learn" && bestStreak>=2){ best.classList.remove("hidden"); best.textContent="🔥 "+T().best(bestStreak); }
+  else best.classList.add("hidden");
   renderReview($("onlyWrong").getAttribute("aria-pressed")==="true");
 }
 function renderReview(onlyWrong){
@@ -1175,7 +1378,9 @@ function renderReview(onlyWrong){
     t("rq",(i+1)+". ["+it.lecName+"] "+it.q);
     if(a===null) t("ra wrong",T().none); else if(!ok) t("ra wrong",T().yours+T().tf[a]);
     t("ra right",T().correct+T().tf[q.correct]);
-    t("re",it.e);
+    t("re",it.e); d.lastChild.dir="auto";
+    if(it.tr) t("re tr",it.tr);
+    if(!ok) d.appendChild(topicButton(q));
     r.appendChild(d);
   });
   if(!r.children.length){ const p=document.createElement("p"); p.style.color="var(--muted)"; p.textContent=T().perfect; r.appendChild(p); }
@@ -1192,7 +1397,7 @@ $("quitBtn").onclick=()=>{
   else { clearInterval(tick); show("setup"); }
 };
 document.addEventListener("keydown",e=>{
-  if($("quiz").classList.contains("hidden") || e.ctrlKey || e.metaKey || e.altKey) return;
+  if($("quiz").classList.contains("hidden") || e.ctrlKey || e.metaKey || e.altKey || e.target.tagName==="INPUT" || $("about").open || $("welcome").open) return;
   const k=e.key.toLowerCase();
   if(k==="1"||k==="١"||k==="t") pick(0);
   else if(k==="2"||k==="٢"||k==="f") pick(1);
@@ -1201,6 +1406,129 @@ document.addEventListener("keydown",e=>{
     if(m && !m.disabled && document.activeElement.tagName!=="BUTTON") m.click();
   }
 });
+
+function renderStreak(){
+  const el=$("streak");
+  if(mode!=="learn" || streak<2){ el.classList.add("hidden"); return; }
+  el.classList.remove("hidden");
+  el.textContent="🔥 "+streak;
+  el.setAttribute("aria-label", T().streak(streak)); el.title=T().streak(streak);
+  if(justPicked){ el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
+}
+const reduceMotion = ()=>window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+function countUp(target){
+  const span=$("bigScore").firstChild;
+  if(reduceMotion() || target===0) return;
+  const t0=performance.now(), dur=Math.min(1200, 300+target*40);
+  const step=now=>{
+    const k=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-k,3);
+    span.textContent=Math.round(target*e)+" ";
+    if(k<1) requestAnimationFrame(step);
+  };
+  span.textContent="0 "; requestAnimationFrame(step);
+}
+function confetti(){
+  if(reduceMotion()) return;
+  const c=document.createElement("canvas"); c.className="confetti"; c.setAttribute("aria-hidden","true");
+  document.body.appendChild(c);
+  const dpr=window.devicePixelRatio||1, W=innerWidth, H=innerHeight;
+  c.width=W*dpr; c.height=H*dpr; const x=c.getContext("2d"); x.scale(dpr,dpr);
+  const cs=getComputedStyle(document.documentElement);
+  const cols=["--primary","--warn","--ok","--ink"].map(v=>cs.getPropertyValue(v).trim());
+  const ps=Array.from({length:140},()=>({x:W/2+(Math.random()-.5)*W*.3, y:H*.35, vx:(Math.random()-.5)*11, vy:-Math.random()*12-4,
+    w:6+Math.random()*6, h:4+Math.random()*4, r:Math.random()*6, vr:(Math.random()-.5)*.3, c:cols[Math.floor(Math.random()*cols.length)]}));
+  const t0=performance.now();
+  const frame=now=>{
+    const t=now-t0; x.clearRect(0,0,W,H);
+    ps.forEach(p=>{ p.vy+=.32; p.vx*=.99; p.x+=p.vx; p.y+=p.vy; p.r+=p.vr;
+      x.save(); x.globalAlpha=Math.max(0,1-t/2600); x.translate(p.x,p.y); x.rotate(p.r); x.fillStyle=p.c; x.fillRect(-p.w/2,-p.h/2,p.w,p.h); x.restore(); });
+    if(t<2600) requestAnimationFrame(frame); else c.remove();
+  };
+  requestAnimationFrame(frame);
+}
+
+function topicButton(q){
+  const wrap=document.createElement("div");
+  const b=document.createElement("button"); b.className="topicBtn"; b.type="button"; b.setAttribute("aria-expanded","false");
+  b.textContent="📖 "+T().topicBtn;
+  b.onclick=()=>{
+    const open=b.getAttribute("aria-expanded")==="true";
+    if(open){ wrap.querySelector(".topicPanel").remove(); b.setAttribute("aria-expanded","false"); b.textContent="📖 "+T().topicBtn; return; }
+    const panel=topicPanel(q.lec,q.i); wrap.appendChild(panel);
+    b.setAttribute("aria-expanded","true"); b.textContent="📖 "+T().topicHide;
+    panel.scrollIntoView({behavior: reduceMotion()?"auto":"smooth", block:"nearest"});
+  };
+  wrap.appendChild(b); return wrap;
+}
+function topicPanel(lecId,i){
+  const lec=LECTURES.find(l=>l.id===lecId), sec=lec.summary[lang][SEC_MAP[lecId][i]];
+  const d=document.createElement("div"); d.className="topicPanel";
+  const tag=document.createElement("span"); tag.className="lecTag"; tag.textContent=lec.title[lang];
+  const h=document.createElement("h4"); h.textContent=sec.h;
+  const list=document.createElement(sec.ordered?"ol":"ul");
+  sec.items.forEach(t=>{ const li=document.createElement("li"); li.textContent=t; list.appendChild(li); });
+  const sw=document.createElement("div"); sw.className="searchWrap";
+  const sh=document.createElement("h5"); sh.textContent=T().searchH;
+  const box=document.createElement("div"); box.className="search";
+  const inp=document.createElement("input"); inp.type="search"; inp.autocomplete="off"; inp.enterKeyHint="search"; inp.placeholder=T().searchPh;
+  inp.setAttribute("aria-label", T().searchH);
+  const res=document.createElement("div");
+  inp.addEventListener("input", ()=>renderSearch(res, inp.value));
+  box.appendChild(inp); sw.append(sh, box, res);
+  d.append(tag, h, list, sw);
+  return d;
+}
+
+/* ---- summary search: every word must appear in the topic title or one of its points (AR + EN text), results in lecture/section order ---- */
+const norm=t=>t.toLowerCase().replace(/[\u064B-\u065F\u0670\u0640]/g,"").replace(/[أإآ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه");
+function searchSummaries(query){
+  const words=norm(query).split(/\s+/).filter(Boolean);
+  if(!words.length) return null;
+  const out=[];
+  LECTURES.forEach(lec=>{
+    lec.summary[lang].forEach((sec,k)=>{
+      const other=lec.summary[lang==="ar"?"en":"ar"][k];
+      const hay=norm([sec.h,...sec.items,other.h,...other.items].join(" \n "));
+      if(!words.every(w=>hay.includes(w))) return;
+      // AR and EN points are parallel by index, so a point matches if either language's version has the word
+      const items=sec.items.filter((t,j)=>words.some(w=>norm(t+" "+(other.items[j]||"")).includes(w)));
+      out.push({lec, sec, items: items.length ? items : sec.items});
+    });
+  });
+  return {words, out};
+}
+function highlight(el, text, words){
+  const n=norm(text); let i=0;
+  const marks=[];
+  words.forEach(w=>{ let k=n.indexOf(w); while(k>-1){ marks.push([k,k+w.length]); k=n.indexOf(w,k+w.length); } });
+  marks.sort((a,b)=>a[0]-b[0]);
+  // norm() keeps string length for Latin text; for Arabic it can drop diacritics, so fall back to plain text when lengths differ
+  if(n.length!==text.length || !marks.length){ el.textContent=text; return; }
+  marks.forEach(([a,b])=>{ if(a<i) return; el.append(text.slice(i,a)); const m=document.createElement("mark"); m.textContent=text.slice(a,b); el.append(m); i=b; });
+  el.append(text.slice(i));
+}
+function renderSearch(box, query){
+  box.replaceChildren();
+  const r=searchSummaries(query);
+  if(!r) return false;
+  const c=document.createElement("p"); c.className="sCount"; c.textContent=T().sCount(r.out.length); box.append(c);
+  r.out.forEach(({lec,sec,items})=>{
+    const d=document.createElement("div"); d.className="sRes";
+    const tag=document.createElement("span"); tag.className="lecTag"; tag.textContent=lec.title[lang];
+    const h=document.createElement("h4"); highlight(h, sec.h, r.words);
+    const ul=document.createElement("ul");
+    items.forEach(t=>{ const li=document.createElement("li"); highlight(li, t, r.words); ul.append(li); });
+    d.append(tag,h,ul); box.append(d);
+  });
+  return true;
+}
+function runSumSearch(){
+  const on=renderSearch($("sumSearchRes"), $("sumSearch").value);
+  $("sumSearchRes").classList.toggle("hidden", !on);
+  $("sumBrowse").classList.toggle("hidden", on);
+}
+$("sumSearch").addEventListener("input", runSumSearch);
+
 
 function renderSumTabs(){
   const c=$("sumTabs"); c.innerHTML="";
@@ -1225,8 +1553,36 @@ function renderSummary(){
   });
 }
 
+function isLight(){ return document.documentElement.dataset.theme==="light"; }
+function updateThemeBtn(){ $("themeBtn").textContent = isLight() ? T().toDark : T().toLight; }
+$("themeBtn").onclick=()=>{
+  const light=!isLight();
+  if(light) document.documentElement.dataset.theme="light"; else delete document.documentElement.dataset.theme;
+  try{localStorage.setItem("me4245-theme", light?"light":"dark")}catch(e){}
+  updateThemeBtn();
+};
+function closeWelcome(){ try{localStorage.setItem("me4245-welcomed","1")}catch(e){} }
+$("welcomeGo").onclick=()=>$("welcome").close();
+$("welcome").addEventListener("close", closeWelcome);
+$("aboutBtn").onclick=()=>$("about").showModal();
+$("brandBtn").onclick=()=>$("about").showModal();
+(function(){
+  const card=document.querySelector("#quiz .card");
+  if(!window.matchMedia || !matchMedia("(hover:hover) and (pointer:fine)").matches) return;
+  card.addEventListener("pointermove",e=>{
+    if(reduceMotion()) return;
+    const r=card.getBoundingClientRect(), px=(e.clientX-r.left)/r.width-.5, py=(e.clientY-r.top)/r.height-.5;
+    card.style.transform="perspective(1000px) rotateX("+(-py*3).toFixed(2)+"deg) rotateY("+(px*3).toFixed(2)+"deg)";
+  });
+  card.addEventListener("pointerleave",()=>{ card.style.transform=""; });
+})();
+$("aboutClose").onclick=()=>$("about").close();
+$("about").addEventListener("click",e=>{ if(e.target===$("about")) $("about").close(); });
+
 try{ const s=localStorage.getItem("me4245-lang"); if(s==="en"||s==="ar") lang=s; }catch(e){}
 applyLang();
+let welcomed=false; try{ welcomed=localStorage.getItem("me4245-welcomed")==="1"; }catch(e){}
+if(!welcomed) $("welcome").showModal();
 </script>
 </body>
 </html>

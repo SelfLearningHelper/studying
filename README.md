@@ -42,8 +42,8 @@ It made a big difference for me, so I built it for every student going through t
 - **Review screen:** go through every answer after the quiz, or filter to mistakes only.
 - **Lecture summaries** built into the quiz for quick revision.
 - **Keyboard shortcuts:** `1`–`4` for multiple choice, `1`/`2` or `T`/`F` for true/false.
-- **Accessibility (Media Translation, ME 4441):** screen-reader announcements for feedback and the one-minute warning, 44px tap targets, and a warning before leaving an exam in progress.
-- **Dark / light theme (Media Translation, ME 4441):** follows the device by default, with a toggle that remembers your choice.
+- **Accessibility (Media Translation, ME 4441, ME 4245):** screen-reader announcements for feedback and the one-minute warning, 44px tap targets, and a warning before leaving an exam in progress.
+- **Dark / light theme (all quizzes):** follows the device by default, with a toggle that remembers your choice.
 
 ### IDP Competency Certification
 - **Topic selection** from the full IDP review question banks.
@@ -69,8 +69,8 @@ It made a big difference for me, so I built it for every student going through t
 - **مراجعة بعد الاختبار:** تشوف كل الإجابات أو أخطاءك بس.
 - **ملخصات المحاضرات** داخل الاختبار نفسه.
 - **اختصارات الكيبورد:** `1`–`4` للاختيار من متعدد، و `1`/`2` أو `T`/`F` لصح وخطأ.
-- **إمكانية الوصول (الترجمة الإعلامية، ME 4441):** قارئ الشاشة ينطق التصحيح وتنبيه آخر دقيقة، وأزرار بحجم 44px، وتنبيه لو حاولت تطلع والاختبار شغال.
-- **الوضع الداكن والفاتح (الترجمة الإعلامية، ME 4441):** يتبع إعداد الجهاز، وفيه زر تبديل يتذكر اختيارك.
+- **إمكانية الوصول (الترجمة الإعلامية، ME 4441، ME 4245):** قارئ الشاشة ينطق التصحيح وتنبيه آخر دقيقة، وأزرار بحجم 44px، وتنبيه لو حاولت تطلع والاختبار شغال.
+- **الوضع الداكن والفاتح (كل الاختبارات):** يتبع إعداد الجهاز، وفيه زر تبديل يتذكر اختيارك.
 
 ### IDP Competency Certification
 - **اختيار المواضيع** من بنوك أسئلة مراجعة IDP كاملة.
