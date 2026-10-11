@@ -49,6 +49,25 @@ h1{font-size:1.55rem;margin:6px 0 2px}
   border-radius:999px;padding:3px 10px;cursor:pointer}
 .srcHead .miniLink:hover{border-color:var(--primary);color:var(--primary)}
 
+.selHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px}
+.selHead h2{margin:0 !important}
+.selAll{background:none;border:none;color:var(--primary);font-weight:700;font-size:.88rem;text-decoration:underline;text-underline-offset:4px;cursor:pointer;padding:8px 2px;min-height:40px}
+.srcList{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.srcRow{display:flex;align-items:stretch;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden;transition:border-color .15s,background .15s}
+.srcRow.on{border-color:var(--primary);background:var(--primary-soft)}
+.srcRow.part{border-color:var(--primary)}
+.srcPick{flex:1;display:flex;align-items:center;gap:12px;padding:14px;background:none;border:none;text-align:left;cursor:pointer;color:var(--ink);font:inherit;min-height:64px}
+.srcPick .box{flex:0 0 auto;width:22px;height:22px;border-radius:6px;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;font-weight:800;color:transparent;background:var(--surface)}
+.srcRow.on .box{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+.srcRow.part .box{border-color:var(--primary);color:var(--primary)}
+.srcPick .sn{display:block;font-weight:700;font-size:.95rem}
+.srcPick .sc{display:block;color:var(--muted);font-size:.8rem;margin-top:2px}
+.srcRow.on .sn,.srcRow.part .sn{color:var(--primary)}
+.srcExp{flex:0 0 52px;border:none;border-left:1.5px solid var(--line);background:none;color:var(--muted);cursor:pointer;font-size:1.1rem;display:grid;place-items:center}
+.srcRow.on .srcExp,.srcRow.part .srcExp{border-left-color:var(--primary);color:var(--primary)}
+.srcExp svg{transition:transform .2s}
+.srcExp[aria-expanded="true"] svg{transform:rotate(180deg)}
+.srcTopics{padding:4px 2px 6px}
 .topicGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
 .topicCard{position:relative;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;
   padding:12px 34px 12px 14px;cursor:pointer;user-select:none;color:var(--ink);min-height:58px;
@@ -244,7 +263,7 @@ button:active:not(:disabled){transform:scale(.98)}
 
     <div class="card">
       <div class="group">
-        <h2>Select topics</h2>
+        <div class="selHead"><h2>Select topics</h2><button class="selAll" id="selAll" type="button"></button></div>
         <p class="note" id="topicNote">Loading question bank…</p>
         <div id="topicGroups"></div>
       </div>
@@ -1335,39 +1354,54 @@ function groupBySrc(){
   TOPICS.forEach(t=>{ (g[t.src] = g[t.src]||[]).push(t); });
   return g;
 }
+const openSrc = new Set();
 function renderTopicGroups(){
   const g = groupBySrc();
   const el = $("topicGroups");
   el.innerHTML = "";
+  const allOn = TOPICS.every(t=>selectedTopics.has(t.id));
+  $("selAll").textContent = allOn ? "Deselect all" : "Select all";
+  const list = document.createElement("div"); list.className = "srcList";
   Object.keys(g).forEach(src=>{
-    const head = document.createElement("div");
-    head.className = "srcHead";
-    const total = g[src].reduce((s,t)=>s+t.qs.length,0);
-    head.innerHTML = `<h3>${esc(src)} <span style="color:var(--muted);font-weight:400">(${total} questions)</span></h3>
-      <button class="miniLink" data-src="${esc(src)}">${g[src].every(t=>selectedTopics.has(t.id)) ? "Deselect all" : "Select all"}</button>`;
-    el.appendChild(head);
-    const grid = document.createElement("div");
-    grid.className = "topicGrid";
-    g[src].forEach(t=>{
-      const c = document.createElement("div");
-      c.className = "topicCard" + (selectedTopics.has(t.id) ? " on" : "");
-      c.dataset.id = t.id;
-      c.innerHTML = `<span class="chk">✓</span><span class="tName">${esc(t.name)}</span><span class="tCount">${t.qs.length} questions</span>`;
-      c.onclick = ()=>{ if(selectedTopics.has(t.id)) selectedTopics.delete(t.id); else selectedTopics.add(t.id); renderTopicGroups(); updateNote(); };
-      grid.appendChild(c);
-    });
-    el.appendChild(grid);
+    const ts = g[src];
+    const onCount = ts.filter(t=>selectedTopics.has(t.id)).length;
+    const total = ts.reduce((s,t)=>s+t.qs.length,0);
+    const state = onCount===ts.length ? "on" : onCount ? "part" : "";
+    const wrap = document.createElement("div");
+    const row = document.createElement("div"); row.className = "srcRow " + state;
+    const pick = document.createElement("button"); pick.type="button"; pick.className="srcPick";
+    pick.setAttribute("aria-pressed", state==="on" ? "true" : state==="part" ? "mixed" : "false");
+    pick.innerHTML = `<span class="box">${state==="part" ? "–" : "✓"}</span><span><span class="sn">${esc(src)}</span><span class="sc">${total} questions · ${state==="part" ? `${onCount} of ${ts.length} topics` : `${ts.length} topics`}</span></span>`;
+    pick.onclick = ()=>{ const full = onCount===ts.length; ts.forEach(t=> full ? selectedTopics.delete(t.id) : selectedTopics.add(t.id)); renderTopicGroups(); updateNote(); };
+    const exp = document.createElement("button"); exp.type="button"; exp.className="srcExp";
+    const open = openSrc.has(src);
+    exp.setAttribute("aria-expanded", open); exp.setAttribute("aria-label", (open?"Hide":"Show")+" topics in "+src);
+    exp.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`;
+    exp.onclick = ()=>{ open ? openSrc.delete(src) : openSrc.add(src); renderTopicGroups(); };
+    row.append(pick, exp); wrap.appendChild(row);
+    if(open){
+      const box = document.createElement("div"); box.className = "srcTopics";
+      const grid = document.createElement("div"); grid.className = "topicGrid";
+      ts.forEach(t=>{
+        const c = document.createElement("div");
+        c.className = "topicCard" + (selectedTopics.has(t.id) ? " on" : "");
+        c.dataset.id = t.id; c.tabIndex = 0; c.setAttribute("role","button"); c.setAttribute("aria-pressed", selectedTopics.has(t.id));
+        c.innerHTML = `<span class="chk">✓</span><span class="tName">${esc(t.name)}</span><span class="tCount">${t.qs.length} question${t.qs.length===1?"":"s"}</span>`;
+        const toggle = ()=>{ if(selectedTopics.has(t.id)) selectedTopics.delete(t.id); else selectedTopics.add(t.id); renderTopicGroups(); updateNote(); };
+        c.onclick = toggle; c.onkeydown = e=>{ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); toggle(); } };
+        grid.appendChild(c);
+      });
+      box.appendChild(grid); wrap.appendChild(box);
+    }
+    list.appendChild(wrap);
   });
-  el.querySelectorAll(".miniLink").forEach(btn=>{
-    btn.onclick = ()=>{
-      const src = btn.dataset.src;
-      const ts = g[src];
-      const allOn = ts.every(t=>selectedTopics.has(t.id));
-      ts.forEach(t=> allOn ? selectedTopics.delete(t.id) : selectedTopics.add(t.id));
-      renderTopicGroups(); updateNote();
-    };
-  });
+  el.appendChild(list);
 }
+$("selAll").onclick = ()=>{
+  const allOn = TOPICS.every(t=>selectedTopics.has(t.id));
+  TOPICS.forEach(t=> allOn ? selectedTopics.delete(t.id) : selectedTopics.add(t.id));
+  renderTopicGroups(); updateNote();
+};
 function updateNote(){
   const n = selectedTopics.size;
   const total = TOPICS.filter(t=>selectedTopics.has(t.id)).reduce((s,t)=>s+t.qs.length,0);
