@@ -4,33 +4,27 @@
 
 Practice quizzes that run in the browser, on phone or desktop. Each one is a single HTML file with no framework and no backend, hosted on GitHub Pages.
 
-## Quizzes
+## Sample quiz
 
 | Quiz | Questions | Link |
 |---|---|---|
 | Media Translation | 81 | [Open](https://selflearninghelper.github.io/studying/media-translation-quiz/) |
-| ME 4441: Engineering Management | 70 | [Open](https://selflearninghelper.github.io/studying/me4441-quiz/) |
-| ME 4245: Renewable Energy, True or False | 290 | [Open](https://selflearninghelper.github.io/studying/me4245-TrueOrFalse/) |
 
-**Every question is checked against its source.** All 441 answers were matched to the original lecture slides, including slides that are images only.
+**Every question is checked against its source.** All 81 answers were matched to the original lecture slides, including slides that are images only.
+
+Quizzes for other courses are delivered privately. To order one: [t.me/AlbadarQuiz](https://t.me/AlbadarQuiz)
 
 ## Features
 
-| Feature | Media Translation | ME 4441 | ME 4245 |
-|---|:-:|:-:|:-:|
-| Learn mode with instant feedback, and timed Exam mode | ✓ | ✓ | ✓ |
-| Flashcards: recall the answer, then flip to check | ✓ | ✓ | |
-| Arabic / English questions | ✓ | ✓ | ✓ |
-| Arabic translation under English slide quotes | ✓ | ✓ | ✓ |
-| Pick lectures | ✓ | | ✓ |
-| Question count fits the selection (under 10 = all of them) | ✓ | ✓ | ✓ |
-| Open the full topic behind a question | ✓ | ✓ | ✓ |
-| Search the summaries | ✓ | ✓ | ✓ |
-| Review screen with a mistakes-only filter | ✓ | ✓ | ✓ |
-| Correct-answer streak and score celebration | ✓ | ✓ | ✓ |
-| Keyboard shortcuts | ✓ | ✓ | ✓ |
-| Dark / light theme that follows the device | ✓ | ✓ | ✓ |
-| One-minute warning and leave warning in exams | ✓ | ✓ | |
+- Learn mode with instant feedback, and timed Exam mode
+- Flashcards: recall the answer, then flip to check
+- Arabic / English questions, with an Arabic translation under English slide quotes
+- Pick lectures; the question count fits the selection (under 10 = all of them)
+- Open the full topic behind a question, and search the summaries
+- Review screen with a mistakes-only filter
+- Correct-answer streak and score celebration
+- One-minute warning and leave warning in exams
+- Keyboard shortcuts, and a dark / light theme that follows the device
 
 ## Why I built this
 
@@ -40,7 +34,7 @@ It made a big difference for me, so now I build it for other students too.
 
 ## Tech
 
-Plain HTML, CSS and JavaScript, one file per quiz. The only external resource is the IBM Plex Sans Arabic font from Google Fonts. Language and theme choices are saved in `localStorage`.
+Plain HTML, CSS and JavaScript in a single file. The only external resource is the IBM Plex Sans Arabic font from Google Fonts. Language and theme choices are saved in `localStorage`.
 
 ---
 
@@ -50,33 +44,27 @@ Plain HTML, CSS and JavaScript, one file per quiz. The only external resource is
 
 اختبارات تدريبية تفاعلية تشتغل من المتصفح، على الجوال أو الكمبيوتر. كل اختبار ملف HTML واحد، بدون إطار عمل ولا خادم، ومستضافة على GitHub Pages.
 
-### الاختبارات
+### اختبار تجريبي
 
 | الاختبار | عدد الأسئلة | الرابط |
 |---|---|---|
 | الترجمة الإعلامية | 81 | [افتح](https://selflearninghelper.github.io/studying/media-translation-quiz/) |
-| الإدارة الهندسية (ME 4441) | 70 | [افتح](https://selflearninghelper.github.io/studying/me4441-quiz/) |
-| الطاقة المتجددة: صح وخطأ (ME 4245) | 290 | [افتح](https://selflearninghelper.github.io/studying/me4245-TrueOrFalse/) |
 
-**كل سؤال متطابق مع مصدره.** الـ 441 إجابة كلها تمت مطابقتها مع السلايدات الأصلية، حتى السلايدات اللي نصها صور.
+**كل سؤال متطابق مع مصدره.** الـ 81 إجابة كلها تمت مطابقتها مع السلايدات الأصلية، حتى السلايدات اللي نصها صور.
+
+اختبارات المواد الثانية تنرسل بشكل خاص. للطلب: [t.me/AlbadarQuiz](https://t.me/AlbadarQuiz)
 
 ### المميزات
 
-| الميزة | الترجمة الإعلامية | ME 4441 | ME 4245 |
-|---|:-:|:-:|:-:|
-| وضع تعلم بتصحيح فوري، ووضع اختبار بوقت | ✓ | ✓ | ✓ |
-| بطاقات: تتذكر الجواب وتقلب البطاقة تتأكد | ✓ | ✓ | |
-| الأسئلة بالعربي أو الإنجليزي | ✓ | ✓ | ✓ |
-| ترجمة عربية تحت الشروحات المنقولة من السلايدات | ✓ | ✓ | ✓ |
-| اختيار المحاضرات | ✓ | | ✓ |
-| عدد الأسئلة يناسب اختيارك، وأقل من 10 يكون الاختبار عليها كلها | ✓ | ✓ | ✓ |
-| تفتح الموضوع كامل اللي جاي منه السؤال | ✓ | ✓ | ✓ |
-| البحث في الملخصات | ✓ | ✓ | ✓ |
-| مراجعة بعد الاختبار، مع عرض الأخطاء فقط | ✓ | ✓ | ✓ |
-| سلسلة الإجابات الصح واحتفال بالنتيجة | ✓ | ✓ | ✓ |
-| اختصارات الكيبورد | ✓ | ✓ | ✓ |
-| وضع داكن وفاتح يتبع الجهاز | ✓ | ✓ | ✓ |
-| تنبيه آخر دقيقة وتنبيه قبل الخروج من الاختبار | ✓ | ✓ | |
+- وضع تعلم بتصحيح فوري، ووضع اختبار بوقت
+- بطاقات: تتذكر الجواب وتقلب البطاقة تتأكد
+- الأسئلة بالعربي أو الإنجليزي، مع ترجمة عربية تحت الشروحات المنقولة من السلايدات
+- اختيار المحاضرات، وعدد الأسئلة يناسب اختيارك (أقل من 10 يكون الاختبار عليها كلها)
+- تفتح الموضوع كامل اللي جاي منه السؤال، وتبحث في الملخصات
+- مراجعة بعد الاختبار، مع عرض الأخطاء فقط
+- سلسلة الإجابات الصح واحتفال بالنتيجة
+- تنبيه آخر دقيقة وتنبيه قبل الخروج من الاختبار
+- اختصارات الكيبورد، ووضع داكن وفاتح يتبع الجهاز
 
 ### ليش سويتها
 
@@ -86,6 +74,6 @@ Plain HTML, CSS and JavaScript, one file per quiz. The only external resource is
 
 ### التقنية
 
-كل اختبار ملف واحد مكتوب بـ HTML و CSS و JavaScript عادي. الشي الخارجي الوحيد هو خط IBM Plex Sans Arabic من Google Fonts. اختيار اللغة والثيم ينحفظ في متصفحك.
+الاختبار ملف واحد مكتوب بـ HTML و CSS و JavaScript عادي. الشي الخارجي الوحيد هو خط IBM Plex Sans Arabic من Google Fonts. اختيار اللغة والثيم ينحفظ في متصفحك.
 
 </div>
