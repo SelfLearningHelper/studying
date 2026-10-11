@@ -211,6 +211,16 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .fcDone h2{margin:14px 0 6px}
 .fcDone p{color:var(--muted); margin:0}
 
+/* topic from summary */
+.topicBtn{display:inline-flex; align-items:center; gap:6px; margin-top:12px; background:var(--surface); border:1.5px dashed var(--primary); color:var(--primary);
+  border-radius:8px; padding:8px 14px; min-height:44px; font-weight:600; font-size:.92rem}
+@media (hover:hover){ .topicBtn:hover{background:var(--primary-soft)} }
+#topic{border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--ink); padding:22px 20px 18px; width:min(94vw,560px); max-height:85dvh}
+#topic::backdrop{background:rgba(10,10,12,.65)}
+#topic h2{margin:8px 0 12px; font-size:1.12rem; color:var(--primary); line-height:1.5}
+#topic ul, #topic ol{margin:0 0 18px; padding-inline-start:22px; display:flex; flex-direction:column; gap:8px; line-height:1.65}
+#topic .close{width:100%; min-height:46px; border-radius:8px; border:2px solid var(--line); background:var(--bg); font-weight:600}
+
 /* lecture picker */
 .grouphead{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px}
 .grouphead h2{margin:0 !important}
@@ -395,6 +405,13 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
     <a href="https://linkedin.com/in/albadaralmaymani" target="_blank" rel="noopener" dir="ltr">LinkedIn</a>
   </div>
   <button class="close" id="aboutClose" data-i="close"></button>
+</dialog>
+
+<dialog id="topic" aria-labelledby="topicTitle">
+  <span class="lecTag" id="topicLec"></span>
+  <h2 id="topicTitle"></h2>
+  <div id="topicBody"></div>
+  <button class="close" id="topicClose" data-i="close"></button>
 </dialog>
 
 <dialog id="welcome" aria-labelledby="welcomeTitle">
@@ -901,6 +918,12 @@ const LECTURES = [
   { id:"l2", title:{ar:"ترجمة العناوين", en:"Headline Translation"}, bank:{ar:BANK_L2_AR, en:BANK_L2_EN}, summary:{ar:SUM_L2_AR, en:SUM_L2_EN} },
   { id:"l3", title:{ar:"تقييم الجودة (TQA)", en:"Quality Assessment (TQA)"}, bank:{ar:BANK_L3_AR, en:BANK_L3_EN}, summary:{ar:SUM_L3_AR, en:SUM_L3_EN} }
 ];
+/* summary section (index into summary[lang]) that each question comes from, per lecture */
+const SEC_MAP={
+  l1:[0,0,1,2,2,2,3,3,3,3,4,4,4,6,5,5,6,5,7,7],
+  l2:[0,0,0,1,1,2,2,3,3,4,4,5,6,7,7,7,8,8,8,8,8,8,8,8,8,9,10,10,10,11],
+  l3:[0,0,1,1,1,1,2,2,2,2,2,3,3,3,3,3,3,4,4,5,5,5,5,6,6,7,7,8,8,9,9]
+};
 
 const UI = {
   ar:{
@@ -927,7 +950,7 @@ const UI = {
     aboutBtn:"About me", aboutName:"البدر إبراهيم الميمني", aboutDegree:"خريج علوم البيانات · جامعة أم القرى",
     aboutJob:"مهندس شبكات ·", aboutCo:"تحكم", aboutVia:"(عبر Emircom)", close:"إغلاق",
     toLight:"☀ الوضع الفاتح", toDark:"☾ الوضع الداكن",
-    brand:"البدر",
+    brand:"البدر", topicBtn:"افتح الموضوع كامل من الملخص",
     m3:"بطاقات", m3d:"تشوف السؤال بدون اختيارات، تتذكر الجواب، وتقلب البطاقة تتأكد.", startCards:"ابدأ البطاقات", noteCards:"بدون وقت. الأسئلة اللي ما تنفع بدون اختيارات ما تطلع في البطاقات.", fcTap:"اضغط على البطاقة عشان تقلبها", fcAnsLabel:"الإجابة",
     fcNo:"ما عرفتها", fcYes:"عرفتها", fcPos:(k,n)=>"عرفت <b>"+k+"</b> من "+n,
     fcDoneT:"خلصت كل البطاقات!", fcDone:(n,r)=>"عرفت "+n+" بطاقة"+(r?"، ورجعت لك "+r+" مرة للمراجعة.":" من أول مرة."), fcAgain:"بطاقات جديدة",
@@ -961,7 +984,7 @@ const UI = {
     aboutBtn:"About me", aboutName:"Albadar Ibrahim Almaymani", aboutDegree:"Data Science graduate · Umm Al-Qura University",
     aboutJob:"Network Engineer ·", aboutCo:"Tahakom", aboutVia:"(via Emircom)", close:"Close",
     toLight:"☀ Light mode", toDark:"☾ Dark mode",
-    brand:"Albadar",
+    brand:"Albadar", topicBtn:"Open the full topic from the summary",
     m3:"Flashcards", m3d:"See the question with no options, recall the answer, then flip the card to check.", startCards:"Start flashcards", noteCards:"No timer. Questions that need the options to make sense are left out.", fcTap:"Tap the card to flip it", fcAnsLabel:"Answer",
     fcNo:"Didn't know", fcYes:"Knew it", fcPos:(k,n)=>"Known <b>"+k+"</b> of "+n,
     fcDoneT:"All cards done!", fcDone:(n,r)=>"You learned "+n+" cards"+(r?", with "+r+" repeats along the way.":", all on the first try."), fcAgain:"New cards",
@@ -1126,6 +1149,7 @@ function render(){
     why.className="why"+(right?"":" bad");
     why.innerHTML=""; const bb=document.createElement("b"); bb.textContent= right?T().right:T().wrong(L[q.correct]);
     why.append(bb, document.createTextNode(it.e));
+    if(!right) why.appendChild(topicButton(q));
   } else why.className="why hidden";
   renderStreak();
   justPicked=false;
@@ -1229,6 +1253,19 @@ function renderResult(){
   else best.classList.add("hidden");
   renderReview($("onlyWrong").getAttribute("aria-pressed")==="true");
 }
+function topicButton(q){
+  const b=document.createElement("button"); b.className="topicBtn"; b.type="button";
+  b.textContent="📖 "+T().topicBtn; b.onclick=()=>openTopic(q.lec,q.i); return b;
+}
+function openTopic(lecId,i){
+  const lec=LECTURES.find(l=>l.id===lecId), sec=lec.summary[lang][SEC_MAP[lecId][i]];
+  $("topicLec").textContent=lec.title[lang];
+  $("topicTitle").textContent=sec.h;
+  const list=document.createElement(sec.ordered?"ol":"ul");
+  sec.items.forEach(t=>{ const li=document.createElement("li"); li.textContent=t; list.appendChild(li); });
+  $("topicBody").replaceChildren(list);
+  $("topic").showModal();
+}
 function renderReview(onlyWrong){
   const r=$("review"); r.innerHTML="";
   qs.forEach((q,i)=>{
@@ -1239,6 +1276,7 @@ function renderReview(onlyWrong){
     if(a===null) t("ra wrong",T().none); else if(!ok) t("ra wrong",T().yours+it.opts[a]);
     t("ra right",T().correct+it.opts[q.correct]);
     t("re",it.e);
+    if(!ok) d.appendChild(topicButton(q));
     r.appendChild(d);
   });
   if(!r.children.length){ const p=document.createElement("p"); p.style.color="var(--muted)"; p.textContent=T().perfect; r.appendChild(p); }
@@ -1310,7 +1348,7 @@ $("quitBtn").onclick=()=>{
   else { clearInterval(tick); show("setup"); }
 };
 document.addEventListener("keydown",e=>{
-  if($("quiz").classList.contains("hidden") || $("about").open || $("welcome").open) return;
+  if($("quiz").classList.contains("hidden") || $("about").open || $("welcome").open || $("topic").open) return;
   const k=e.key;
   if("1234".includes(k) && k.length===1) pick(+k-1);
   else if("١٢٣٤".includes(k) && k.length===1) pick("١٢٣٤".indexOf(k));
@@ -1357,6 +1395,8 @@ $("welcomeGo").onclick=()=>$("welcome").close();
 $("welcome").addEventListener("close", closeWelcome);
 $("aboutBtn").onclick=()=>$("about").showModal();
 $("brandBtn").onclick=()=>$("about").showModal();
+$("topicClose").onclick=()=>$("topic").close();
+$("topic").addEventListener("click",e=>{ if(e.target===$("topic")) $("topic").close(); });
 (function(){
   const card=document.querySelector("#quiz .card");
   if(!window.matchMedia || !matchMedia("(hover:hover) and (pointer:fine)").matches) return;
