@@ -61,7 +61,7 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .intro p{margin:0; color:var(--muted); max-width:60ch}
 .group{margin-top:30px}
 .group h2{font-size:1rem; font-weight:600; margin:0 0 12px}
-.modes{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.modes{display:grid; grid-template-columns:1fr; gap:10px}
 .mode{
   text-align:start; background:var(--surface); border:2px solid var(--line); border-radius:8px;
   padding:16px 16px 14px; transition:border-color .15s, background .15s;
@@ -190,8 +190,6 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .confetti{position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:3}
 
 /* flashcards */
-.cardsBtn{display:flex; flex-direction:column; align-items:center; gap:2px; padding:12px 16px}
-.cardsBtn span{font-weight:400; font-size:.86rem; color:var(--muted); line-height:1.5}
 .fcTop{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap}
 .fcProg{height:6px; background:var(--line); border-radius:3px; overflow:hidden; margin-bottom:20px}
 .fcProg i{display:block; height:100%; width:0; background:var(--primary); transition:width .35s cubic-bezier(.16,1,.3,1)}
@@ -279,6 +277,7 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
           <div class="modes">
             <button class="mode" data-mode="learn" aria-pressed="true"><strong data-i="m1"></strong><span data-i="m1d"></span></button>
             <button class="mode" data-mode="exam" aria-pressed="false"><strong data-i="m2"></strong><span data-i="m2d"></span></button>
+            <button class="mode" data-mode="cards" aria-pressed="false"><strong data-i="m3"></strong><span data-i="m3d"></span></button>
           </div>
         </div>
         <div class="group">
@@ -293,7 +292,6 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
           <p class="note" id="timeNote"></p>
         </div>
         <button class="start" id="startBtn" data-i="start"></button>
-        <button class="start secondary cardsBtn" id="cardsBtn"><strong data-i="cardsBtn"></strong><span data-i="cardsBtnD"></span></button>
         <button class="start secondary" id="summaryBtn" data-i="summaryBtn"></button>
       </div>
     </div>
@@ -930,7 +928,7 @@ const UI = {
     aboutJob:"مهندس شبكات ·", aboutCo:"تحكم", aboutVia:"(عبر Emircom)", close:"إغلاق",
     toLight:"☀ الوضع الفاتح", toDark:"☾ الوضع الداكن",
     brand:"البدر",
-    cardsBtn:"ذاكر بالبطاقات", cardsBtnD:"تشوف السؤال بدون اختيارات، تتذكر الجواب، وتقلب البطاقة تتأكد.", fcTap:"اضغط على البطاقة عشان تقلبها", fcAnsLabel:"الإجابة",
+    m3:"بطاقات", m3d:"تشوف السؤال بدون اختيارات، تتذكر الجواب، وتقلب البطاقة تتأكد.", startCards:"ابدأ البطاقات", noteCards:"بدون وقت. الأسئلة اللي ما تنفع بدون اختيارات ما تطلع في البطاقات.", fcTap:"اضغط على البطاقة عشان تقلبها", fcAnsLabel:"الإجابة",
     fcNo:"ما عرفتها", fcYes:"عرفتها", fcPos:(k,n)=>"عرفت <b>"+k+"</b> من "+n,
     fcDoneT:"خلصت كل البطاقات!", fcDone:(n,r)=>"عرفت "+n+" بطاقة"+(r?"، ورجعت لك "+r+" مرة للمراجعة.":" من أول مرة."), fcAgain:"بطاقات جديدة",
     streak:n=>n+" إجابات صح ورا بعض", best:n=>"أطول سلسلة صح: "+n,
@@ -964,7 +962,7 @@ const UI = {
     aboutJob:"Network Engineer ·", aboutCo:"Tahakom", aboutVia:"(via Emircom)", close:"Close",
     toLight:"☀ Light mode", toDark:"☾ Dark mode",
     brand:"Albadar",
-    cardsBtn:"Study with flashcards", cardsBtnD:"See the question with no options, recall the answer, then flip the card to check.", fcTap:"Tap the card to flip it", fcAnsLabel:"Answer",
+    m3:"Flashcards", m3d:"See the question with no options, recall the answer, then flip the card to check.", startCards:"Start flashcards", noteCards:"No timer. Questions that need the options to make sense are left out.", fcTap:"Tap the card to flip it", fcAnsLabel:"Answer",
     fcNo:"Didn't know", fcYes:"Knew it", fcPos:(k,n)=>"Known <b>"+k+"</b> of "+n,
     fcDoneT:"All cards done!", fcDone:(n,r)=>"You learned "+n+" cards"+(r?", with "+r+" repeats along the way.":", all on the first try."), fcAgain:"New cards",
     streak:n=>n+" correct in a row", best:n=>"Longest streak: "+n,
@@ -1022,7 +1020,7 @@ function updateAvail(){
   const n = selectedLectures.size;
   if(n===0){ $("availNote").textContent = T().needLec; }
   else {
-    const total = LECTURES.filter(l=>selectedLectures.has(l.id)).reduce((s,l)=>s+l.bank.ar.length,0);
+    const total = mode==="cards" ? cardPool().length : LECTURES.filter(l=>selectedLectures.has(l.id)).reduce((s,l)=>s+l.bank.ar.length,0);
     $("availNote").textContent = T().avail(total);
   }
   $("startBtn").disabled = n===0;
@@ -1044,12 +1042,15 @@ function applyLang(){
   if(!$("result").classList.contains("hidden")) renderResult();
   if(!$("summary").classList.contains("hidden")){ renderSumTabs(); renderSummary(); }
 }
-function updateNote(){ $("timeNote").textContent = mode==="exam" ? T().noteExam(count*SEC_PER_Q/60) : T().noteLearn; }
+function updateNote(){
+  $("timeNote").textContent = mode==="exam" ? T().noteExam(count*SEC_PER_Q/60) : mode==="cards" ? T().noteCards : T().noteLearn;
+  $("startBtn").textContent = mode==="cards" ? T().startCards : T().start;
+}
 function setLang(l){ lang=l; try{localStorage.setItem("mtq-lang",l)}catch(e){} applyLang(); }
 
 document.querySelectorAll("#langs .chip").forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
 document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{
-  mode=b.dataset.mode; document.querySelectorAll(".mode").forEach(x=>x.setAttribute("aria-pressed", x===b)); updateNote();
+  mode=b.dataset.mode; document.querySelectorAll(".mode").forEach(x=>x.setAttribute("aria-pressed", x===b)); updateNote(); updateAvail();
 });
 document.querySelectorAll("#counts .chip").forEach(b=>b.onclick=()=>{
   count=+b.dataset.n; document.querySelectorAll("#counts .chip").forEach(x=>x.setAttribute("aria-pressed", x===b)); updateNote();
@@ -1244,16 +1245,19 @@ function renderReview(onlyWrong){
 }
 
 $("onlyWrong").onclick=function(){ const on=this.getAttribute("aria-pressed")!=="true"; this.setAttribute("aria-pressed",on); renderReview(on); };
-$("startBtn").onclick=start;
+$("startBtn").onclick=()=> mode==="cards" ? startCards() : start();
 
 /* ---- flashcards: front = question without options, back = correct answer + explanation ---- */
-const MCQ_ONLY=/أي مما يلي|أي من التالي|أي مما سبق|أيّ مما يلي|which of the following|which one of the following/i;
+var MCQ_ONLY=/أي مما يلي|أي من التالي|أي مما سبق|أيّ مما يلي|which of the following|which one of the following/i;
 let deck=[], fcKnown=0, fcTotal=0, fcRepeats=0;
-function startCards(){
-  const pool=shuffle(buildPool()).filter(p=>{
+function cardPool(){
+  return buildPool().filter(p=>{
     const lec=LECTURES.find(l=>l.id===p.lec);
     return !MCQ_ONLY.test(lec.bank.ar[p.i][0]) && !MCQ_ONLY.test(lec.bank.en[p.i][0]);
   });
+}
+function startCards(){
+  const pool=shuffle(cardPool());
   deck=pool.slice(0,count); fcTotal=deck.length; fcKnown=0; fcRepeats=0;
   $("fcStage").classList.remove("hidden"); $("fcDone").classList.add("hidden");
   show("cards"); renderCard();
@@ -1280,7 +1284,6 @@ function nextCard(knew){
   if(knew) $("fcPos").innerHTML=T().fcPos(fcKnown,fcTotal);
   $("fcBar").style.width=(fcKnown/fcTotal*100)+"%";
 }
-$("cardsBtn").onclick=startCards;
 $("flip").onclick=flipCard;
 $("fcYes").onclick=()=>nextCard(true);
 $("fcNo").onclick=()=>nextCard(false);
