@@ -52,7 +52,11 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0}
 
 /* setup */
-.intro h1::before{content:""; display:block; width:44px; height:5px; background:var(--primary); border-radius:2px; margin-bottom:16px}
+/* brand */
+.brandbar{display:flex; margin:-6px 0 18px}
+.brand{background:none; border:none; padding:6px 0; min-height:44px; font-weight:700; font-size:1.05rem; letter-spacing:-.2px; color:var(--ink)}
+.brandDot{color:var(--primary)}
+@media (hover:hover){ .brand:hover{color:var(--primary)} }
 .intro h1{font-size:clamp(1.7rem, 3vw + 1rem, 2.5rem); line-height:1.25; margin:10px 0 6px; font-weight:700; letter-spacing:-.3px}
 .intro p{margin:0; color:var(--muted); max-width:60ch}
 .group{margin-top:30px}
@@ -210,6 +214,7 @@ button:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
 </head>
 <body>
 <div class="wrap">
+  <header class="brandbar"><button class="brand" id="brandBtn" aria-haspopup="dialog"><span data-i="brand"></span><span class="brandDot">.</span></button></header>
 
   <section id="setup">
     <div class="setup-grid">
@@ -856,6 +861,7 @@ const UI = {
     aboutBtn:"About me", aboutName:"البدر إبراهيم الميمني", aboutDegree:"خريج علوم البيانات · جامعة أم القرى",
     aboutJob:"مهندس شبكات ·", aboutCo:"تحكم", aboutVia:"(عبر Emircom)", close:"إغلاق",
     toLight:"☀ الوضع الفاتح", toDark:"☾ الوضع الداكن",
+    brand:"البدر",
     aboutWhy:"سويت هذي الاختبارات لأنها ساعدتني أفهم موادي، وأبيها تساعد غيري.",
     welcomeTitle:"السلايدات تعلّمك. الأسئلة تثبّت.",
     welcomeBody:"هذا الموقع سويته لأنه اللي خلاني أفهم أصعب موادي. الحين صار لك.",
@@ -885,6 +891,7 @@ const UI = {
     aboutBtn:"About me", aboutName:"Albadar Ibrahim Almaymani", aboutDegree:"Data Science graduate · Umm Al-Qura University",
     aboutJob:"Network Engineer ·", aboutCo:"Tahakom", aboutVia:"(via Emircom)", close:"Close",
     toLight:"☀ Light mode", toDark:"☾ Dark mode",
+    brand:"Albadar",
     aboutWhy:"I built these quizzes because they helped me understand my courses, and I want them to help others.",
     welcomeTitle:"Slides teach. Questions make it stick.",
     welcomeBody:"I built this because it's what got me through my hardest courses. Now it's yours.",
@@ -1160,6 +1167,7 @@ function closeWelcome(){ try{localStorage.setItem("mtq-welcomed","1")}catch(e){}
 $("welcomeGo").onclick=()=>$("welcome").close();
 $("welcome").addEventListener("close", closeWelcome);
 $("aboutBtn").onclick=()=>$("about").showModal();
+$("brandBtn").onclick=()=>$("about").showModal();
 $("aboutClose").onclick=()=>$("about").close();
 $("about").addEventListener("click",e=>{ if(e.target===$("about")) $("about").close(); });
 
