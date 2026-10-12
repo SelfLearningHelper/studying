@@ -272,6 +272,19 @@ mark{background:var(--warn-soft); color:var(--warn); border-radius:3px; padding:
 #about .aboutWhy{margin:10px 0 0; color:var(--ink); font-size:.93rem}
 #about .close{width:100%; min-height:44px; border-radius:8px; border:2px solid var(--line); background:var(--bg); font-weight:600}
 @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important} button:active:not(:disabled){transform:none} }
+
+/* ---- rating box ---- */
+.rate{margin:6px auto 18px; max-width:460px; padding:16px; border:1px solid var(--line); border-radius:14px; background:var(--surface); display:grid; gap:10px; text-align:center}
+.rate .rateQ{margin:0; font-weight:600; color:var(--ink)}
+.stars{display:flex; justify-content:center; gap:6px}
+.stars button{width:44px; height:44px; border-radius:10px; border:1px solid var(--line); background:transparent; color:var(--muted); font-size:1.45rem; line-height:1; cursor:pointer}
+.stars button[aria-pressed="true"]{color:var(--primary); border-color:var(--primary); background:var(--primary-soft)}
+.stars button:focus-visible,.rate input:focus-visible,.rate .rateSend:focus-visible{outline:2px solid var(--primary); outline-offset:2px}
+.rate input{font:inherit; color:var(--ink); background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:10px 12px; width:100%; box-sizing:border-box}
+.rate .rateSend{font:inherit; font-weight:600; border:0; border-radius:10px; padding:10px 14px; background:var(--primary); color:var(--on-primary); cursor:pointer}
+.rate .rateSend:disabled{opacity:.45; cursor:default}
+.rate .rateMsg{margin:0; font-size:.92rem; color:var(--muted); min-height:1.2em}
+.rate.done .stars,.rate.done input,.rate.done .rateSend{display:none}
 </style>
 </head>
 <body>
@@ -349,6 +362,13 @@ mark{background:var(--warn-soft); color:var(--warn); border-radius:3px; padding:
       <p id="pct"></p>
       <p class="verdict" id="verdict"></p>
       <p class="best hidden" id="best"></p>
+    </div>
+    <div class="rate" id="rate">
+      <p class="rateQ" data-i="rateQ"></p>
+      <div class="stars" id="stars" role="group"></div>
+      <input type="text" id="rateTxt" maxlength="300" autocomplete="off">
+      <button type="button" class="rateSend" id="rateSend" data-i="rateSend" disabled></button>
+      <p class="rateMsg" id="rateMsg" role="status"></p>
     </div>
     <div class="tools">
       <h2 data-i="review"></h2>
@@ -429,7 +449,7 @@ mark{background:var(--warn-soft); color:var(--warn); border-radius:3px; padding:
   <p data-i="welcomeBody"></p>
   <div class="before">
     <b data-i="beforeH"></b>
-    <ul><li data-i="before1"></li><li data-i="before2"></li><li data-i="before3"></li></ul>
+    <ul><li data-i="before1"></li><li data-i="before2"></li><li data-i="before3"></li><li data-i="before4"></li></ul>
   </div>
   <button class="go" id="welcomeGo" data-i="welcomeGo"></button>
 </dialog>
@@ -989,7 +1009,7 @@ const UI = {
     beforeH:"قبل ما تبدأ:",
     before1:"هذا الاختبار للمراجعة، وما يغني عن المذاكرة من المحاضرات.",
     before2:"الأسئلة متوسطة الصعوبة وأسهل، وهدفها تثبيت الأساسيات.",
-    before3:"الأسئلة ثابتة وما تتغير، بس كل مرة تبدأ تنسحب لك منها مجموعة بترتيب مختلف."
+    before3:"الأسئلة ثابتة وما تتغير، بس كل مرة تبدأ تنسحب لك منها مجموعة بترتيب مختلف.", before4:"الإجابات تنحفظ بدون أي معلومات شخصية، عشان نعرف الأسئلة الصعبة ونحسّنها.", rateQ:"وش رأيك في الاختبار؟", ratePh:"وش ينقص؟ (اختياري)", rateSend:"إرسال التقييم", rateThanks:"وصل تقييمك، شكرًا لك 🙏", rateFail:"ما وصل التقييم. تأكد من الاتصال وجرّب مرة ثانية.", rateNeed:"اختر عدد النجوم أول.", starLbl:n=>n+" من 5"
   },
   en:{
     title:"Media Translation Quiz",
@@ -1029,7 +1049,7 @@ const UI = {
     beforeH:"Before you start:",
     before1:"This quiz is for review. It does not replace studying the lectures.",
     before2:"The questions are of medium difficulty or easier, aimed at locking in the basics.",
-    before3:"The questions are fixed and don't change, but each attempt draws a set from them in a different order."
+    before3:"The questions are fixed and don't change, but each attempt draws a set from them in a different order.", before4:"Answers are saved without any personal information, so we can find hard questions and improve them.", rateQ:"How was this quiz?", ratePh:"What's missing? (optional)", rateSend:"Send rating", rateThanks:"Got it, thank you 🙏", rateFail:"Your rating didn't go through. Check your connection and try again.", rateNeed:"Pick a number of stars first.", starLbl:n=>n+" of 5"
   }
 };
 const SEC_PER_Q = 60;
@@ -1041,6 +1061,61 @@ let activeSumLec = "l1";
 let streak=0, bestStreak=0, justPicked=false;
 let qs=[], answers=[], idx=0, timeLeft=0, tick=null, startedAt=0, finished=false, lastSecs=0, timedOut=false;
 const T = () => UI[lang];
+/* ---- anonymous answer log + rating (sent to the AlbadarQuiz worker) ---- */
+const AQ = {
+  quiz: "media", attempt: "", stars: 0, sent: false, busy: false,
+  base(){
+    const h = location.hostname;
+    if(h.endsWith(".workers.dev") || h === "localhost" || h === "127.0.0.1") return "/api";
+    if(location.protocol === "file:") return "";
+    return "https://albadarquiz.albadar.workers.dev/api";
+  },
+  post(path, body){
+    const b = this.base(); if(!b) return Promise.reject(new Error("offline"));
+    return fetch(b + path, {method:"POST", headers:{"Content-Type":"text/plain"}, body:JSON.stringify(body), keepalive:true})
+      .then(r => { if(!r.ok) throw new Error(r.status); return r; });
+  },
+  newAttempt(){
+    const a = new Uint8Array(9); (crypto.getRandomValues ? crypto.getRandomValues(a) : a.forEach((_,i)=>a[i]=Math.random()*256|0));
+    this.attempt = Array.from(a, x => x.toString(16).padStart(2,"0")).join("");
+    this.stars = 0; this.sent = false; this.busy = false;
+    const t = $("rateTxt"); if(t) t.value = "";
+    $("rate").classList.remove("done"); $("rateMsg").textContent = "";
+  },
+  score(){ return qs.filter((q,i)=>answers[i]===q.correct).length; },
+  sendAnswers(){
+    if(mode !== "learn" && mode !== "exam") return;
+    const items = [];
+    qs.forEach((q,i)=>{ if(answers[i] !== null) items.push({q: q.lec + ":" + q.i, ok: answers[i]===q.correct ? 1 : 0, t: String(item(q).q).slice(0,160)}); });
+    if(items.length) this.post("/answers", {quiz:this.quiz, attempt:this.attempt, lang, mode, items}).catch(()=>{});
+  },
+  renderRate(){
+    const box = $("stars");
+    if(!box.children.length){
+      for(let n=1; n<=5; n++){
+        const b = document.createElement("button"); b.type = "button"; b.textContent = "★"; b.dataset.s = n;
+        b.onclick = () => { if(this.sent) return; this.stars = n; $("rateMsg").textContent = ""; this.renderRate(); };
+        box.appendChild(b);
+      }
+      $("rateSend").onclick = () => this.sendRating();
+    }
+    [...box.children].forEach(b => { const n = +b.dataset.s; b.setAttribute("aria-pressed", n <= this.stars); b.setAttribute("aria-label", T().starLbl(n)); });
+    $("rateTxt").placeholder = T().ratePh;
+    $("rateSend").disabled = !this.stars || this.busy;
+    $("rate").classList.toggle("done", this.sent);
+    if(this.sent) $("rateMsg").textContent = T().rateThanks;
+  },
+  sendRating(){
+    if(this.sent || this.busy) return;
+    if(!this.stars){ $("rateMsg").textContent = T().rateNeed; return; }
+    this.busy = true; this.renderRate();
+    this.post("/rating", {quiz:this.quiz, attempt:this.attempt, lang, mode, stars:this.stars,
+      comment:$("rateTxt").value.trim().slice(0,300), score:this.score(), total:qs.length})
+      .then(() => { this.sent = true; })
+      .catch(() => { $("rateMsg").textContent = T().rateFail; })
+      .finally(() => { this.busy = false; this.renderRate(); });
+  }
+};
 
 function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
 function fmt(s){ const m=Math.floor(s/60), r=s%60; return m+":"+String(r).padStart(2,"0"); }
@@ -1167,7 +1242,7 @@ function start(){
     return {lec:p.lec, i:p.i, perm, correct:perm.indexOf(0)};
   });
   count = n;
-  answers=new Array(count).fill(null); idx=0; finished=false; streak=0; bestStreak=0; justPicked=false; timedOut=false; startedAt=Date.now();
+  answers=new Array(count).fill(null); idx=0; finished=false; streak=0; bestStreak=0; justPicked=false; timedOut=false; startedAt=Date.now(); AQ.newAttempt();
   clearInterval(tick);
   const t=$("timer");
   if(mode==="exam"){
@@ -1271,7 +1346,7 @@ function finish(){
   finished=true; clearInterval(tick);
   lastSecs=Math.round((Date.now()-startedAt)/1000);
   $("onlyWrong").setAttribute("aria-pressed","false");
-  renderResult(); show("result");
+  renderResult(); show("result"); AQ.sendAnswers();
   const correct=qs.filter((q,i)=>answers[i]===q.correct).length;
   countUp(correct);
   if(correct/count>=0.9) confetti();
@@ -1324,6 +1399,7 @@ function renderResult(){
   const best=$("best");
   if(mode==="learn" && bestStreak>=2){ best.classList.remove("hidden"); best.textContent="🔥 "+T().best(bestStreak); }
   else best.classList.add("hidden");
+  AQ.renderRate();
   renderReview($("onlyWrong").getAttribute("aria-pressed")==="true");
 }
 function topicButton(q){
