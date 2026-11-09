@@ -14,22 +14,22 @@ if(t==="light")document.documentElement.dataset.theme="light";})();</script>
 <style>
 :root{
   /* dark tokens; [data-theme="light"] swaps them. The theme follows the device until the user picks one with the toggle */
-  --bg:#111114; --surface:#1A1A1F; --ink:#F3F1EC; --muted:#A3A1A8; --line:#2E2D35;
-  --primary:#FF7A45; --primary-soft:#3A2218; --on-primary:#16110E;
-  --ok:#5BD08A; --ok-soft:#173022; --bad:#FF5A73; --bad-soft:#3B1820;
-  --warn:#FFC24B; --warn-soft:#2D2412;
-  --idle:#4A4952; --glow:rgba(255,122,69,.13);
+  --bg:#18120D; --surface:#231A13; --ink:#F3EADF; --muted:#B3A391; --line:#3A2D22;
+  --primary:#E8B04A; --primary-soft:#3A2A12; --on-primary:#1A120B;
+  --ok:#5BD08A; --ok-soft:#173022; --bad:#FF6B81; --bad-soft:#3D1A25;
+  --warn:#F2C36B; --warn-soft:#2F2614;
+  --idle:#4B3D31; --glow:rgba(232,176,74,.12);
   color-scheme:dark;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
 :root[data-theme="light"]{
-  --bg:#F3F2EF; --surface:#FDFCFA; --ink:#17161A; --muted:#5C5A62; --line:#DEDBD5;
-  --primary:#C2410C; --primary-soft:#FDE6D9; --on-primary:#FFF8F3;
-  --ok:#1E7A45; --ok-soft:#DDF2E4; --bad:#C0263F; --bad-soft:#FBE0E4;
-  --warn:#7A4F00; --warn-soft:#FFF0CC;
-  --idle:#BDBAB4; --glow:rgba(194,65,12,.08);
+  --bg:#F5EFE6; --surface:#FDFAF5; --ink:#2B1D14; --muted:#6E5E52; --line:#E5D9C8;
+  --primary:#8A5A12; --primary-soft:#FBEBC6; --on-primary:#FFFFFF;
+  --ok:#1E7A45; --ok-soft:#DDF0E3; --bad:#B4233C; --bad-soft:#F8DFE3;
+  --warn:#7A5300; --warn-soft:#FBEFD2;
+  --idle:#D3C6B4; --glow:rgba(138,90,18,.08);
   color-scheme:light;
 }
 html{scroll-padding-top:env(safe-area-inset-top,0px); -webkit-text-size-adjust:100%}
@@ -347,6 +347,149 @@ mark{background:var(--warn-soft); color:var(--warn); border-radius:3px; padding:
   @keyframes rise{from{opacity:0} to{opacity:1}}
   .lec:hover,.mode:hover,.start:hover,.opt:hover,.lec:active,.mode:active,.chip:active{transform:none !important; box-shadow:none !important}
 }
+/* ---- motion v3 (3D UI) ---- */
+:root{--ease-out:cubic-bezier(.16,1,.3,1); --ease-spring:cubic-bezier(.34,1.56,.64,1)}
+/* every screen enters with a little depth */
+@keyframes enter3d{from{opacity:0; transform:perspective(1400px) rotateX(7deg) translateY(22px)} to{opacity:1; transform:none}}
+section:not(.hidden){animation:enter3d .6s var(--ease-out) both; transform-origin:50% 0}
+@keyframes riseIn{from{opacity:0; transform:perspective(900px) rotateX(-14deg) translateY(18px)} to{opacity:1; transform:none}}
+
+/* ---- tilt + glare cards (topics, modes) ---- */
+.lec,.mode{position:relative; transform-style:preserve-3d; isolation:isolate;
+  transform:perspective(800px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateZ(var(--tz,0px));
+  transition:transform .35s var(--ease-out), box-shadow .3s var(--ease-out), border-color .2s, background .2s}
+.lec::after,.mode::after{content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:-1; opacity:0;
+  background:radial-gradient(circle at var(--gx,50%) var(--gy,50%), color-mix(in srgb, var(--primary) 22%, transparent), transparent 60%);
+  transition:opacity .3s}
+@media (hover:hover) and (pointer:fine){
+  .lec:hover,.mode:hover{--tz:14px; transform:perspective(800px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateZ(14px); box-shadow:0 18px 30px -18px color-mix(in srgb, var(--primary) 70%, transparent)}
+  .lec:hover::after,.mode:hover::after{opacity:1}
+  .lec.tilting,.mode.tilting{transition:transform .08s linear, box-shadow .3s var(--ease-out), border-color .2s, background .2s}
+}
+.lec:active,.mode:active{transform:perspective(800px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateZ(-4px) !important}
+@keyframes tickPop{0%{transform:scale(.4) rotate(-20deg)} 60%{transform:scale(1.35) rotate(6deg)} 100%{transform:scale(1)}}
+@keyframes cardBounce{0%{translate:0 0} 35%{translate:0 -5px} 100%{translate:0 0}}
+.lec.just{animation:cardBounce .45s var(--ease-spring)}
+.lec.just .box{animation:tickPop .45s var(--ease-spring)}
+.mode.just{animation:cardBounce .45s var(--ease-spring)}
+
+/* ---- chips (language, count, types, stars) ---- */
+.chip{transition:transform .25s var(--ease-spring), box-shadow .25s, border-color .2s, background .2s, color .2s}
+@media (hover:hover) and (pointer:fine){ .chip:hover{transform:translateY(-3px); box-shadow:0 10px 18px -12px color-mix(in srgb, var(--primary) 70%, transparent)} }
+.chip:active{transform:scale(.93)}
+@keyframes chipPop{0%{transform:scale(1)} 40%{transform:scale(1.12)} 100%{transform:scale(1)}}
+.chip.just{animation:chipPop .4s var(--ease-spring)}
+.stars button{transition:transform .25s var(--ease-spring), color .2s, background .2s, border-color .2s}
+@media (hover:hover) and (pointer:fine){ .stars button:hover{transform:translateY(-3px) scale(1.12) rotate(-6deg)} }
+.stars button.just{animation:tickPop .45s var(--ease-spring)}
+
+/* ---- buttons: depth, press, shine ---- */
+.start,.btn,.rateSend{position:relative; overflow:hidden}
+.start:not(.secondary)::before{content:""; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(115deg, transparent 30%, rgba(255,255,255,.38) 50%, transparent 70%); transform:translateX(-120%)}
+@media (hover:hover) and (pointer:fine){
+  .start:not(:disabled):hover{transform:translateY(-3px); box-shadow:0 16px 30px -14px var(--primary)}
+  .start:not(.secondary):not(:disabled):hover::before{transition:transform .8s var(--ease-out); transform:translateX(120%)}
+}
+.start:not(:disabled):active{transform:translateY(1px) scale(.985); box-shadow:none}
+@keyframes breathe{0%,100%{box-shadow:0 10px 28px -12px var(--primary)} 50%{box-shadow:0 14px 36px -10px var(--primary)}}
+#setup #startBtn:not(:disabled){animation:breathe 3.2s ease-in-out infinite}
+.nav .btn{transition:transform .2s var(--ease-spring), box-shadow .2s, filter .2s}
+@media (hover:hover) and (pointer:fine){ .nav .btn:not(:disabled):hover{transform:translateY(-2px)} }
+.nav .btn:not(:disabled):active{transform:scale(.96)}
+
+/* ---- question card turns like a page ---- */
+#quiz{perspective:1600px}
+@keyframes turnInL{from{opacity:0; transform:rotateY(-28deg) translateX(-40px) translateZ(-60px)} to{opacity:1; transform:none}}
+@keyframes turnInR{from{opacity:0; transform:rotateY(28deg) translateX(40px) translateZ(-60px)} to{opacity:1; transform:none}}
+#quiz .card.turnF{animation:turnInR .55s var(--ease-out) both}
+#quiz .card.turnB{animation:turnInL .55s var(--ease-out) both}
+html[dir="rtl"] #quiz .card.turnF{animation-name:turnInL}
+html[dir="rtl"] #quiz .card.turnB{animation-name:turnInR}
+
+/* ---- options: lift, correct pops out, wrong wobbles ---- */
+#opts{perspective:900px}
+.opt{transform-style:preserve-3d; transition:transform .3s var(--ease-out), box-shadow .3s var(--ease-out), border-color .2s, background .2s}
+@media (hover:hover) and (pointer:fine){ .opt:hover:not(:disabled){transform:translateY(-2px) translateZ(10px); box-shadow:0 12px 22px -16px color-mix(in srgb, var(--ink) 60%, transparent)} }
+.opt:active:not(:disabled){transform:scale(.985)}
+@keyframes liftOut{0%{transform:none} 45%{transform:translateZ(46px) translateY(-6px) scale(1.04)} 100%{transform:translateZ(24px) translateY(-3px) scale(1.02)}}
+.opt.ok.pop{animation:liftOut .55s var(--ease-spring) both; box-shadow:0 22px 34px -20px var(--ok)}
+@keyframes wobble3d{0%,100%{transform:none} 20%{transform:rotateY(-12deg) translateX(-6px)} 45%{transform:rotateY(10deg) translateX(5px)} 70%{transform:rotateY(-5deg) translateX(-2px)}}
+.opt.bad.shake{animation:wobble3d .5s ease-in-out}
+.spark{position:fixed; width:8px; height:8px; border-radius:50%; pointer-events:none; z-index:60; background:var(--ok);
+  animation:spark .7s var(--ease-out) forwards}
+.spark.alt{background:var(--primary)}
+@keyframes spark{from{transform:translate(0,0) scale(1); opacity:1} to{transform:translate(var(--dx),var(--dy)) scale(.2); opacity:0}}
+@keyframes whyIn{from{opacity:0; transform:perspective(700px) rotateX(-18deg) translateY(-6px)} to{opacity:1; transform:none}}
+.why:not(.hidden){animation:whyIn .45s var(--ease-out) both; transform-origin:50% 0}
+@keyframes curPulse{0%,100%{transform:scale(1)} 50%{transform:scale(1.35)}}
+.dot.cur{animation:curPulse 1.6s ease-in-out infinite}
+@keyframes flame{0%{transform:scale(1) rotate(0)} 30%{transform:scale(1.3) rotate(-8deg)} 60%{transform:scale(.95) rotate(5deg)} 100%{transform:scale(1)}}
+.streak.bump{animation:flame .55s var(--ease-spring)}
+
+/* ---- result, review, summary ---- */
+@keyframes scoreIn{from{opacity:0; transform:perspective(900px) rotateX(55deg) translateY(30px)} to{opacity:1; transform:none}}
+#result:not(.hidden) .score{animation:scoreIn .8s var(--ease-spring) both; transform-origin:50% 100%}
+#result:not(.hidden) .rate{animation:riseIn .6s var(--ease-out) .25s both}
+.rev,.sec{animation:riseIn .5s var(--ease-out) both; transition:transform .3s var(--ease-out), box-shadow .3s}
+.rev:nth-child(2),.sec:nth-child(2){animation-delay:.05s} .rev:nth-child(3),.sec:nth-child(3){animation-delay:.1s}
+.rev:nth-child(4),.sec:nth-child(4){animation-delay:.15s} .rev:nth-child(n+5),.sec:nth-child(n+5){animation-delay:.2s}
+@media (hover:hover) and (pointer:fine){ .rev:hover,.sec:hover{transform:translateY(-3px); box-shadow:0 14px 26px -18px color-mix(in srgb, var(--ink) 55%, transparent)} }
+
+/* reduced motion: soft fades, no movement */
+@media (prefers-reduced-motion: reduce){
+  @keyframes enter3d{from{opacity:0} to{opacity:1}}
+  @keyframes turnInL{from{opacity:0} to{opacity:1}}
+  @keyframes turnInR{from{opacity:0} to{opacity:1}}
+  @keyframes scoreIn{from{opacity:0} to{opacity:1}}
+  @keyframes whyIn{from{opacity:0} to{opacity:1}}
+  .lec,.mode{transform:none !important}
+  .lec::after,.mode::after,.spark{display:none}
+  .lec.just,.lec.just .box,.mode.just,.chip.just,.stars button.just,.opt.ok.pop,.opt.bad.shake,.dot.cur,.streak.bump,#setup #startBtn{animation:none !important}
+  .chip:hover,.chip:active,.opt:hover,.start:hover,.rev:hover,.sec:hover,.stars button:hover{transform:none !important}
+}
+/* ---- confirm v1 ---- */
+.opt.pending{border-color:var(--primary) !important; background:var(--primary-soft) !important;
+  transform:translateY(-2px) translateZ(12px); box-shadow:0 14px 24px -16px var(--primary)}
+.confirmTip{margin-inline-start:auto; flex:none; font-size:.78rem; font-weight:700; color:var(--primary);
+  background:var(--surface); border:1px solid var(--primary); border-radius:999px; padding:2px 10px; white-space:nowrap;
+  animation:tipIn .35s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes tipIn{from{opacity:0; transform:scale(.6)} to{opacity:1; transform:none}}
+@keyframes tipNudge{0%,100%{transform:none} 50%{transform:scale(1.08)}}
+.opt.pending .confirmTip{animation:tipIn .35s cubic-bezier(.34,1.56,.64,1) both, tipNudge 1.4s ease-in-out .6s infinite}
+.confirmRow{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:10px; padding:10px 14px;
+  border:1px dashed var(--line); border-radius:10px; cursor:pointer; user-select:none}
+.confirmRow .cTxt{display:grid; gap:2px}
+.confirmRow .cTxt b{font-size:.92rem}
+.confirmRow .cTxt span{font-size:.8rem; color:var(--muted)}
+.switch{flex:none; position:relative; width:46px; height:26px; border-radius:999px; background:var(--line); border:0; padding:0;
+  transition:background .25s; cursor:pointer}
+.switch::after{content:""; position:absolute; top:3px; inset-inline-start:3px; width:20px; height:20px; border-radius:50%;
+  background:var(--surface); box-shadow:0 1px 3px rgba(0,0,0,.3); transition:inset-inline-start .25s cubic-bezier(.34,1.56,.64,1)}
+.switch[aria-checked="true"]{background:var(--primary)}
+.switch[aria-checked="true"]::after{inset-inline-start:23px}
+.switch:focus-visible{outline:3px solid var(--primary); outline-offset:2px}
+.confirmRow.off-mode{opacity:.55}
+@media (prefers-reduced-motion: reduce){ .confirmTip,.opt.pending .confirmTip{animation:none} .opt.pending{transform:none} }
+/* ---- abbreviations v1 ---- */
+abbr.ab{text-decoration:none; font-weight:700}
+.abx{color:var(--muted); font-weight:500}
+#abbrs .abHead{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px}
+#abbrs h2{margin:0; font-size:1.4rem}
+#abbrs .abCount{color:var(--muted); font-size:.92rem}
+#abbrs .abSearch{width:100%; font:inherit; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:11px 14px; margin-bottom:14px}
+#abbrs .abSearch:focus-visible{outline:2px solid var(--primary); outline-offset:2px}
+.abList{display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px}
+.abCard{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:14px 16px; display:grid; gap:4px; align-content:start;
+  animation:riseIn .45s cubic-bezier(.16,1,.3,1) both; transition:transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s}
+@media (hover:hover) and (pointer:fine){ .abCard:hover{transform:translateY(-3px); box-shadow:0 14px 24px -16px color-mix(in srgb, var(--primary) 70%, transparent)} }
+.abTerm{font-size:1.25rem; font-weight:800; color:var(--primary); letter-spacing:.02em; direction:ltr; text-align:start; unicode-bidi:isolate}
+.abExp{font-weight:600; direction:ltr; unicode-bidi:isolate}
+html[dir="rtl"] .abExp{text-align:right}
+.abAr{color:var(--muted); font-size:.92rem}
+.abLecs{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px}
+.abLecs span{font-size:.75rem; font-weight:600; border:1px solid var(--line); border-radius:999px; padding:1px 8px; color:var(--muted)}
+.abEmpty{color:var(--muted); text-align:center; padding:30px 0}
 </style>
 </head>
 <body>
@@ -416,6 +559,13 @@ mark{background:var(--warn-soft); color:var(--warn); border-radius:3px; padding:
     </div>
     <div class="nav" id="nav"></div>
     <p class="hint" id="hint"></p>
+  </section>
+
+  <section id="abbrs" class="hidden">
+    <div class="abHead"><div><h2 id="abTitle"></h2><span class="abCount" id="abCount"></span></div>
+      <button class="mini" id="abBack"></button></div>
+    <input type="search" class="abSearch" id="abSearch" autocomplete="off" enterkeyhint="search">
+    <div class="abList" id="abList"></div>
   </section>
 
   <section id="result" class="hidden">
@@ -1117,7 +1267,7 @@ const UI = {
 const SEC_PER_Q = 60;
 const $ = id => document.getElementById(id);
 
-let lang="ar", mode="learn", count=20;
+let lang="en" /* default = source language; a saved choice still wins */, mode="learn", count=20;
 let selectedLectures = new Set(LECTURES.map(l=>l.id));
 let activeSumLec = "l1";
 let streak=0, bestStreak=0, justPicked=false;
@@ -1717,6 +1867,197 @@ if(!welcomed) $("welcome").showModal();
       }
     };
   }
+})();
+</script>
+<script>
+/* motion v3: tilt + glare, selection pops, page-turn per question, sparkles on a correct answer */
+(function(){
+  const rm=()=>window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const fine=window.matchMedia && matchMedia("(hover:hover) and (pointer:fine)").matches;
+  /* tilt + glare on topic and mode cards (mouse only) */
+  if(fine){
+    document.addEventListener("pointermove",e=>{
+      if(rm()) return; const el=e.target.closest && e.target.closest(".lec,.mode"); if(!el) return;
+      const r=el.getBoundingClientRect(), x=(e.clientX-r.left)/r.width, y=(e.clientY-r.top)/r.height;
+      el.classList.add("tilting");
+      el.style.setProperty("--ry",((x-.5)*14).toFixed(2)+"deg"); el.style.setProperty("--rx",((.5-y)*12).toFixed(2)+"deg");
+      el.style.setProperty("--gx",(x*100).toFixed(1)+"%"); el.style.setProperty("--gy",(y*100).toFixed(1)+"%");
+    });
+    document.addEventListener("pointerout",e=>{
+      const el=e.target.closest && e.target.closest(".lec,.mode"); if(!el || el.contains(e.relatedTarget)) return;
+      el.classList.remove("tilting"); el.style.removeProperty("--rx"); el.style.removeProperty("--ry");
+    });
+  }
+  /* pop the thing that was just chosen; lists re-render on click, so find it again by position */
+  const popAfter=(container, index, sel)=>setTimeout(()=>{ const box=document.getElementById(container); if(!box) return;
+    const el=box.querySelectorAll(sel)[index]; if(!el) return; el.classList.remove("just"); void el.offsetWidth; el.classList.add("just");
+    setTimeout(()=>el.classList.remove("just"),600); },0);
+  document.addEventListener("click",e=>{
+    const t=e.target.closest && e.target.closest(".lec,.chip,.mode,.stars button"); if(!t) return;
+    const box=t.parentElement; if(!box) return;
+    const sel=t.classList.contains("lec")?".lec":t.classList.contains("mode")?".mode":t.classList.contains("chip")?".chip":"button";
+    const i=[...box.querySelectorAll(":scope > "+sel)].indexOf(t);
+    if(box.id) popAfter(box.id,i,":scope > "+sel);
+    else { t.classList.remove("just"); void t.offsetWidth; t.classList.add("just"); setTimeout(()=>t.classList.remove("just"),600); }
+  },true);
+  /* sparkles from an element */
+  function sparkle(el){
+    if(rm() || !el) return; const r=el.getBoundingClientRect(), cx=r.left+r.width*(document.documentElement.dir==="rtl"?.85:.15), cy=r.top+r.height/2;
+    for(let k=0;k<14;k++){ const s=document.createElement("span"); s.className="spark"+(k%3===0?" alt":"");
+      const a=Math.random()*Math.PI*2, d=40+Math.random()*70;
+      s.style.left=cx+"px"; s.style.top=cy+"px"; s.style.setProperty("--dx",(Math.cos(a)*d).toFixed(0)+"px"); s.style.setProperty("--dy",(Math.sin(a)*d-20).toFixed(0)+"px");
+      document.body.appendChild(s); setTimeout(()=>s.remove(),800); }
+  }
+  /* question card turns in on every new question; direction follows next/back */
+  if(typeof render==="function"){
+    const base=render; let lastIdx=null, lastKey=null;
+    render=function(){
+      const key=(typeof qs!=="undefined" && qs[idx]) ? qs[idx].lec+":"+qs[idx].i : null;
+      const fresh=key!==null && (key!==lastKey || idx!==lastIdx); const fwd=lastIdx===null || idx>=lastIdx;
+      lastKey=key; lastIdx=idx;
+      base.apply(this, arguments);
+      const card=document.querySelector("#quiz .card");
+      if(fresh && card){ card.classList.remove("turnF","turnB"); void card.offsetWidth; card.classList.add(fwd?"turnF":"turnB");
+        clearTimeout(render._tc); render._tc=setTimeout(()=>card.classList.remove("turnF","turnB"),650); }
+    };
+  }
+  /* sparkles when the learner picks the correct answer in learn mode */
+  if(typeof pick==="function"){
+    const basePick=pick;
+    pick=function(i){
+      const before=(typeof answers!=="undefined") ? answers[idx] : undefined;
+      basePick.apply(this, arguments);
+      if(typeof mode!=="undefined" && mode==="learn" && before===null && answers[idx]===i && i===qs[idx].correct){
+        const ok=document.querySelector("#opts .opt.ok"); if(ok) sparkle(ok);
+      }
+    };
+  }
+})();
+</script>
+<script>
+/* confirm v1: in instant-feedback mode, the first tap selects and the second tap on the same option locks it in */
+(function(){
+  if(typeof pick!=="function" || typeof render!=="function") return;
+  const KEY="confirm:"+location.pathname;
+  let on=true; try{ const v=localStorage.getItem(KEY); if(v==="0") on=false; }catch(e){}
+  let pending=null, pendKey=null;
+  const fine=window.matchMedia && matchMedia("(hover:hover) and (pointer:fine)").matches;
+  const txt=()=> lang==="ar"
+    ? {tip: fine?"اضغط مرة ثانية للتأكيد":"اضغط مرة ثانية للتأكيد", t:"تأكيد قبل الإجابة", d:"أول ضغطة تختار، والثانية تثبّت الإجابة. يخص وضع التصحيح الفوري."}
+    : {tip: fine?"Click again to confirm":"Tap again to confirm", t:"Confirm before answering", d:"First tap selects, second tap locks it in. Applies to instant feedback mode."};
+  const active=()=> on && typeof mode!=="undefined" && mode==="learn";
+  const qkey=()=> (qs[idx] ? qs[idx].lec+":"+qs[idx].i+":"+idx : null);
+  function paint(){
+    document.querySelectorAll("#opts .opt").forEach((b,k)=>{
+      b.classList.toggle("pending", k===pending);
+      const old=b.querySelector(".confirmTip"); if(old) old.remove();
+      if(k===pending){ const s=document.createElement("span"); s.className="confirmTip"; s.textContent=txt().tip; b.appendChild(s); }
+    });
+  }
+  const basePick=pick;
+  pick=function(i){
+    if(active() && answers[idx]===null && !finished){
+      if(i<0 || i>=document.querySelectorAll("#opts .opt").length) return;
+      if(pending!==i){ pending=i; pendKey=qkey(); paint(); return; }
+      pending=null; pendKey=null;
+    }
+    return basePick.apply(this, arguments);
+  };
+  const baseRender=render;
+  render=function(){
+    if(qkey()!==pendKey){ pending=null; pendKey=null; }
+    const r=baseRender.apply(this, arguments);
+    if(pending!==null && answers[idx]===null) paint();
+    return r;
+  };
+  /* Enter confirms the selected option */
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Enter" && pending!==null && !document.getElementById("quiz").classList.contains("hidden")){
+      e.preventDefault(); e.stopImmediatePropagation(); pick(pending);
+    }
+  },true);
+  /* the setting, under the mode cards */
+  const modes=document.querySelector("#setup .modes");
+  if(modes){
+    const row=document.createElement("div"); row.className="confirmRow";
+    row.innerHTML='<div class="cTxt"><b></b><span></span></div><button type="button" class="switch" role="switch"></button>';
+    const sw=row.querySelector(".switch");
+    const sync=()=>{ const t=txt(); row.querySelector("b").textContent=t.t; row.querySelector("span").textContent=t.d;
+      sw.setAttribute("aria-checked", on); sw.setAttribute("aria-label", t.t);
+      row.classList.toggle("off-mode", typeof mode!=="undefined" && mode!=="learn"); };
+    row.addEventListener("click",()=>{ on=!on; try{ localStorage.setItem(KEY, on?"1":"0"); }catch(e){} sync(); });
+    modes.insertAdjacentElement("afterend", row);
+    sync();
+    if(typeof applyLang==="function"){ const baseApply=applyLang; applyLang=function(){ const r=baseApply.apply(this, arguments); sync(); if(pending!==null) paint(); return r; }; }
+    document.querySelectorAll(".mode").forEach(m=>m.addEventListener("click",()=>setTimeout(sync,0)));
+  }
+})();
+</script>
+<script>
+/* abbreviations v1: first use in each lecture summary is written out; a page lists them all */
+(function(){
+  const RAW=[["AVT", "Audiovisual Translation", "الترجمة السمعية البصرية"], ["TQA", "Translation Quality Assessment", "تقييم جودة الترجمة"], ["QA", "Quality Assurance", "ضمان الجودة"], ["QC", "Quality Control", "مراقبة الجودة"], ["TAUS", "Translation Automation User Society", "جمعية مستخدمي أتمتة الترجمة"], ["DQF", "Dynamic Quality Framework", "إطار الجودة الديناميكي"], ["MQM", "Multidimensional Quality Metrics", "مقاييس الجودة متعددة الأبعاد"], ["BLEU", "Bilingual Evaluation Understudy", "مقياس آلي لجودة الترجمة"], ["TER", "Translation Edit Rate", "معدل تعديل الترجمة"], ["COMET", "Crosslingual Optimized Metric for Evaluation of Translation", "مقياس آلي لتقييم الترجمة"], ["MT", "Machine Translation", "الترجمة الآلية"], ["NMT", "Neural Machine Translation", "الترجمة الآلية العصبية"], ["RBMT", "Rule-Based Machine Translation", "الترجمة الآلية القائمة على القواعد"], ["TM", "Translation Memory", "ذاكرة الترجمة"], ["ASR", "Automatic Speech Recognition", "التعرف الآلي على الكلام"], ["OCR", "Optical Character Recognition", "التعرف الضوئي على الحروف"], ["LLM", "Large Language Model", "نموذج لغوي كبير"], ["AI", "Artificial Intelligence", "الذكاء الاصطناعي"], ["SI", "Simultaneous Interpreting", "الترجمة الفورية"], ["TT", "Target Text", "النص الهدف"], ["TTML", "Timed Text Markup Language", "لغة ترميز النص المؤقت (للترجمة النصية)"], ["SRT", "SubRip Text (subtitle file format)", "صيغة ملف ترجمة نصية"], ["W3C", "World Wide Web Consortium", "اتحاد شبكة الويب العالمية"], ["SMPTE", "Society of Motion Picture and Television Engineers", "جمعية مهندسي السينما والتلفزيون"], ["EBU", "European Broadcasting Union", "اتحاد البث الأوروبي"], ["BBC", "British Broadcasting Corporation", "هيئة الإذاعة البريطانية"], ["EU", "European Union", "الاتحاد الأوروبي"], ["UN", "United Nations", "الأمم المتحدة"], ["US", "United States", "الولايات المتحدة"]];
+  const esc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+  const lecName=l=>((l.title||l.short||{})[lang]) || l.id;
+  const ABBR=RAW.map(([a,en,ar])=>({a,en,ar, re:new RegExp("(?<![A-Za-z0-9])"+esc(a)+"(s?)(?![A-Za-z])")}))
+    .map(x=>({...x, lecs:LECTURES.filter(l=>x.re.test(JSON.stringify(l.bank)+JSON.stringify(l.summary)))}))
+    .filter(x=>x.lecs.length).sort((p,q)=>p.a.localeCompare(q.a));
+  if(!ABBR.length) return;
+  const L=()=> lang==="ar"
+    ? {btn:n=>"الاختصارات ("+n+")", title:"الاختصارات", count:n=>n+" اختصار في هذا المقرر", back:"رجوع", ph:"دوّر على اختصار أو معناه", none:"ما فيه اختصار يطابق بحثك."}
+    : {btn:n=>"Abbreviations ("+n+")", title:"Abbreviations", count:n=>n+" abbreviations in this course", back:"Back", ph:"Search an abbreviation or its meaning", none:"No abbreviation matches your search."};
+  /* 1) expand the first use of each abbreviation in the lecture summary being shown */
+  function expand(){
+    const box=document.getElementById("summaryContent"); if(!box) return;
+    const done=new Set();
+    const walker=document.createTreeWalker(box, NodeFilter.SHOW_TEXT);
+    const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
+    for(const node of nodes){
+      if(node.parentElement && node.parentElement.closest("abbr,.abx,mark")) continue;
+      let text=node.nodeValue, frag=null, last=0, hits=[];
+      for(const x of ABBR){ if(done.has(x.a)) continue;
+        const m=x.re.exec(text); if(!m) continue;
+        const end=m.index+m[0].length, after=text.slice(end, end+3);
+        done.add(x.a); if(/^\s?\(/.test(after) || text[m.index-1]==="(") continue;   /* already written out, or already in parentheses after its full form */
+        hits.push({i:m.index, len:m[0].length, x, s:m[1]}); }
+      if(!hits.length) continue;
+      hits.sort((p,q)=>p.i-q.i); frag=document.createDocumentFragment();
+      for(const h of hits){ if(h.i<last) continue;
+        frag.append(text.slice(last,h.i));
+        const ab=document.createElement("abbr"); ab.className="ab"; ab.title=h.x.en; ab.textContent=h.x.a+h.s;
+        const sp=document.createElement("span"); sp.className="abx"; sp.append(" (");
+        const b=document.createElement("bdi"); b.textContent=h.x.en; sp.append(b, ")");
+        frag.append(ab, sp); last=h.i+h.len; }
+      frag.append(text.slice(last)); node.replaceWith(frag);
+    }
+  }
+  if(typeof renderSummary==="function"){ const base=renderSummary; renderSummary=function(){ const r=base.apply(this,arguments); expand(); return r; }; }
+  /* 2) the Abbreviations page */
+  const sec=document.getElementById("abbrs");
+  function renderList(){
+    const q=(document.getElementById("abSearch").value||"").trim().toLowerCase();
+    const list=document.getElementById("abList"); list.innerHTML="";
+    const rows=ABBR.filter(x=>!q || (x.a+" "+x.en+" "+x.ar).toLowerCase().includes(q));
+    rows.forEach((x,k)=>{ const c=document.createElement("div"); c.className="abCard"; c.style.animationDelay=Math.min(k*25,400)+"ms";
+      const t=document.createElement("div"); t.className="abTerm"; t.textContent=x.a;
+      const e=document.createElement("div"); e.className="abExp"; e.textContent=x.en;
+      const ar=document.createElement("div"); ar.className="abAr"; ar.textContent=x.ar;
+      const ls=document.createElement("div"); ls.className="abLecs"; x.lecs.forEach(l=>{ const s=document.createElement("span"); s.textContent=lecName(l); ls.appendChild(s); });
+      c.append(t,e,ar,ls); list.appendChild(c); });
+    if(!rows.length){ const d=document.createElement("p"); d.className="abEmpty"; d.textContent=L().none; list.appendChild(d); }
+  }
+  function labels(){ const t=L();
+    document.getElementById("abTitle").textContent=t.title; document.getElementById("abCount").textContent=t.count(ABBR.length);
+    document.getElementById("abBack").textContent=t.back; document.getElementById("abSearch").placeholder=t.ph;
+    const b=document.getElementById("abbrBtn"); if(b) b.textContent=t.btn(ABBR.length); }
+  function open(){ document.querySelectorAll("body section").forEach(s=>s.classList.add("hidden")); sec.classList.remove("hidden"); labels(); renderList(); window.scrollTo(0,0); }
+  const sb=document.getElementById("summaryBtn");
+  if(sb){ const b=document.createElement("button"); b.className="start secondary"; b.id="abbrBtn"; b.type="button"; b.onclick=open; sb.insertAdjacentElement("afterend", b); }
+  document.getElementById("abBack").onclick=()=>show("setup");
+  document.getElementById("abSearch").addEventListener("input", renderList);
+  if(typeof show==="function"){ const baseShow=show; show=function(id){ sec.classList.add("hidden"); return baseShow.apply(this,arguments); }; }
+  if(typeof applyLang==="function"){ const baseApply=applyLang; applyLang=function(){ const r=baseApply.apply(this,arguments); labels(); if(!sec.classList.contains("hidden")) renderList(); return r; }; }
+  labels();
 })();
 </script>
 </body>
