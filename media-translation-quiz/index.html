@@ -490,7 +490,51 @@ html[dir="rtl"] .abExp{text-align:right}
 .abLecs{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px}
 .abLecs span{font-size:.75rem; font-weight:600; border:1px solid var(--line); border-radius:999px; padding:1px 8px; color:var(--muted)}
 .abEmpty{color:var(--muted); text-align:center; padding:30px 0}
+/* ---- mistakes v1 ---- */
+.mxRow{display:flex; gap:8px; align-items:stretch; margin-top:12px}
+.mxRow .start{flex:1; margin:0}
+#mxBtn{display:flex; align-items:center; justify-content:center; gap:10px}
+#mxBtn .mxN{min-width:26px; height:26px; padding:0 8px; border-radius:999px; background:var(--bad); color:#fff;
+  font-size:.85rem; font-weight:800; display:inline-grid; place-items:center; animation:tipIn .35s cubic-bezier(.34,1.56,.64,1) both}
+#mxClear{flex:none; font:inherit; font-size:.85rem; color:var(--muted); background:none; border:1px dashed var(--line); border-radius:12px; padding:0 14px; cursor:pointer}
+#mxClear:hover{color:var(--bad); border-color:var(--bad)}
+.mxNote{margin:10px 0 0; padding:10px 14px; border-radius:10px; background:var(--surface); border:1px solid var(--line); font-size:.92rem; color:var(--muted)}
+.mxNote b{color:var(--ink)}
+.mxTag{display:inline-block; margin-inline-start:8px; font-size:.75rem; font-weight:700; color:var(--bad); border:1px solid var(--bad); border-radius:999px; padding:1px 8px; vertical-align:middle}
+/* ---- extras v1 ---- */
+/* resume banner */
+.resume{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:16px 0 18px; padding:14px 16px; border-radius:12px;
+  background:var(--primary-soft); border:1px solid var(--primary); animation:riseIn .45s cubic-bezier(.16,1,.3,1) both}
+.resume .rsT{flex:1 1 220px; display:grid; gap:2px}
+.resume .rsT b{font-size:1rem}
+.resume .rsT span{font-size:.85rem; color:var(--muted)}
+.resume button{font:inherit; font-weight:700; border-radius:10px; padding:9px 16px; cursor:pointer}
+.resume .rsGo{background:var(--primary); color:var(--on-primary); border:0}
+.resume .rsNo{background:none; color:var(--muted); border:1px solid var(--line)}
+/* mastery bar inside each lecture */
+.lec{flex-wrap:wrap}
+.lec .mst{flex:1 0 100%; display:flex; align-items:center; gap:8px; margin-top:6px; font-size:.75rem; font-weight:700; color:var(--muted)}
+.lec .mst i{flex:1; height:5px; border-radius:99px; background:var(--line); overflow:hidden; position:relative}
+.lec .mst i::after{content:""; position:absolute; inset:0; inset-inline-end:auto; width:var(--w); border-radius:inherit; background:var(--ok); transition:width .6s cubic-bezier(.16,1,.3,1)}
+.lec .mst.mid i::after{background:var(--primary)}
+.lec .mst.low i::after{background:var(--bad)}
+/* source line */
+.srcRef{display:flex; align-items:center; gap:6px; margin-top:8px; font-size:.8rem; color:var(--muted)}
+.srcRef b{color:var(--ink); font-weight:700}
+/* share */
+.shareBtn{display:inline-flex; align-items:center; gap:8px; margin-top:12px; font:inherit; font-weight:700; font-size:.92rem; color:var(--primary);
+  background:var(--surface); border:1px solid var(--primary); border-radius:999px; padding:8px 18px; cursor:pointer}
+.shareBtn:hover{background:var(--primary-soft)}
+.shareMsg{font-size:.8rem; color:var(--muted); margin:6px 0 0; min-height:1em}
+/* install */
+.installBtn{color:var(--ink)}
+.installTip{font-size:.8rem; color:var(--muted); text-align:center; margin:10px 16px 0}
 </style>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#18120D" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F5EFE6" media="(prefers-color-scheme: light)">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
 </head>
 <body>
 <div class="wrap">
@@ -2057,6 +2101,269 @@ if(!welcomed) $("welcome").showModal();
   document.getElementById("abSearch").addEventListener("input", renderList);
   if(typeof show==="function"){ const baseShow=show; show=function(id){ sec.classList.add("hidden"); return baseShow.apply(this,arguments); }; }
   if(typeof applyLang==="function"){ const baseApply=applyLang; applyLang=function(){ const r=baseApply.apply(this,arguments); labels(); if(!sec.classList.contains("hidden")) renderList(); return r; }; }
+  labels();
+})();
+</script>
+<script>
+/* mistakes v1: wrong answers are kept in this browser; "Practice my mistakes" quizzes only those */
+(function(){
+  if(typeof start!=="function" || typeof buildPool!=="function" || typeof finish!=="function") return;
+  const KEY="mistakes:"+location.pathname, NEED=2;
+  const load=()=>{ try{ return JSON.parse(localStorage.getItem(KEY)||"{}")||{}; }catch(e){ return {}; } };
+  const save=m=>{ try{ localStorage.setItem(KEY, JSON.stringify(m)); }catch(e){} };
+  const bankLen=l=> Array.isArray(l.bank) ? l.bank.length : l.bank.ar.length;
+  /* keys that still point at a real question */
+  function items(){ const m=load(), out=[];
+    for(const k in m){ const c=k.lastIndexOf(":"), lec=k.slice(0,c), i=+k.slice(c+1);
+      const l=LECTURES.find(x=>String(x.id)===lec); if(l && i>=0 && i<bankLen(l)) out.push({lec:l.id, i}); }
+    return out; }
+  let practicing=false;
+  window.MX={get on(){ return practicing; }, set on(v){ practicing=!!v; }};
+  const arN=n=> n===1 ? "<b>سؤال واحد</b>" : n===2 ? "<b>سؤالين</b>" : n<=10 ? "<b>"+n+"</b> أسئلة" : "<b>"+n+"</b> سؤال";
+  const txt=()=> lang==="ar"
+    ? {btn:"تدرّب على أخطائك", clear:"مسح", ask:"تمسح قائمة أخطائك؟", tag:"من أخطائك",
+       left:n=> n ? "باقي في قائمة أخطائك "+arN(n)+". السؤال يطلع منها إذا جاوبته صح مرتين في محاولتين مختلفتين." : "<b>قائمة أخطائك فاضية.</b> ما فيه أسئلة تحتاج تراجعها.",
+       added:n=>(n===1?"انضاف ":"انضافت ")+arN(n)+" لقائمة أخطائك. تقدر تتدرب عليها من الشاشة الأولى."}
+    : {btn:"Practice my mistakes", clear:"Clear", ask:"Clear your mistakes list?", tag:"From your mistakes",
+       left:n=> n ? "<b>"+n+"</b> "+(n===1?"question":"questions")+" left in your mistakes list. A question leaves it after you answer it right in 2 separate attempts." : "<b>Your mistakes list is empty.</b> Nothing left to review.",
+       added:n=>"<b>"+n+"</b> "+(n===1?"question was":"questions were")+" added to your mistakes list. Practice them from the start screen."};
+
+  /* setup: button + clear, right under Start */
+  const sb=document.getElementById("startBtn");
+  const row=document.createElement("div"); row.className="mxRow hidden";
+  row.innerHTML='<button type="button" class="start secondary" id="mxBtn"><span class="mxL"></span><span class="mxN"></span></button><button type="button" id="mxClear"></button>';
+  sb.insertAdjacentElement("afterend", row);
+  function paint(){ const n=items().length, t=txt();
+    row.classList.toggle("hidden", !n);
+    row.querySelector(".mxL").textContent=t.btn; row.querySelector(".mxN").textContent=n;
+    const c=document.getElementById("mxClear"); c.textContent=t.clear; c.setAttribute("aria-label", t.clear+" — "+t.btn); }
+  document.getElementById("mxBtn").onclick=()=>{
+    if(!items().length) return;
+    if(typeof mode!=="undefined" && mode==="cards"){ const b=document.querySelector('.mode[data-mode="learn"]'); if(b) b.click(); }
+    practicing=true; start();
+  };
+  document.getElementById("mxClear").onclick=()=>{ if(confirm(txt().ask)){ save({}); paint(); } };
+
+  /* while practicing, the pool is the mistakes list (all lectures, all of it) */
+  const baseBuild=buildPool; buildPool=function(){ return practicing ? items() : baseBuild.apply(this, arguments); };
+  if(typeof planned==="function"){ const basePlanned=planned; planned=function(){ return practicing ? items().length : basePlanned.apply(this, arguments); }; }
+  /* practice runs are not sent to the answer log (they would skew the stats) */
+  if(typeof AQ==="object" && typeof AQ.sendAnswers==="function"){ const baseSend=AQ.sendAnswers; AQ.sendAnswers=function(){ if(practicing) return; return baseSend.apply(this, arguments); }; }
+
+  /* tag the question while practicing */
+  if(typeof render==="function"){ const baseRender=render; render=function(){ const r=baseRender.apply(this, arguments);
+    if(practicing){ const pos=document.getElementById("pos"); if(pos && !pos.querySelector(".mxTag")){ const s=document.createElement("span"); s.className="mxTag"; s.textContent=txt().tag; pos.appendChild(s); } }
+    return r; }; }
+
+  /* after each attempt: wrong -> into the list (count 0); right -> count +1, out at NEED */
+  let added=0;
+  const baseFinish=finish; finish=function(){
+    const was=finished; added=0;
+    if(!was && typeof mode!=="undefined" && mode!=="cards"){
+      const m=load();
+      qs.forEach((q,k)=>{ const a=answers[k]; if(a===null || a===undefined) return;
+        const key=q.lec+":"+q.i;
+        if(a!==q.correct){ if(!(key in m)) added++; m[key]=0; }
+        else if(key in m){ m[key]=(m[key]||0)+1; if(m[key]>=NEED) delete m[key]; } });
+      save(m);
+    }
+    return baseFinish.apply(this, arguments);
+  };
+  /* result screen: one line about the list */
+  const note=document.createElement("p"); note.className="mxNote hidden";
+  const score=document.querySelector("#result .score"); if(score) score.insertAdjacentElement("afterend", note);
+  if(typeof renderResult==="function"){ const baseRes=renderResult; renderResult=function(){ const r=baseRes.apply(this, arguments);
+    const n=items().length, t=txt();
+    if(practicing){ note.innerHTML=t.left(n); note.classList.remove("hidden"); }
+    else if(added){ note.innerHTML=t.added(added); note.classList.remove("hidden"); }
+    else note.classList.add("hidden");
+    return r; }; }
+
+  if(typeof show==="function"){ const baseShow=show; show=function(id){ if(id==="setup"){ practicing=false; paint(); } return baseShow.apply(this, arguments); }; }
+  if(typeof applyLang==="function"){ const baseApply=applyLang; applyLang=function(){ const r=baseApply.apply(this, arguments); paint(); return r; }; }
+  paint();
+})();
+</script>
+<script>
+/* extras v1: rating once · resume · mastery per lecture · source line · share card · install */
+(function(){
+  const PATH=location.pathname, SRC=null, CNT="count";
+  const ls={ get(k,d){ try{ const v=localStorage.getItem(k); return v===null?d:JSON.parse(v); }catch(e){ return d; } },
+             set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} },
+             del(k){ try{ localStorage.removeItem(k); }catch(e){} } };
+  const ar=()=>lang==="ar";
+  const getN=()=> CNT==="total" ? total : count;
+  const setN=n=>{ if(CNT==="total") total=n; else count=n; };
+  const practicing=()=> !!(window.MX && window.MX.on);
+
+  /* 1) rating: shown on one result screen per student per link, never again */
+  if(typeof AQ==="object" && typeof AQ.renderRate==="function"){
+    const RK="rateShown:"+PATH, base=AQ.renderRate;
+    AQ.renderRate=function(){
+      const box=document.getElementById("rate"), seen=ls.get(RK,null);
+      if(seen && seen!==this.attempt){ box.classList.add("hidden"); return; }
+      box.classList.remove("hidden"); if(!seen) ls.set(RK, this.attempt);
+      return base.apply(this, arguments);
+    };
+  }
+
+  /* 2) source line under each explanation */
+  function srcText(q){
+    if(!SRC) return null;
+    const v=(SRC.q && SRC.q[q.lec+":"+q.i]) || (SRC.lec && SRC.lec[q.lec]); if(!v) return null;
+    const many=/[–,-]/.test(v), L=lang;
+    const unit = L==="ar" ? (many ? SRC.unit.arPl : SRC.unit.ar) : (many ? SRC.unit.enPl : SRC.unit.en);
+    const doc=(SRC.docLec && SRC.docLec[q.lec]) || SRC.doc;
+    return {lbl: L==="ar"?"المصدر:":"Source:", txt: doc[L]+"، "+unit+" "+v.replace(/, /g,"، "), en: doc[L]+", "+unit+" "+v};
+  }
+  function srcEl(q){ const s=srcText(q); if(!s) return null;
+    const p=document.createElement("p"); p.className="srcRef"; p.dir="auto";
+    const b=document.createElement("b"); b.textContent="📄 "+s.lbl; p.append(b, " "+(ar()?s.txt:s.en)); return p; }
+  if(typeof render==="function"){ const base=render; render=function(){ const r=base.apply(this, arguments);
+    const why=document.getElementById("why"); if(why && !why.classList.contains("hidden") && qs[idx]){ const e=srcEl(qs[idx]); if(e){ const tb=why.querySelector(".topicBtn"); const anchor=tb?tb.parentElement:null; anchor?why.insertBefore(e, anchor):why.appendChild(e); } }
+    save(); return r; }; }
+  if(typeof renderReview==="function"){ const base=renderReview; renderReview=function(){ const r=base.apply(this, arguments);
+    const cards=document.querySelectorAll("#review .rev"); let k=0;
+    const onlyWrong=arguments[0];
+    qs.forEach((q,i)=>{ if(onlyWrong && answers[i]===q.correct) return; const c=cards[k++]; if(!c) return; const e=srcEl(q); if(!e) return;
+      const tb=c.querySelector(".topicBtn"); const anchor=tb?tb.parentElement:null; anchor?c.insertBefore(e, anchor):c.appendChild(e); });
+    return r; }; }
+
+  /* 3) mastery per lecture: last result of each question, shown as a bar on the lecture button */
+  const MK="mastery:"+PATH;
+  const bankLen=l=> Array.isArray(l.bank) ? l.bank.length : l.bank.ar.length;
+  function paintMastery(){
+    const m=ls.get(MK,{}), btns=document.querySelectorAll("#lectures .lec");
+    LECTURES.forEach((l,k)=>{ const b=btns[k]; if(!b) return; const old=b.querySelector(".mst"); if(old) old.remove();
+      let seen=0, ok=0; for(const key in m){ if(key.slice(0,key.lastIndexOf(":"))===String(l.id)){ seen++; ok+=m[key]; } }
+      if(!seen) return;
+      const pct=Math.round(ok/bankLen(l)*100);
+      const d=document.createElement("span"); d.className="mst"+(pct<40?" low":pct<75?" mid":"");
+      d.title = ar() ? ("أتقنت "+ok+" من "+bankLen(l)+" سؤال") : ("Mastered "+ok+" of "+bankLen(l)+" questions");
+      const bar=document.createElement("i"); bar.style.setProperty("--w", pct+"%");
+      d.append(bar, (ar()?"إتقان ":"Mastery ")+pct+"%"); b.appendChild(d); });
+  }
+  if(typeof renderLecChips==="function"){ const base=renderLecChips; renderLecChips=function(){ const r=base.apply(this, arguments); paintMastery(); return r; }; }
+
+  /* 4) resume an unfinished attempt */
+  const SK="resume:"+PATH;
+  function save(){
+    if(finished || !qs.length || typeof mode==="undefined" || mode==="cards") return;
+    if(document.getElementById("quiz").classList.contains("hidden")) return;
+    ls.set(SK,{v:1, qs, answers, idx, n:getN(), mode, timeLeft, el:Math.round((Date.now()-startedAt)/1000),
+      att:(typeof AQ==="object"?AQ.attempt:""), streak, bestStreak, px:practicing(), at:Date.now()});
+  }
+  addEventListener("pagehide", save); document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden") save(); });
+  if(typeof pick==="function"){ const base=pick; pick=function(){ const r=base.apply(this, arguments); save(); return r; }; }
+
+  const baseFinish=finish; finish=function(){
+    const was=finished, r=baseFinish.apply(this, arguments);
+    if(!was && finished){ ls.del(SK);
+      if(mode!=="cards"){ const m=ls.get(MK,{}); qs.forEach((q,k)=>{ const a=answers[k]; if(a===null||a===undefined) return; m[q.lec+":"+q.i]= a===q.correct?1:0; }); ls.set(MK,m); }
+    }
+    return r; };
+  if(typeof start==="function"){ const base=start; start=function(){ ls.del(SK); return base.apply(this, arguments); }; }
+
+  const setup=document.getElementById("setup");
+  const banner=document.createElement("div"); banner.className="resume hidden";
+  banner.innerHTML='<div class="rsT"><b></b><span></span></div><button type="button" class="rsGo"></button><button type="button" class="rsNo"></button>';
+  const firstGroup=setup.querySelector(".group") || setup.firstElementChild;
+  firstGroup.parentElement.insertBefore(banner, firstGroup);
+  function valid(s){ return s && s.v===1 && Array.isArray(s.qs) && s.qs.length && s.qs.every(q=>{ const l=LECTURES.find(x=>x.id===q.lec); return l && q.i<bankLen(l); }) && (Date.now()-s.at)<30*864e5; }
+  function paintBanner(){
+    const s=ls.get(SK,null);
+    if(!valid(s) || !s.answers.some(a=>a!==null)){ banner.classList.add("hidden"); return; }
+    const done=s.answers.filter(a=>a!==null).length;
+    banner.querySelector("b").textContent = ar() ? "عندك اختبار ما كملته" : "You have an unfinished quiz";
+    banner.querySelector("span").textContent = ar() ? ("جاوبت "+done+" من "+s.n+" سؤال"+(s.mode==="exam"?" · باقي من الوقت "+fmt(Math.max(s.timeLeft,0)):"")) : ("Answered "+done+" of "+s.n+(s.mode==="exam"?" · "+fmt(Math.max(s.timeLeft,0))+" left":""));
+    banner.querySelector(".rsGo").textContent = ar() ? "كمّل من حيث وقفت" : "Continue";
+    banner.querySelector(".rsNo").textContent = ar() ? "تجاهل" : "Discard";
+    banner.classList.remove("hidden");
+  }
+  banner.querySelector(".rsNo").onclick=()=>{ ls.del(SK); paintBanner(); };
+  banner.querySelector(".rsGo").onclick=()=>{
+    const s=ls.get(SK,null); if(!valid(s)) { paintBanner(); return; }
+    if(mode!==s.mode){ const b=document.querySelector('.mode[data-mode="'+s.mode+'"]'); if(b) b.click(); }
+    if(window.MX) window.MX.on=!!s.px;
+    qs=s.qs; answers=s.answers; idx=Math.min(s.idx, s.qs.length-1); setN(s.n);
+    finished=false; timedOut=false; justPicked=false; streak=s.streak||0; bestStreak=s.bestStreak||0;
+    startedAt=Date.now()-(s.el||0)*1000;
+    if(typeof AQ==="object"){ AQ.newAttempt(); if(s.att) AQ.attempt=s.att; }
+    clearInterval(tick); const t=document.getElementById("timer");
+    if(mode==="exam"){
+      timeLeft=s.timeLeft; t.classList.remove("hidden","low"); t.textContent=fmt(Math.max(timeLeft,0));
+      tick=setInterval(()=>{ timeLeft--; t.textContent=fmt(Math.max(timeLeft,0)); t.classList.toggle("low", timeLeft<=60);
+        const live=document.getElementById("timerLive"); if(timeLeft===60 && live) live.textContent=T().timeLow;
+        if(timeLeft<=0){ timedOut=true; finish(); } },1000);
+    } else t.classList.add("hidden");
+    const rail=document.getElementById("rail"); if(rail) rail.classList.toggle("jump", mode==="exam");
+    show("quiz"); render();
+  };
+
+  /* 5) share card */
+  const score=document.querySelector("#result .score");
+  const sBtn=document.createElement("button"); sBtn.type="button"; sBtn.className="shareBtn";
+  const sMsg=document.createElement("p"); sMsg.className="shareMsg"; sMsg.setAttribute("role","status");
+  if(score){ score.append(sBtn, sMsg); }
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim()||getComputedStyle(document.body).getPropertyValue(n).trim();
+  function wrap(ctx, text, max){ const words=String(text).split(" "), lines=[]; let cur="";
+    for(const w of words){ const t=cur?cur+" "+w:w; if(ctx.measureText(t).width>max && cur){ lines.push(cur); cur=w; } else cur=t; } if(cur) lines.push(cur); return lines; }
+  function card(){
+    const W=1080, H=1350, c=document.createElement("canvas"); c.width=W; c.height=H; const x=c.getContext("2d");
+    const font=getComputedStyle(document.body).fontFamily, R=ar();
+    const bg=css("--bg")||"#18120D", sf=css("--surface")||"#231A13", ink=css("--ink")||"#F3EADF", mu=css("--muted")||"#B3A391", pr=css("--primary")||"#E8B04A", ln=css("--line")||"#3A2D22";
+    x.fillStyle=bg; x.fillRect(0,0,W,H);
+    const g=x.createRadialGradient(W*.8,H*.1,40,W*.8,H*.1,900); g.addColorStop(0, pr+"33"); g.addColorStop(1,"transparent"); x.fillStyle=g; x.fillRect(0,0,W,H);
+    x.direction="ltr"; x.textAlign="left"; x.font="800 54px "+font;
+    x.fillStyle=ink; x.fillText("Albadar", 90, 140); x.fillStyle=pr; x.fillText(".", 90+x.measureText("Albadar").width+2, 140);
+    /* panel */
+    x.fillStyle=sf; x.strokeStyle=ln; x.lineWidth=3; const px=70, py=230, pw=W-140, ph=820;
+    x.beginPath(); x.roundRect ? x.roundRect(px,py,pw,ph,40) : x.rect(px,py,pw,ph); x.fill(); x.stroke();
+    x.textAlign="center"; x.direction=R?"rtl":"ltr";
+    x.fillStyle=mu; x.font="600 40px "+font; const title=(T().title||document.title).replace(/<[^>]+>/g,"");
+    wrap(x, title, pw-120).slice(0,2).forEach((l,k)=>x.fillText(l, W/2, py+110+k*54));
+    const ok=qs.filter((q,i)=>answers[i]===q.correct).length, n=getN(), pct=Math.round(ok/n*100);
+    x.fillStyle=ink; x.font="800 230px "+font; x.direction="ltr"; x.fillText(ok+"/"+n, W/2, py+470);
+    x.fillStyle=pr; x.font="800 84px "+font; x.fillText(pct+"%", W/2, py+590);
+    x.direction=R?"rtl":"ltr"; x.fillStyle=mu; x.font="500 40px "+font;
+    const v=document.getElementById("verdict"); wrap(x, v?v.textContent:"", pw-140).slice(0,2).forEach((l,k)=>x.fillText(l, W/2, py+690+k*52));
+    /* footer */
+    x.fillStyle=ink; x.font="700 44px "+font; x.fillText(R?"ذاكر معي واختبر نفسك":"Study with me. Test yourself.", W/2, 1170);
+    x.fillStyle=pr; x.font="800 48px "+font; x.direction="ltr"; x.fillText("t.me/AlbadarQuiz", W/2, 1250);
+    return c;
+  }
+  function sLabels(){ sBtn.textContent = ar() ? "↗ شارك نتيجتك" : "↗ Share your result"; }
+  sBtn.onclick=async()=>{
+    sMsg.textContent=""; const c=card();
+    const blob=await new Promise(r=>c.toBlob(r,"image/png")); if(!blob) return;
+    const name="albadar-result.png", file=new File([blob], name, {type:"image/png"});
+    const text = ar() ? "اختبرت نفسي على AlbadarQuiz: t.me/AlbadarQuiz" : "I tested myself on AlbadarQuiz: t.me/AlbadarQuiz";
+    try{ if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file], text}); return; } }
+    catch(e){ if(e && e.name==="AbortError") return; }
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+    sMsg.textContent = ar() ? "نزلت الصورة. أرسلها لقروب الدفعة." : "Image saved. Send it to your class group.";
+  };
+
+  /* 6) installable app */
+  let deferred=null; const foot=document.querySelector("#setup .foot, footer, .footer");
+  const iBtn=document.createElement("button"); iBtn.type="button"; iBtn.className="aboutBtn installBtn hidden";
+  const iTip=document.createElement("p"); iTip.className="installTip hidden";
+  const host=foot || setup; host.appendChild(iBtn); (foot?foot.parentElement:setup).appendChild(iTip);
+  const standalone=()=> matchMedia("(display-mode: standalone)").matches || navigator.standalone===true;
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
+  function iLabels(){ iBtn.textContent = ar() ? "⤓ ثبّته على جهازك" : "⤓ Install as app";
+    iTip.textContent = ar() ? "تبيه مثل التطبيق؟ اضغط زر المشاركة في Safari ثم «إضافة إلى الشاشة الرئيسية»." : "Want it as an app? Tap Share in Safari, then “Add to Home Screen”.";
+    iTip.classList.toggle("hidden", !(ios && !standalone())); }
+  addEventListener("beforeinstallprompt", e=>{ e.preventDefault(); deferred=e; iBtn.classList.remove("hidden"); });
+  addEventListener("appinstalled", ()=>{ deferred=null; iBtn.classList.add("hidden"); });
+  iBtn.onclick=async()=>{ if(!deferred) return; deferred.prompt(); try{ await deferred.userChoice; }catch(e){} deferred=null; iBtn.classList.add("hidden"); };
+  if("serviceWorker" in navigator && location.protocol==="https:") navigator.serviceWorker.register("sw.js").catch(()=>{});
+
+  /* language + screen changes */
+  function labels(){ sLabels(); iLabels(); paintBanner(); paintMastery(); }
+  if(typeof applyLang==="function"){ const base=applyLang; applyLang=function(){ const r=base.apply(this, arguments); labels(); return r; }; }
+  if(typeof show==="function"){ const base=show; show=function(id){ const r=base.apply(this, arguments); if(id==="setup"){ paintBanner(); paintMastery(); } return r; }; }
   labels();
 })();
 </script>
