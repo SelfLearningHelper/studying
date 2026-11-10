@@ -12,10 +12,9 @@
 if(t!=="light"&&t!=="dark")t=window.matchMedia&&matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";
 if(t==="light")document.documentElement.dataset.theme="light";})();</script>
 <script>
-/* fix v4: motion is on by default; the footer switch turns it off (saved per link) */
+/* fix v4: motion is on for everyone, whatever the device's reduce-motion setting */
 (function(){
-  var off=false; try{ off=localStorage.getItem("motion:"+location.pathname)==="off"; }catch(e){}
-  if(off) document.documentElement.classList.add("calm");
+  try{ localStorage.removeItem("motion:"+location.pathname); }catch(e){}   /* no switch any more: motion is on for everyone */
   var mm=window.matchMedia.bind(window);
   window.matchMedia=function(q){
     if(/prefers-reduced-motion/.test(q)){
@@ -2388,22 +2387,6 @@ if(!welcomed) $("welcome").showModal();
   if(typeof applyLang==="function"){ const base=applyLang; applyLang=function(){ const r=base.apply(this, arguments); labels(); return r; }; }
   if(typeof show==="function"){ const base=show; show=function(id){ const r=base.apply(this, arguments); if(id==="setup"){ paintBanner(); paintMastery(); } return r; }; }
   labels();
-})();
-</script>
-<script>
-/* fix v4: motion switch in the footer */
-(function(){
-  var KEY="motion:"+location.pathname, foot=document.querySelector("footer");
-  if(!foot) return;
-  var b=document.createElement("button"); b.type="button"; b.className="aboutBtn motionBtn";
-  function label(){ var calm=document.documentElement.classList.contains("calm");
-    b.textContent = lang==="ar" ? (calm ? "✦ تشغيل الحركة" : "✦ إيقاف الحركة") : (calm ? "✦ Turn motion on" : "✦ Turn motion off");
-    b.setAttribute("aria-pressed", String(!calm)); }
-  b.onclick=function(){ var calm=document.documentElement.classList.toggle("calm");
-    try{ localStorage.setItem(KEY, calm?"off":"on"); }catch(e){} label(); };
-  var t=document.getElementById("themeBtn"); t ? t.insertAdjacentElement("afterend", b) : foot.appendChild(b);
-  if(typeof applyLang==="function"){ var base=applyLang; applyLang=function(){ var r=base.apply(this, arguments); label(); return r; }; }
-  label();
 })();
 </script>
 </body>
